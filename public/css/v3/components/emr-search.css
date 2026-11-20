@@ -1,0 +1,605 @@
+
+/* ==========================================================
+   SIRMED V3 — EMR SEARCH MODAL
+========================================================== */
+
+.emr-search-modal {
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .12);
+}
+
+/* HEADER */
+.emr-search-header {
+    padding: 20px 24px;
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.emr-search-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+/* SEARCH */
+.emr-search-box {
+    padding: 18px;
+    border-radius: 16px;
+
+    /* background: var(--bs-tertiary-bg); */
+    border: 1px solid var(--bs-border-color);
+}
+
+.emr-search-input-group {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.emr-search-input-group .input-group-text {
+    background: var(--bs-body-bg);
+    border-right: 0;
+}
+
+.emr-search-input-group .form-control {
+    border-left: 0;
+    font-weight: 600;
+    letter-spacing: .5px;
+}
+
+.emr-search-input-group .btn {
+    min-width: 130px;
+}
+
+/* EMPTY */
+.emr-search-empty {
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    padding: 24px;
+
+    border: 1px dashed var(--bs-border-color);
+    border-radius: 16px;
+
+    color: var(--bs-body-color);
+}
+
+.emr-search-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+
+    font-size: 28px;
+    margin-bottom: 14px;
+}
+
+/* PATIENT CARD */
+.emr-search-patient-card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--bs-body-bg);
+}
+
+.emr-search-patient-header {
+    padding: 18px;
+    /* background: var(--bs-tertiary-bg); */
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.emr-search-patient-avatar {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+
+    font-size: 24px;
+}
+
+.emr-search-patient-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.emr-search-patient-meta {
+    font-size: .82rem;
+    color: var(--bs-secondary-color);
+}
+
+/* VISIT */
+.emr-search-visit-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.emr-search-visit {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    border-bottom: 1px solid var(--bs-border-color);
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.emr-search-visit:last-child {
+    border-bottom: 0;
+}
+
+.emr-search-visit:hover {
+    background: var(--bs-primary-bg-subtle);
+}
+
+.emr-search-visit:active {
+    transform: scale(.995);
+}
+
+.emr-search-visit-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: var(--bs-secondary-bg);
+    color: var(--bs-secondary-color);
+}
+
+.emr-search-visit-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.emr-search-visit-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.emr-search-visit-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+
+    font-size: .8rem;
+    color: var(--bs-secondary-color);
+}
+
+.emr-search-visit-info span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.emr-search-visit-arrow {
+    color: var(--bs-secondary-color);
+    flex-shrink: 0;
+}
+
+/* STATUS */
+.emr-search-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.emr-search-status.status-active {
+    color: var(--bs-warning-text-emphasis);
+    background: var(--bs-warning-bg-subtle);
+}
+
+.emr-search-status.status-finished {
+    color: var(--bs-success-text-emphasis);
+    background: var(--bs-success-bg-subtle);
+}
+
+.emr-search-status.status-cancelled {
+    color: var(--bs-danger-text-emphasis);
+    background: var(--bs-danger-bg-subtle);
+}
+
+/* LOADING */
+.emr-search-loading {
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    color: var(--bs-secondary-color);
+}
+
+/* ERROR */
+.emr-search-error {
+    padding: 20px;
+    text-align: center;
+
+    border: 1px solid var(--bs-danger-border-subtle);
+    background: var(--bs-danger-bg-subtle);
+
+    border-radius: 14px;
+    color: var(--bs-danger-text-emphasis);
+}
+
+/* RESPONSIVE */
+@media (max-width: 576px) {
+
+    .emr-search-header {
+        padding: 16px;
+    }
+
+    .emr-search-box {
+        padding: 12px;
+    }
+
+    .emr-search-input-group {
+        flex-wrap: wrap;
+    }
+
+    .emr-search-input-group .input-group-text {
+        display: none;
+    }
+
+    .emr-search-input-group .form-control {
+        border-left: 1px solid var(--bs-border-color);
+    }
+
+    .emr-search-input-group .btn {
+        width: 100%;
+    }
+
+    .emr-search-visit {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .emr-search-visit-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+}
+
+/* =========================================================
+   EMR VISIT LIST - MODERN CARD
+========================================================= */
+
+.emr-search-visit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+}
+
+/* Card kunjungan */
+.emr-search-visit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 18px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 16px;
+
+    background: var(--bs-body-bg);
+    cursor: pointer;
+
+    transition:
+        border-color .25s ease,
+        background-color .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+
+    overflow: hidden;
+}
+
+/* Accent bar */
+.emr-search-visit::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+
+    width: 4px;
+    border-radius: 0 6px 6px 0;
+
+    background: var(--bs-primary);
+    opacity: .45;
+
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+/* Hover */
+.emr-search-visit:hover {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+
+    box-shadow: 0 8px 24px rgba(var(--bs-primary-rgb), .10);
+    transform: translateY(-2px);
+}
+
+.emr-search-visit:hover::before {
+    opacity: 1;
+}
+
+/* Active */
+.emr-search-visit:active {
+    transform: scale(.99);
+}
+
+/* Icon */
+.emr-search-visit-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+
+    font-size: 22px;
+
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .25s ease;
+}
+
+.emr-search-visit:hover .emr-search-visit-icon {
+    background: var(--bs-primary);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Content */
+.emr-search-visit-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Title */
+.emr-search-visit-title {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Visit information */
+.emr-search-visit-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+
+    font-size: .8rem;
+    color: var(--bs-secondary-color);
+}
+
+.emr-search-visit-info span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.5;
+}
+
+.emr-search-visit-info i {
+    font-size: .9rem;
+    color: var(--bs-primary);
+    opacity: .85;
+}
+
+/* Arrow */
+.emr-search-visit-arrow {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: var(--bs-secondary-color);
+    background: var(--bs-tertiary-bg);
+
+    transition:
+        color .25s ease,
+        background .25s ease,
+        transform .25s ease;
+}
+
+.emr-search-visit:hover .emr-search-visit-arrow {
+    color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+.emr-search-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 10px;
+
+    border-radius: 50px;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.emr-search-status i {
+    font-size: .8rem;
+}
+
+.emr-search-status.status-active {
+    color: var(--bs-warning-text-emphasis);
+    background: var(--bs-warning-bg-subtle);
+    border: 1px solid var(--bs-warning-border-subtle);
+}
+
+.emr-search-status.status-finished {
+    color: var(--bs-success-text-emphasis);
+    background: var(--bs-success-bg-subtle);
+    border: 1px solid var(--bs-success-border-subtle);
+}
+
+.emr-search-status.status-cancelled {
+    color: var(--bs-danger-text-emphasis);
+    background: var(--bs-danger-bg-subtle);
+    border: 1px solid var(--bs-danger-border-subtle);
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] .emr-search-visit {
+    background: var(--bs-body-bg);
+    border-color: rgba(255,255,255,.08);
+}
+
+[data-bs-theme="dark"] .emr-search-visit:hover {
+    background: rgba(var(--bs-primary-rgb), .08);
+    border-color: var(--bs-primary);
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+
+[data-bs-theme="dark"] .emr-search-visit-icon {
+    background: rgba(var(--bs-primary-rgb), .15);
+}
+
+[data-bs-theme="dark"] .emr-search-visit:hover .emr-search-visit-icon {
+    background: var(--bs-primary);
+    color: #fff;
+}
+
+[data-bs-theme="dark"] .emr-search-visit-arrow {
+    background: rgba(255,255,255,.05);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .emr-search-visit-list {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .emr-search-visit {
+        padding: 14px;
+        gap: 12px;
+        border-radius: 14px;
+    }
+
+    .emr-search-visit-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        font-size: 19px;
+    }
+
+    .emr-search-visit-title {
+        font-size: .88rem;
+    }
+
+    .emr-search-visit-info {
+        gap: 6px 12px;
+        font-size: .76rem;
+    }
+
+    .emr-search-visit-arrow {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .emr-search-visit {
+        align-items: flex-start;
+    }
+
+    .emr-search-visit-arrow {
+        margin-top: 4px;
+    }
+
+    .emr-search-visit-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+}

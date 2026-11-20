@@ -298,3 +298,137 @@
 </header>
 
 @include('inc.v3.emr.epatient')
+
+<!-- =========================================================
+    MODAL CARI EMR PASIEN
+========================================================= -->
+<div class="modal fade" id="modalCariEMR" tabindex="-1"
+     aria-labelledby="modalCariEMRLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content emr-search-modal">
+
+            <!-- HEADER -->
+            <div class="modal-header emr-search-header">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="emr-search-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="modal-title fw-bold mb-1" id="modalCariEMRLabel">
+                            Cari Rekam Medis Pasien
+                        </h5>
+
+                        <div class="small text-body-secondary">
+                            Cari pasien berdasarkan Nomor Rekam Medis
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Tutup">
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body p-3 p-md-4">
+
+                <!-- SEARCH -->
+                <div class="emr-search-box mb-4">
+
+                    <label for="cariEMRNorm" class="form-label fw-semibold">
+                        Nomor Rekam Medis (NORM)
+                    </label>
+
+                    <div class="input-group input-group-lg emr-search-input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-person-vcard"></i>
+                        </span>
+
+                        <input type="text"
+                               class="form-control"
+                               id="cariEMRNorm"
+                               placeholder="Masukkan nomor RM"
+                               maxlength="8"
+                               inputmode="numeric"
+                               autocomplete="off" autofocus>
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="btnCariEMR">
+
+                            <i class="bi bi-search"></i>
+
+                        </button>
+
+                    </div>
+
+                    <div class="form-text">
+                        Maksimal 8 digit. Angka 0 di depan akan otomatis disesuaikan saat pencarian.
+                    </div>
+
+                </div>
+
+
+                <!-- INFO SEARCH -->
+                <div id="cariEMRInfo" class="mb-3"></div>
+
+
+                <!-- RESULT -->
+                <div id="cariEMRHasil">
+
+                    <div class="emr-search-empty">
+
+                        <div class="emr-search-empty-icon">
+                            <i class="bi bi-person-search"></i>
+                        </div>
+
+                        <h6 class="fw-semibold mb-1">
+                            Cari pasien terlebih dahulu
+                        </h6>
+
+                        <p class="text-body-secondary small mb-0">
+                            Masukkan nomor rekam medis pasien kemudian tekan Cari Pasien.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer d-flex justify-content-between">
+
+                <div class="small text-body-secondary">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Klik salah satu kunjungan untuk membuka EMR.
+                </div>
+
+                <button type="button"
+                        class="btn btn-subtle-secondary border-dashed"
+                        data-bs-dismiss="modal">
+
+                    <i class="bi bi-x-lg me-1"></i>
+                    Tutup
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

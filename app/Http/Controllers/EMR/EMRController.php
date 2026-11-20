@@ -1008,6 +1008,100 @@ class EMRController extends Controller
         ]);
     }
 
+    public function searchByNoRM(Request $request)
+    {
+        $norm = preg_replace('/\D/', '', trim($request->norm ?? ''));
+
+        // Hilangkan 0 di depan NORM
+        $norm = ltrim($norm, '0');
+
+        // Jika semua angka adalah 0
+        if ($norm === '') {
+            $norm = '0';
+        }
+
+        if ($norm === '') {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
+        }
+
+        $user = auth()->user();
+        $isAdmin = $user->hasRole('admin');
+
+        $data = DB::table('pendaftaran.pendaftaran as pp')
+            ->join('pendaftaran.kunjungan as pk', function ($join) {
+                $join->on('pk.NOPEN', '=', 'pp.NOMOR')
+                    ->where('pk.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.pasien as ps', 'ps.NORM', '=', 'pp.NORM')
+            ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('pendaftaran.penjamin as pj', 'pj.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.dokter as dr', 'dr.ID', '=', 'pk.DPJP')
+            ->leftJoin('master.referensi as ref', function ($join) {
+                $join->on('ref.ID', '=', 'pj.JENIS')
+                    ->where('ref.STATUS', 1)
+                    ->where('ref.JENIS', 10);
+            })
+            ->where('pp.NORM', $norm)
+            ->where('pp.STATUS', '!=', 0)
+            ->where(function ($q) {
+                $q->where('pk.RUANGAN', 'LIKE', '10201%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10207%');
+            })
+            ->when(!$isAdmin, function ($query) use ($user) {
+                $query->whereExists(function ($subquery) use ($user) {
+                    $subquery->select(DB::raw(1))
+                        ->from('aplikasi.pengguna_akses_ruangan as par')
+                        ->whereColumn('par.RUANGAN', 'pk.RUANGAN')
+                        ->where('par.PENGGUNA', $user->ID)
+                        ->where('par.STATUS', 1);
+                });
+            })
+            ->select([
+                'pp.NORM',
+                DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+
+                'pp.NOMOR as NOPENDAFTARAN',
+                'pp.TANGGAL as TGLDAFTAR',
+
+                'pk.MASUK as TGLMASUK',
+                'pk.KELUAR as TGLKELUAR',
+                'pk.NOMOR as NOKUNJUNGAN',
+                'pk.MASUK as TGLKUNJUNGAN',
+
+                'ru.DESKRIPSI as NAMARUANGAN',
+
+                'ref.ID AS IDPENJAMIN',
+                'ref.DESKRIPSI AS NAMAPENJAMIN',
+
+                DB::raw("
+                    master.getNamaLengkapPegawai(
+                        CASE
+                            WHEN dr.NIP IS NULL OR dr.NIP = 0 OR dr.NIP = ''
+                            THEN pj.DPJP_LAYANAN
+                            ELSE dr.NIP
+                        END
+                    ) AS NAMADOKTER
+                "),
+
+                'pp.STATUS as STATUSDAFTAR',
+                'pk.STATUS as STATUSKUNJUNGAN',
+            ])
+            ->orderByDesc('pk.MASUK')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
     // API
     function getRiwayatKunjungan($NORM)
     {
