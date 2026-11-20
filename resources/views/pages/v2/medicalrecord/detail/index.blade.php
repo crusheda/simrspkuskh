@@ -11,7 +11,7 @@
 
 <script>
     window.EMRData = {
-        isAdmin: @json(Auth::user()->hasRole(['admin']));
+        isAdmin: @json(Auth::user()->hasRole(['admin'])),
         kunjungan: @json($list["KUNJUNGAN"]),
         ruangan: @json($list["show"]->IDRUANGAN),
         namaRuangan: @json($list["show"]->NAMARUANGAN),
