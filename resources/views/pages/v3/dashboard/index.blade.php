@@ -10,21 +10,123 @@
                 <p class="page-description">Selamat datang kembali. Berikut ringkasan dan pintasan aplikasi SIRMED.</p>
             </div><span class="date-chip"><i class="bi bi-calendar3 me-1"></i>{{ now()->translatedFormat('d F Y') }}</span>
         </div> --}}
-        <div class="welcome-banner mb-3">
-            <h2>Halo, {{ DB::table('aplikasi.pengguna')
-                            ->where('ID', Auth::id())
-                            ->selectRaw('master.getNamaLengkapPegawai(NIP) AS nama')
-                            ->value('nama') ?? Auth::user()->NAMA }} 👋</h2>
-            <p>Semoga aktivitas hari ini berjalan lancar. Pilih modul yang Anda perlukan melalui menu di samping atau akses
-                cepat berikut.</p><span class="welcome-chip"><i class="bi bi-shield-check"></i> Sesi Anda aktif dan
-                terlindungi</span>
+
+        <div class="welcome-banner mb-3" id="welcomeBanner" data-simgos-status-url="{{ route('system.simgos-status') }}">
+
+            {{-- BACKGROUND DECORATION --}}
+            <div class="welcome-banner-decoration">
+                <span class="welcome-orb welcome-orb-1"></span>
+                <span class="welcome-orb welcome-orb-2"></span>
+                <span class="welcome-orb welcome-orb-3"></span>
+                <span class="welcome-grid"></span>
+            </div>
+
+            {{-- MAIN CONTENT --}}
+            <div class="welcome-content">
+
+                <div class="welcome-greeting-label">
+                    <span class="welcome-status-indicator me-2" id="simgosStatusIndicatorUp"></span>
+                    SIRMED · HOSPITAL INFORMATION SYSTEM
+                </div>
+
+                <h2>
+                    Halo,
+                    {{ DB::table('aplikasi.pengguna')
+                        ->where('ID', Auth::id())
+                        ->selectRaw('master.getNamaLengkapPegawai(NIP) AS nama')
+                        ->value('nama') ?? Auth::user()->NAMA }}
+                    <span class="welcome-wave">👋</span>
+                </h2>
+
+                <p class="welcome-description">
+                    Selamat datang kembali di SIRMED.<br>
+                    Semoga aktivitas dan pelayanan Anda hari ini
+                    berjalan lancar, efektif, dan penuh keberkahan.
+                </p>
+
+                <div class="welcome-footer">
+
+                    <div class="welcome-session-status">
+                        <span class="welcome-status-icon" id="simgosStatusIcon">
+                            <i class="bi bi-shield-check"></i>
+                        </span>
+
+                        <div>
+                            <strong>Sesi aktif</strong>
+                            <small id="simgosStatusText">
+                                Memeriksa sistem...
+                            </small>
+                        </div>
+
+                        <span class="welcome-status-indicator" id="simgosStatusIndicator"></span>
+                    </div>
+
+                    <div class="welcome-footer-divider"></div>
+
+                    <div class="welcome-quick-info">
+                        <i class="bi bi-hospital"></i>
+                        <span>Digital Healthcare System</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {{-- VISUAL SIDE --}}
+            <div class="welcome-visual">
+
+                {{-- Decorative rings --}}
+                <div class="welcome-visual-ring welcome-ring-1"></div>
+                <div class="welcome-visual-ring welcome-ring-2"></div>
+
+                {{-- Main medical symbol --}}
+                <div class="welcome-medical-emblem">
+                    <div class="welcome-emblem-inner">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                </div>
+
+                {{-- Floating card --}}
+                <div class="welcome-float-card welcome-card-top">
+                    <div class="welcome-float-icon blue">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <div class="welcome-float-text">
+                        <strong>Healthcare</strong>
+                        <span>Integrated System</span>
+                    </div>
+                </div>
+
+                {{-- Floating card --}}
+                <div class="welcome-float-card welcome-card-bottom">
+                    <div class="welcome-float-icon green">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div class="welcome-float-text">
+                        <strong>System Ready</strong>
+                        <span>All services connected</span>
+                    </div>
+                </div>
+
+                {{-- Decorative elements --}}
+                <span class="welcome-deco-plus welcome-plus-1">+</span>
+                <span class="welcome-deco-plus welcome-plus-2">+</span>
+                <span class="welcome-deco-cross">
+                    <i class="bi bi-plus-lg"></i>
+                </span>
+
+            </div>
+
         </div>
-        <div class="row g-3 mb-3">
+
+        {{-- <div class="row g-3 mb-3">
             <div class="col-12 col-xl-7">
                 <div class="card-surface">
-                    <div class="d-flex justify-content-between align-middle">
+                    <div class="d-flex justify-content-between align-items-center">
                         <h2 class="section-title">Informasi aplikasi</h2>
-                        <span class="badge text-bg-info">Terintegrasi</span>
+                        <div>
+                            <span class="badge text-bg-info">Terintegrasi Simgos v2</span>
+                        </div>
                     </div>
                     <h6 class="section-subtitle">Informasi lingkungan SIRMED yang sedang digunakan.</h6>
                     <div class="table-responsive">
@@ -32,7 +134,7 @@
                             <tbody>
                                 <tr>
                                     <td class="text-secondary">Aplikasi</td>
-                                    <td class="fw-semibold">SIRMED (Sistem Informasi Rekam Medis) Versi 3</td>
+                                    <td class="fw-semibold">SIRMED (<a class="text-primary">Sistem Informasi Rekam Medis</a>) Versi 3</td>
                                     <td class="text-end"><span class="badge badge-soft-primary">Livewire</span></td>
                                 </tr>
                                 <tr>
@@ -52,23 +154,37 @@
             </div>
             <div class="col-12 col-xl-5">
                 <div class="card-surface">
-                    <h2 class="section-title">Keamanan akun</h2>
+                    <h2 class="section-title">Keamanan Sistem</h2>
                     <h6 class="section-subtitle mb-4">Pengingat singkat untuk pengguna.</h6>
-                    <div class="d-flex gap-3 mb-3"><span class="quick-action-icon"><i class="bi bi-shield-lock"></i></span>
-                        <div><strong class="d-block small">Jaga kerahasiaan akun</strong>
+                    <div class="d-flex gap-3 mb-3">
+                        <span class="quick-action-icon"><i class="bi bi-shield-lock"></i></span>
+                        <div>
+                            <strong class="d-block small">Jaga kerahasiaan akun</strong>
                             <p class="text-secondary small mb-0 mt-1">Jangan membagikan kredensial atau meninggalkan sesi
                                 terbuka di komputer bersama.</p>
                         </div>
                     </div>
-                    <div class="d-flex gap-3"><span class="quick-action-icon"><i class="bi bi-life-preserver"></i></span>
+                    <div class="d-flex gap-3">
+                        <span class="quick-action-icon">
+                            <i class="bi bi-person-lock"></i>
+                        </span>
+                        <div>
+                            <strong class="d-block small">Jaga privasi pasien</strong>
+                            <p class="text-secondary small mb-0 mt-1">
+                                Gunakan data pasien hanya untuk kepentingan pelayanan.
+                                Jangan mengakses, menyebarkan, atau membagikan informasi medis
+                                pasien kepada pihak yang tidak berwenang.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3 mt-3"><span class="quick-action-icon"><i class="bi bi-life-preserver"></i></span>
                         <div><strong class="d-block small">Laporkan kendala</strong>
-                            <p class="text-secondary small mb-0 mt-1">Hubungi tim IT rumah sakit jika menemukan masalah pada
-                                aplikasi.</p>
+                            <p class="text-secondary small mb-0 mt-1">Hubungi Tim IT Rumah Sakit (<b>Telf. Kantor : 102 / 193</b>) apabila menemukan masalah pada aplikasi.</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- <div class="row g-3 mb-4">
             <div class="col-12 col-sm-6 col-xl-3">
@@ -364,110 +480,155 @@
             </div>
 
             {{-- LEADERBOARD --}}
-            <div class="mb-3">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <div>
-                        <h5 class="fw-bold mb-1">
-                            <i class="bi bi-trophy me-2 text-warning"></i>
-                            Top 10 Pengkajian
-                        </h5>
+            <div class="accordion" id="top10ChampionPengkajianAwalAcc">
+                <div class="accordion champion-accordion" id="top10ChampionPengkajianAwalAcc">
+                    <div class="accordion-item border-0 overflow-hidden">
 
-                        <div class="small text-secondary">
-                            {{ $leaderboardPeriod === 'yearly'
-                                ? 'Akumulasi tahun ' . now()->format('Y')
-                                : 'Akumulasi 3 bulan terakhir' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        {{-- ACCORDION HEADER --}}
+                        <h2 class="accordion-header" id="headingTop10Champion">
+                            <button
+                                class="accordion-button champion-accordion-header collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#top10ChampionPengkajianAwal"
+                                aria-expanded="false"
+                                aria-controls="top10ChampionPengkajianAwal">
 
-            @if ($leaderboard->isNotEmpty())
-                <div class="table-responsive">
-                    <table class="table table-modern align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width: 65px;">Rank</th>
-                                <th>Nama Pegawai</th>
-                                <th class="text-end">Pengkajian</th>
-                            </tr>
-                        </thead>
+                                <div class="champion-header-content">
 
-                        <tbody>
-                            @foreach ($leaderboard as $pegawai)
-                                <tr @if ($pegawai->USER_CREATED == Auth::user()->getAuthIdentifier())
-                                    style="background: rgba(var(--bs-primary-rgb), .06)"
-                                @endif>
+                                    {{-- ICON --}}
+                                    <div class="champion-header-icon">
+                                        <i class="bi bi-trophy-fill"></i>
+                                    </div>
 
-                                    <td>
-                                        @if ($pegawai->rank === 1)
-                                            <span class="fs-5">🥇</span>
-                                        @elseif ($pegawai->rank === 2)
-                                            <span class="fs-5">🥈</span>
-                                        @elseif ($pegawai->rank === 3)
-                                            <span class="fs-5">🥉</span>
-                                        @else
-                                            <span class="badge rounded-pill badge-soft-secondary">
-                                                #{{ $pegawai->rank }}
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    <td>
-                                        <div class="fw-semibold">
-                                            {{ $pegawai->nama }} @if (!empty($pegawai->kategori)) - <small class="">{{ $pegawai->kategori }}</small> @endif
-
-                                            @if ($pegawai->USER_CREATED == Auth::user()->getAuthIdentifier())
-                                                <span class="badge rounded-pill badge-soft-primary ms-1">
-                                                    Anda
-                                                </span>
-                                            @endif
+                                    {{-- TITLE --}}
+                                    <div class="champion-header-info">
+                                        <div class="champion-header-title">
+                                            Top 10 Pengkajian
+                                            <span class="champion-header-badge">LEADERBOARD</span>
                                         </div>
-                                    </td>
 
-                                    <td class="text-end">
-                                        <span class="fw-bold">
-                                            {{ number_format($pegawai->total_pengkajian) }}
-                                        </span>
+                                        <div class="champion-header-subtitle">
+                                            <i class="bi bi-stars me-1"></i>
+                                            Peringkat pegawai berdasarkan pengkajian yang difinalisasi
+                                        </div>
+                                    </div>
 
-                                        <small class="text-secondary">Form</small>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="text-center py-5">
-                    <div style="font-size: 3rem;">🌱</div>
+                                    {{-- PERIOD --}}
+                                    <div class="champion-header-period me-3">
+                                        <i class="bi bi-calendar3"></i>
 
-                    <h6 class="fw-bold mt-2">
-                        Belum ada data leaderboard
-                    </h6>
+                                        {{ $leaderboardPeriod === 'yearly'
+                                            ? 'Tahun ' . now()->format('Y')
+                                            : '3 Bulan Terakhir' }}
+                                    </div>
 
-                    <p class="text-secondary small mb-0">
-                        Jadilah yang pertama memulai capaian pada periode ini.
-                    </p>
-                </div>
-            @endif
+                                </div>
 
-            {{-- MOTIVATION --}}
-            <div class="rounded-3 p-3 mt-4"
-                style="background: var(--bs-tertiary-bg);">
+                            </button>
+                        </h2>
 
-                <div class="d-flex gap-3 align-items-start">
-                    <i class="bi bi-lightning-charge-fill text-warning fs-4"></i>
+                        {{-- COLLAPSE --}}
+                        <div
+                            id="top10ChampionPengkajianAwal"
+                            class="accordion-collapse collapse"
+                            data-bs-parent="#top10ChampionPengkajianAwalAcc">
 
-                    <div>
-                        <strong>
-                            Setiap pengkajian yang difinalisasi adalah kontribusi nyata untuk pelayanan pasien.
-                        </strong>
+                            <div class="accordion-body champion-accordion-body">
+                                @if ($leaderboard->isNotEmpty())
+                                    <div class="table-responsive">
+                                        <table class="table table-modern align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 65px;">Rank</th>
+                                                    <th>Nama Pegawai</th>
+                                                    <th class="text-end">Pengkajian</th>
+                                                </tr>
+                                            </thead>
 
-                        <div class="small text-secondary mt-1">
-                            Konsisten hari ini, lebih baik dari kemarin!
+                                            <tbody>
+                                                @foreach ($leaderboard as $pegawai)
+                                                    <tr @if ($pegawai->USER_CREATED == Auth::user()->getAuthIdentifier())
+                                                        style="background: rgba(var(--bs-primary-rgb), .06)"
+                                                    @endif>
+
+                                                        <td>
+                                                            @if ($pegawai->rank === 1)
+                                                                <span class="fs-5">🥇</span>
+                                                            @elseif ($pegawai->rank === 2)
+                                                                <span class="fs-5">🥈</span>
+                                                            @elseif ($pegawai->rank === 3)
+                                                                <span class="fs-5">🥉</span>
+                                                            @else
+                                                                <span class="badge rounded-pill badge-soft-secondary">
+                                                                    #{{ $pegawai->rank }}
+                                                                </span>
+                                                            @endif
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="fw-semibold">
+                                                                {{ $pegawai->nama }} @if (!empty($pegawai->kategori)) - <small class="">{{ $pegawai->kategori }}</small> @endif
+
+                                                                @if ($pegawai->USER_CREATED == Auth::user()->getAuthIdentifier())
+                                                                    <span class="badge rounded-pill badge-soft-primary ms-1">
+                                                                        Anda
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+
+                                                        <td class="text-end">
+                                                            <span class="fw-bold">
+                                                                {{ number_format($pegawai->total_pengkajian) }}
+                                                            </span>
+
+                                                            <small class="text-secondary">Form</small>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="text-center py-5">
+                                        <div style="font-size: 3rem;">🌱</div>
+
+                                        <h6 class="fw-bold mt-2">
+                                            Belum ada data leaderboard
+                                        </h6>
+
+                                        <p class="text-secondary small mb-0">
+                                            Jadilah yang pertama memulai capaian pada periode ini.
+                                        </p>
+                                    </div>
+                                @endif
+
+                                {{-- MOTIVATION --}}
+                                <div class="rounded-3 p-3 mt-4"
+                                    style="background: var(--bs-tertiary-bg);">
+
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <i class="bi bi-lightning-charge-fill text-warning fs-4"></i>
+
+                                        <div>
+                                            <strong>
+                                                Setiap pengkajian yang difinalisasi adalah kontribusi nyata untuk pelayanan pasien.
+                                            </strong>
+
+                                            <div class="small text-secondary mt-1">
+                                                Konsisten hari ini, lebih baik dari kemarin!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
 
     </div>

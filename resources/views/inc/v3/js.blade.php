@@ -1,6 +1,9 @@
 {{-- BOOTSTRAP --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" data-navigate-once></script>
 
+{{-- THREE JS --}}
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script> --}}
+
 {{-- SIGNATURE PAD --}}
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js" data-navigate-once></script>
 
@@ -77,6 +80,7 @@
 <script src="{{ asset('js/v3/app.js') }}" data-navigate-once></script>
 <script src="{{ asset('js/v3/components/datatables.js') }}" data-navigate-once></script>
 <script src="{{ asset('js/v3/components/buttons.js') }}" data-navigate-once></script>
+<script src="{{ asset('js/v3/components/simgos-status.js') }}" data-navigate-once></script>
 <script src="{{ asset('js/v3/pages/notifikasi-klaim.js') }}" data-navigate-once></script>
 
 {{-- INISIALISASI DAYJS --}}

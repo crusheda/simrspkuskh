@@ -40,6 +40,7 @@ use App\Livewire\Monitoring;
 use App\Livewire\EMR;
 use App\Livewire\SmartClaim;
 use App\Http\Controllers\Auth\LoginV3Controller;
+use App\Http\Controllers\SystemHealthController;
 
 // =====================================================
 // SIRMED v3 - LIVEWIRE
@@ -81,6 +82,9 @@ Route::middleware(['auth']) // AUTHENTICATED
         Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
         Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData'])->name('v3.notifikasi.data');
         Route::get('/setting/notifikasi/data/{id}', [NotifikasiController::class, 'showDetail'])->name('v3.notifikasi.detail');
+
+        // Helper
+        Route::get('/system/simgos-status', [SystemHealthController::class, 'simgos'])->name('system.simgos-status');
     });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------

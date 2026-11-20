@@ -57,6 +57,7 @@
 <link rel="stylesheet" href="{{ asset('css/v3/components/buttons.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/list-group.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/accordions.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/pages/dashboard.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/notifikasi.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/profil.css') }}">
 

@@ -216,6 +216,49 @@
 
                 @endif
 
+                {{-- EMR CONFIRM ACTION MODAL --}}
+                <div class="modal fade" id="emrConfirmActionModal" tabindex="-1"
+                    aria-labelledby="emrConfirmActionTitle" aria-hidden="true">
+
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+
+                            <div class="modal-body text-center p-4">
+
+                                <div class="emr-confirm-icon mb-3" id="emrConfirmIcon">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                </div>
+
+                                <h5 class="mb-2" id="emrConfirmActionTitle">
+                                    Konfirmasi Tindakan
+                                </h5>
+
+                                <p class="text-muted small mb-4" id="emrConfirmActionMessage">
+                                    Apakah Anda yakin ingin melanjutkan tindakan ini?
+                                </p>
+
+                                <div class="d-flex justify-content-center gap-2">
+
+                                    <button type="button"
+                                            class="btn btn-subtle-secondary"
+                                            data-bs-dismiss="modal">
+                                        Batal
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-danger"
+                                            id="emrConfirmActionSubmit">
+                                        Ya, Lanjutkan
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

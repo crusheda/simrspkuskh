@@ -1966,6 +1966,58 @@
             }
         });
 
+        /* =========================================================
+        EMR CONFIRMATION MODAL
+        ========================================================= */
+
+        const confirmModalElement = document.getElementById('emrConfirmActionModal');
+
+        const confirmModal = confirmModalElement
+            ? bootstrap.Modal.getOrCreateInstance(confirmModalElement)
+            : null;
+
+        let pendingConfirmAction = null;
+
+        function confirmEMRAction({
+            title = 'Konfirmasi Tindakan',
+            message = 'Apakah Anda yakin ingin melanjutkan?',
+            buttonText = 'Ya, Lanjutkan',
+            buttonClass = 'btn-danger',
+            icon = 'bi-exclamation-triangle',
+            onConfirm = null
+        }) {
+            if (!confirmModal) return;
+
+            const titleEl = document.getElementById('emrConfirmActionTitle');
+            const messageEl = document.getElementById('emrConfirmActionMessage');
+            const submitBtn = document.getElementById('emrConfirmActionSubmit');
+            const iconEl = document.getElementById('emrConfirmIcon');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            submitBtn.textContent = buttonText;
+
+            submitBtn.className = `btn ${buttonClass}`;
+            iconEl.innerHTML = `<i class="bi ${icon}"></i>`;
+
+            pendingConfirmAction = onConfirm;
+
+            confirmModal.show();
+        }
+
+        document.getElementById('emrConfirmActionSubmit')
+            ?.addEventListener('click', function () {
+
+                const action = pendingConfirmAction;
+
+                pendingConfirmAction = null;
+                confirmModal.hide();
+
+                if (typeof action === 'function') {
+                    action();
+                }
+            });
+
         /* =====================================================
         EVENT TOMBOL AKSI TAB
         ===================================================== */
@@ -1979,13 +2031,35 @@
         // Tutup semua tab kecuali tab aktif.
         closeOtherButton?.addEventListener(
             'click',
-            closeOthers
+            function () {
+
+                confirmEMRAction({
+                    title: 'Tutup Tab Lainnya?',
+                    message: 'Seluruh tab pasien lainnya akan ditutup. Tab pasien yang sedang aktif akan tetap dibuka.',
+                    buttonText: 'Ya, Tutup Tab Lain',
+                    buttonClass: 'btn-warning',
+                    icon: 'bi-layout-sidebar'
+                    ,
+                    onConfirm: () => closeOthers()
+                });
+            }
         );
 
         // Tutup seluruh tab pasien dan kembali ke Home.
         closeAllButton?.addEventListener(
             'click',
-            closeAll
+            function () {
+
+                confirmEMRAction({
+                    title: 'Tutup Semua Tab Pasien?',
+                    message: 'Semua tab pasien yang sedang terbuka akan ditutup dan Anda akan kembali ke halaman My Pasien.',
+                    buttonText: 'Ya, Tutup Semua',
+                    buttonClass: 'btn-danger',
+                    icon: 'bi-x-circle',
+                    onConfirm: () => closeAll()
+                });
+
+            }
         );
 
         /* =====================================================

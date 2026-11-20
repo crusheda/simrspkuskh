@@ -1897,3 +1897,57 @@ body {
     }
 
 }
+
+
+/* =========================================================
+   EMR CONFIRM MODAL
+========================================================= */
+
+#emrConfirmActionModal .modal-content {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .12);
+}
+
+#emrConfirmActionModal .modal-body {
+    padding: 28px !important;
+}
+
+.emr-confirm-icon {
+    width: 62px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline: auto;
+
+    border-radius: 18px;
+
+    color: #f59e0b;
+    background: rgba(245, 158, 11, .10);
+
+    font-size: 25px;
+}
+
+#emrConfirmActionModal h5 {
+    font-size: 16px;
+    font-weight: 750;
+}
+
+#emrConfirmActionModal p {
+    line-height: 1.7;
+}
+
+#emrConfirmActionModal .btn {
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+[data-bs-theme="dark"] #emrConfirmActionModal .modal-content {
+    background: var(--bs-modal-bg);
+    border-color: rgba(148, 163, 184, .12);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .3);
+}
