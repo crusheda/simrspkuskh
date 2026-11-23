@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\Style\Font;
+use PhpOffice\PhpWord\Settings;
 use Milon\Barcode\DNS2D;
 use setasign\Fpdi\Fpdi;
 use PHPJasper\PHPJasper;
@@ -1363,8 +1364,38 @@ class BerkasKlaimController extends Controller
                     return $fallback;
                 }
 
+                // Jika data ternyata berupa array
+                if (is_array($value)) {
+                    $value = implode(' | ', array_map(function ($item) {
+                        if (is_array($item)) {
+                            return implode(' | ', array_map(
+                                fn ($v) => is_scalar($v) ? (string) $v : '',
+                                $item
+                            ));
+                        }
+
+                        return is_scalar($item) ? (string) $item : '';
+                    }, $value));
+                }
+
+                // Jika data berupa object
+                if (is_object($value)) {
+                    if (method_exists($value, '__toString')) {
+                        $value = (string) $value;
+                    } else {
+                        $value = json_encode(
+                            $value,
+                            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                        ) ?: '';
+                    }
+                }
+
+                if (!is_scalar($value)) {
+                    return $fallback;
+                }
+
                 $text = (string) $value;
-                // Teks dari SIMRS terkadang berisi markup HTML hasil editor RME.
+
                 $text = preg_replace('~<br\s*/?>~i', ' ', $text);
                 $text = preg_replace('~</(?:p|div|li|tr|h[1-6])\s*>~i', ' ', $text);
                 $text = strip_tags($text);
@@ -2170,6 +2201,14 @@ class BerkasKlaimController extends Controller
             ) use ($clean, &$temporaryDocs, &$temporaryFiles, $outputDir, $logoPath) {
                 $templateProcessor = new TemplateProcessor($template);
 
+                // Log::debug('DEBUG PHPWORD XML ESCAPING', [
+                //     'method_exists' => method_exists(Settings::class, 'setOutputEscapingEnabled'),
+                //     'escaping_enabled' => Settings::isOutputEscapingEnabled(),
+                //     'phpword_version' => defined('PhpOffice\\PhpWord\\Settings::VERSION')
+                //         ? Settings::VERSION
+                //         : 'unknown',
+                // ]);
+
                 // SetValue harus menggunakan 2 parameter. PHPWord yang melakukan XML escaping.
                 foreach ($values as $key => $value) {
                     $templateProcessor->setValue($key, $clean($value, ''));
@@ -2244,10 +2283,83 @@ class BerkasKlaimController extends Controller
                 //         . ' | log=' . (string) $convertLog
                 //     );
                 // }
+
                 [$success, $convertLog, $exitCode] = $this->libreOffice->generatePdf(
                     $docxPath,
                     $outputDir
                 );
+
+                // =============================================================
+                // DEBUG XML DOCX - TEMPORARY
+                // LETAK: Tepat setelah saveAs() dan validasi DOCX
+                // =============================================================
+                // $docxDebug = [
+                //     'zip_valid' => false,
+                //     'xml_errors' => [],
+                // ];
+
+                // $zip = new \ZipArchive();
+
+                // if ($zip->open($docxPath) === true) {
+
+                //     $docxDebug['zip_valid'] = true;
+
+                //     $documentXml = $zip->getFromName('word/document.xml');
+
+                //     if ($documentXml !== false) {
+
+                //         // Posisi error dari log sebelumnya
+                //         $errorColumn = 12090;
+                //         $position = $errorColumn - 1;
+                //         $start = max(0, $position - 150);
+
+                //         $context = substr($documentXml, $start, 300);
+
+                //         Log::debug('DEBUG XML ERROR CONTEXT', [
+                //             'column' => $errorColumn,
+                //             'xml_length' => strlen($documentXml),
+                //             'context' => $context,
+                //             'before' => substr($documentXml, $start, $position - $start),
+                //             'after' => substr($documentXml, $position, 150),
+                //             'hex' => bin2hex($context),
+                //         ]);
+
+                //         // Cari ampersand (&) XML yang tidak valid
+                //         preg_match_all(
+                //             '/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)/',
+                //             $documentXml,
+                //             $matches,
+                //             PREG_OFFSET_CAPTURE
+                //         );
+
+                //         $invalidAmpersands = [];
+
+                //         foreach ($matches[0] as $match) {
+                //             $offset = $match[1];
+
+                //             $invalidAmpersands[] = [
+                //                 'offset' => $offset,
+                //                 'context' => substr(
+                //                     $documentXml,
+                //                     max(0, $offset - 100),
+                //                     200
+                //                 ),
+                //             ];
+                //         }
+
+                //         Log::debug('DEBUG INVALID XML AMPERSAND', [
+                //             'count' => count($invalidAmpersands),
+                //             'matches' => $invalidAmpersands,
+                //         ]);
+                //     }
+
+                //     $zip->close();
+                // }
+
+                // Log::debug('DEBUG RESUME DOCX', $docxDebug);
+                // =============================================================
+                // END DEBUG XML DOCX
+                // =============================================================
 
                 clearstatcache(true, $pdfPath);
 
@@ -2740,12 +2852,12 @@ class BerkasKlaimController extends Controller
                 }
             }
 
-            Log::error('Generate Resume Medis gagal', [
-                'kunjungan' => $kunjungan,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            // Log::error('Generate Resume Medis gagal', [
+            //     'kunjungan' => $kunjungan,
+            //     'error' => $e->getMessage(),
+            //     'file' => $e->getFile(),
+            //     'line' => $e->getLine(),
+            // ]);
 
             return response()->json([
                 'success' => false,
