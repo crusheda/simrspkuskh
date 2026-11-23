@@ -7,8 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+use App\Http\Controllers\EMR\CatatanController;
+
 class EMR extends Component
 {
+    // public function boot(CatatanController $catatanController)
+    // {
+    //     $this->catatanController = $catatanController;
+    // }
+
     public array $list = [];
 
     public function mount(): void
@@ -442,6 +449,13 @@ class EMR extends Component
 
         /*
         |--------------------------------------------------------------------------
+        | REFERENSI RUANGAN UNTUK MODAL CATATAN
+        |--------------------------------------------------------------------------
+        */
+        $ruangan_catatan = app(CatatanController::class)->referensiRuangan();
+
+        /*
+        |--------------------------------------------------------------------------
         | DATA UNTUK VIEW
         |--------------------------------------------------------------------------
         */
@@ -456,6 +470,7 @@ class EMR extends Component
             'umur_hari' => $umurHari,
             'umur_tahun' => $umurTahun,
             'kode_ruangan' => $kodeRuangan,
+            'ruangan_catatan' => $ruangan_catatan
         ];
 
         return view('pages.v3.emr.detail.index', [

@@ -269,6 +269,7 @@
                 </li>
                 @endhasrole
 
+                @hasrole('admin')
                 {{-- Capaian --}}
                 <li>
                     <a href="{{ route('v3.capaian') }}" class="dropdown-item" wire:navigate>
@@ -276,6 +277,7 @@
                         Capaian
                     </a>
                 </li>
+                @endhasrole
 
                 <li>
                     <hr class="dropdown-divider">

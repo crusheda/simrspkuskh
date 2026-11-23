@@ -564,7 +564,7 @@
                                 parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
                                 valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
                                 if (valSEP == valTGLSEP) {
-                                    SEP = '<b class="text-purple-700">'+item.NOSEP+'</b>';
+                                    SEP = '<b class="text-purple-400">'+item.NOSEP+'</b>';
                                     btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
                                                     <i class="fas fa-check text-success"></i>
                                                 </button>`;

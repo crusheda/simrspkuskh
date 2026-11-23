@@ -3,8 +3,10 @@
 @section('title', 'Detail Rekam Medis')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/v3/components/emr/alergi.css') }}">
     <link rel="stylesheet" href="{{ asset('css/v3/components/emr/cppt.css') }}">
     <link rel="stylesheet" href="{{ asset('css/v3/components/emr/nav.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/v3/components/emr/catatan.css') }}">
 @endpush
 
 @section('content')
@@ -88,6 +90,50 @@
 
                 </div>
             @endif
+        </div>
+        <div id="alert-catatan-pasien" class="alert-catatan-pasien d-none">
+            <div class="alert-catatan-shell mb-2">
+
+                {{-- ICON --}}
+                <div class="alert-catatan-icon">
+                    <i class="ph-duotone ph-notepad"></i>
+                </div>
+
+                {{-- LABEL --}}
+                <div class="alert-catatan-title">
+                    Catatan Pasien
+                </div>
+
+                {{-- META --}}
+                <div class="alert-catatan-meta">
+                    <span id="alert-catatan-tipe"></span>
+                    <span class="alert-catatan-dot">•</span>
+                    <span id="alert-catatan-tanggal"></span>
+                    <span id="alert-catatan-status"></span>
+                </div>
+
+                {{-- DESCRIPTION --}}
+                <div id="alert-catatan-deskripsi"
+                    class="alert-catatan-description">
+                </div>
+
+                {{-- ACTION --}}
+                <div class="alert-catatan-action d-none" id="alert-catatan-action">
+                    <button type="button"
+                            class="btn btn-sm btn-alert-catatan-view"
+                            id="btn-lihat-seluruh-catatan">
+
+                        <i class="ph-duotone ph-list-bullets"></i>
+                        <span>Lihat Seluruh Catatan</span>
+
+                        <span class="alert-catatan-count"
+                            id="alert-catatan-count">0</span>
+
+                        <i class="ph ph-arrow-up-right"></i>
+                    </button>
+                </div>
+
+            </div>
         </div>
         @if ($list['riwayat_alergi']->isNotEmpty())
             <div class="pb-2">
@@ -202,15 +248,31 @@
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h6>Biodata Pasien</h6>
-                                <div class="dropdown" hidden>
-                                    <a class="btn btn-secondary-subtle arrow-none" href="javascript: void(0);"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a class="dropdown-item" href="javascript: void(0);"><s>Ubah Data</s></a>
-                                        {{-- <a class="dropdown-item" href="#">Delete</a> --}}
+                                @hasrole('admin')
+                                    <div class="dropdown">
+                                        <a class="btn btn-secondary-subtle arrow-none"
+                                        href="javascript:void(0);"
+                                        data-bs-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                            <i class="ph-duotone ph-dots-three-outline-vertical"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <button class="dropdown-item fs-14"
+                                                    type="button"
+                                                    onclick="EMRDetailPage.copyNomorPasien('{{ $list['show']->NOPEN }}')">
+                                                <i class="ph-duotone ph-copy me-1"></i>
+                                                Copy Nomor Pendaftaran
+                                            </button>
+                                            <button class="dropdown-item fs-14"
+                                                    type="button"
+                                                    onclick="EMRDetailPage.copyNomorPasien('{{ $list['show']->NOMOR }}')">
+                                                <i class="ph-duotone ph-copy me-1"></i>
+                                                Copy Nomor Kunjungan
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                @endhasrole
                             </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
@@ -343,21 +405,55 @@
     {{-- MODAL ENDED --}}
 
     {{-- ============================================================
-        FLOATING CPPT BUTTON
+        FLOATING CATATAN + CPPT
     ============================================================ --}}
-    <div class="cppt-floating-container">
-        <button type="button" id="btn-floating-cppt" class="cppt-floating-btn" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}',1)">
+    <div class="emr-floating-actions">
+
+        {{-- CATATAN --}}
+        <button type="button"
+                id="btn-floating-catatan"
+                class="emr-catatan-floating-btn catatan-state-empty"
+                data-kunjungan="{{ $list['KUNJUNGAN'] }}"
+                data-rm="{{ $list['show']->NORM }}"
+                data-ruangan="{{ $list['show']->IDRUANGAN }}"
+                title="Catatan Pasien">
+
+            <span class="emr-catatan-floating-icon">
+                <i class="ph-duotone ph-note"></i>
+            </span>
+
+            <span class="emr-catatan-floating-label">
+                Patient Notes
+            </span>
+
+            <span class="emr-catatan-floating-badge" id="btn-count-catatan">
+                0
+            </span>
+        </button>
+
+        {{-- CPPT EXISTING --}}
+        <button type="button"
+                id="btn-floating-cppt"
+                class="cppt-floating-btn"
+                onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}',1)">
+
             <span class="cppt-floating-icon">
                 <i class="ph-duotone ph-notepad"></i>
             </span>
+
             <span class="cppt-floating-label">
                 CPPT
             </span>
+
             <span class="cppt-floating-badge" id="btn-count-cppt">
                 {{ $list['cpptCount'] }}
             </span>
         </button>
+
     </div>
+
+    {{-- MODAL CATATAN USER & ASURANSI --}}
+    @include('pages.v3.emr.detail.catatan.index')
 
     {{-- ============================================================
         OPEN MODAL NEW CPPT
@@ -458,6 +554,7 @@
             showModalCppt,
             hapusCPPT,
             resetFormCPPT,
+            copyNomorPasien,
             loadRiwayatKunjunganPasien,
         };
 
@@ -677,6 +774,56 @@
                 });
         });
 
+        // FUNCTION TOAST GLOBAL
+        window.toast = function (type, message, title = '') {
+            if (typeof iziToast === 'undefined') {
+                console.warn('iziToast belum dimuat:', message);
+                return;
+            }
+
+            const options = {
+                message: message,
+                position: 'topRight',
+                timeout: 3000,
+                close: true,
+                progressBar: true,
+            };
+
+            switch (type) {
+                case 'success':
+                    iziToast.success({
+                        ...options,
+                        title: title || 'Berhasil',
+                    });
+                    break;
+
+                case 'error':
+                    iziToast.error({
+                        ...options,
+                        title: title || 'Gagal',
+                    });
+                    break;
+
+                case 'warning':
+                    iziToast.warning({
+                        ...options,
+                        title: title || 'Perhatian',
+                    });
+                    break;
+
+                case 'info':
+                    iziToast.info({
+                        ...options,
+                        title: title || 'Informasi',
+                    });
+                    break;
+
+                default:
+                    iziToast.show(options);
+                    break;
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
             const modalCPPT = document.getElementById('modalCPPT');
 
@@ -890,8 +1037,8 @@
 
                     // Simpan ke window agar modal_edit.blade.php dapat mengaksesnya
                     window.dataPPA = dataPPA;
-                    console.log('Data PPA Global:', window.dataPPA);
-                    console.log('Jumlah Data PPA:', window.dataPPA.length);
+                    // console.log('Data PPA Global:', window.dataPPA);
+                    // console.log('Jumlah Data PPA:', window.dataPPA.length);
 
                     // Data dokter
                     dataDokter = (res.dokter || []).filter(item => item.ID && item.NAMA);
@@ -1324,6 +1471,41 @@
                         .addClass('fa-clipboard-list');
                 }
             });
+        }
+
+        async function copyNomorPasien(nomor) {
+            const text = String(nomor ?? '').trim();
+
+            if (!text) {
+                toast('warning', 'Nomor tidak tersedia.');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(text);
+
+                toast('success', `${text} berhasil disalin.`);
+            } catch (error) {
+                // Fallback untuk browser yang Clipboard API-nya tidak tersedia
+                const textarea = document.createElement('textarea');
+
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                textarea.style.pointerEvents = 'none';
+
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                const success = document.execCommand('copy');
+                textarea.remove();
+
+                if (success) {
+                    toast('success', `${text} berhasil disalin.`);
+                } else {
+                    toast('error', 'Gagal menyalin nomor.');
+                }
+            }
         }
 
         function loadRiwayatKunjunganPasien() { // RIWAYAT DI GRID KANAN

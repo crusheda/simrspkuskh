@@ -21,6 +21,8 @@
 <link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
 <!-- data tables css -->
 <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}" />
+
+<!-- JS FIRST -->
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 
 {{-- CDN --}}

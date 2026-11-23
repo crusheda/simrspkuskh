@@ -59,6 +59,11 @@ use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Pasien\ApiResumeMedisController;
 use App\Http\Controllers\Display\RatingController;
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+// NEW SIRMED v3 WITH LIVEWIRE v4
+use App\Http\Controllers\EMR\CatatanController;
+
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
@@ -75,6 +80,24 @@ Route::prefix('v3')->middleware(['web','auth'])->group(function () { // SIRMED v
     Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSepV3'])->name('api.v3.klaim.verifSep');
     // Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3']);
     Route::post('search/emr', [EMRController::class, 'searchByNoRM']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATATAN EMR
+    |--------------------------------------------------------------------------
+    */
+    // Load catatan berdasarkan kunjungan aktif
+    Route::get('emr/catatan/{kunjungan}', [CatatanController::class, 'getCatatanEMR']);
+    // Tambah catatan internal
+    Route::post('emr/catatan/{kunjungan}/internal', [CatatanController::class, 'storeCatatanInternal']);
+    // Edit catatan internal
+    Route::put('emr/catatan/internal/{id}', [CatatanController::class, 'updateCatatanInternal']);
+    // Hapus catatan internal
+    Route::delete('emr/catatan/internal/{id}', [CatatanController::class, 'deleteCatatanInternal']);
+    // Solve catatan internal
+    Route::post('emr/catatan/internal/{id}/solve', [CatatanController::class, 'solveCatatanInternal']);
+    // Solve catatan asuransi
+    Route::post('emr/catatan/insurance/{id}/solve', [CatatanController::class, 'solveCatatanAsuransi']);
 });
 
 Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v.2

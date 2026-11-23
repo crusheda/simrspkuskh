@@ -1024,12 +1024,12 @@
                 xhr.responseText || xhr
             );
 
-            notify(
-                'error',
-                'Gagal',
-                xhr.responseJSON?.message ||
-                'Gagal mengambil data Resume Medis.'
-            );
+            // notify(
+            //     'error',
+            //     'Gagal',
+            //     xhr.responseJSON?.message ||
+            //     'Gagal mengambil data Resume Medis.'
+            // );
 
         } finally {
 

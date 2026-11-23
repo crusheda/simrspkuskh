@@ -1,0 +1,809 @@
+/* ============================================================
+   SIRMED V3 - EMR CATATAN
+============================================================ */
+
+/* FLOATING WRAPPER */
+.emr-floating-actions {
+    position: fixed !important;
+    right: 24px !important;
+    bottom: 24px !important;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+
+    z-index: 1050 !important;
+    pointer-events: none;
+}
+
+.emr-floating-actions > button {
+    pointer-events: auto;
+}
+
+/* ============================================================
+   CATATAN FLOATING BUTTON
+============================================================ */
+
+.emr-catatan-floating-btn {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-width: 58px;
+    height: 58px;
+    padding: 0 18px;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        color .25s ease,
+        transform .25s ease;
+
+    animation: catatanFloating 3s ease-in-out infinite;
+}
+
+/* EMPTY */
+.emr-catatan-floating-btn.catatan-state-empty {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+/* PENDING */
+.emr-catatan-floating-btn.catatan-state-pending {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+/* ALL SOLVED */
+.emr-catatan-floating-btn.catatan-state-solved {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+.emr-catatan-floating-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(.93);
+    color: #fff;
+}
+
+.emr-catatan-floating-btn:active {
+    transform: scale(.97);
+}
+
+.emr-catatan-floating-btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+}
+
+/* ICON */
+.emr-catatan-floating-icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+
+    font-size: 21px;
+}
+
+/* LABEL */
+.emr-catatan-floating-label {
+    font-size: 14px;
+    letter-spacing: .2px;
+    white-space: nowrap;
+}
+
+/* BADGE */
+.emr-catatan-floating-badge {
+    position: absolute;
+    top: -5px;
+    right: -4px;
+
+    min-width: 21px;
+    height: 21px;
+    padding: 0 5px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--surface);
+    border-radius: 999px;
+
+    background: #fff;
+    color: #212529;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+.emr-catatan-modal {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+
+    background: var(--surface);
+    color: var(--text);
+}
+
+.emr-catatan-header {
+    padding: 20px 24px;
+
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.emr-catatan-modal-icon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: var(--primary);
+    background: var(--primary-soft);
+
+    font-size: 24px;
+}
+
+.emr-catatan-body {
+    background: var(--surface);
+}
+
+.emr-catatan-footer {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+/* ============================================================
+   PATIENT BAR
+============================================================ */
+
+.emr-catatan-patient-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+
+    padding: 12px 24px;
+
+    background: var(--soft);
+    border-bottom: 1px solid var(--border);
+}
+
+.emr-catatan-patient-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: .82rem;
+    color: var(--text);
+}
+
+.emr-catatan-patient-item > i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+
+.emr-catatan-tabs {
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.emr-catatan-tabs .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--soft);
+    color: var(--muted);
+
+    font-size: .82rem;
+    font-weight: 600;
+
+    transition: all .2s ease;
+}
+
+.emr-catatan-tabs .nav-link:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.emr-catatan-tabs .nav-link.active {
+    color: #fff;
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.emr-catatan-tabs .badge {
+    background: rgba(0,0,0,.08);
+    color: inherit;
+    font-size: .7rem;
+}
+
+.emr-catatan-tabs .nav-link.active .badge {
+    background: rgba(255,255,255,.2);
+}
+
+/* ============================================================
+   NOTE CARD
+============================================================ */
+
+.catatan-card {
+    position: relative;
+
+    padding: 18px;
+    margin-bottom: 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    background: var(--surface);
+
+    transition:
+        border-color .2s ease,
+        background .2s ease;
+}
+
+.catatan-card:hover {
+    border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.catatan-card.is-solved {
+    opacity: .92;
+}
+
+.catatan-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 16px;
+}
+
+/* SOURCE */
+.catatan-source {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.catatan-source-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    font-size: 21px;
+}
+
+.catatan-source-icon.internal {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.catatan-source-icon.insurance {
+    background: rgba(13,110,253,.10);
+    color: #0d6efd;
+}
+
+.catatan-source-title {
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--text);
+}
+
+.catatan-source-meta {
+    margin-top: 3px;
+    font-size: .75rem;
+    color: var(--muted);
+}
+
+/* STATUS */
+.catatan-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: .72rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.catatan-status-pending {
+    background: var(--warning-soft, rgba(255,193,7,.15));
+    color: var(--warning, #997404);
+}
+
+.catatan-status-solved {
+    background: var(--success-soft, rgba(25,135,84,.12));
+    color: var(--success, #198754);
+}
+
+/* DESCRIPTION */
+.catatan-card-description {
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: var(--soft);
+    color: var(--text);
+
+    font-size: .88rem;
+    line-height: 1.8;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* SOLVED DESCRIPTION */
+.catatan-solved-description {
+    margin-top: 12px;
+    padding: 13px 15px;
+
+    border: 1px solid rgba(25,135,84,.2);
+    border-radius: 12px;
+
+    background: var(--success-soft, rgba(25,135,84,.08));
+    color: var(--text);
+
+    font-size: .82rem;
+    line-height: 1.7;
+}
+
+.catatan-solved-title {
+    font-weight: 700;
+    color: var(--success, #198754);
+    margin-bottom: 6px;
+}
+
+/* FOOTER */
+.catatan-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.catatan-room {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: .75rem;
+    color: var(--muted);
+}
+
+.catatan-room i {
+    color: var(--primary);
+}
+
+/* ACTIONS */
+.catatan-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.catatan-card-actions .btn,
+.catatan-card-footer > .btn {
+    border-radius: 9px;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+.catatan-empty-state {
+    min-height: 200px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 28px;
+
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+
+    text-align: center;
+    color: var(--muted);
+    gap: 8px;
+}
+
+.catatan-empty-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background: var(--primary-soft);
+    color: var(--primary);
+
+    font-size: 27px;
+
+    margin-bottom: 6px;
+}
+
+.catatan-error-state {
+    padding: 20px;
+
+    border: 1px solid var(--danger, #dc3545);
+    border-radius: 14px;
+
+    color: var(--danger, #dc3545);
+    text-align: center;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .emr-floating-actions {
+        right: 15px !important;
+        bottom: 15px !important;
+        gap: 10px;
+    }
+
+    .emr-catatan-floating-btn {
+        width: 58px;
+        height: 58px;
+
+        min-width: 58px;
+        padding: 0;
+
+        gap: 0;
+    }
+
+    .emr-catatan-floating-label {
+        display: none;
+    }
+
+    .emr-catatan-floating-icon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+        font-size: 21px;
+    }
+
+    .emr-catatan-header {
+        padding: 16px;
+    }
+
+    .emr-catatan-patient-bar {
+        padding: 12px 16px;
+        gap: 8px 14px;
+    }
+
+    .catatan-card {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .catatan-card-top {
+        flex-wrap: wrap;
+    }
+
+    .catatan-card-description {
+        padding: 12px;
+        font-size: .84rem;
+    }
+
+    .catatan-card-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .catatan-card-actions {
+        width: 100%;
+    }
+
+    .catatan-card-actions .btn {
+        flex: 1;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .emr-catatan-floating-btn {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+@keyframes catatanFloating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* =========================================================
+   ALERT CATATAN PASIEN - HORIZONTAL (DIATAS ALERT POTENSI READMISI)
+========================================================= */
+
+.alert-catatan-pasien {
+    margin-bottom: .5rem;
+    animation: alertCatatanFadeIn .25s ease;
+}
+
+.alert-catatan-shell {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+
+    min-height: 48px;
+    padding: .55rem .75rem;
+
+    border: 1px solid var(--bs-border-color);
+    border-left: 3px solid var(--bs-primary);
+    border-radius: 10px;
+
+    background: var(--bs-tertiary-bg);
+    overflow: hidden;
+}
+
+/* ICON */
+.alert-catatan-icon {
+    flex: 0 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 8px;
+    background: rgba(var(--bs-primary-rgb), .12);
+    color: var(--bs-primary);
+
+    font-size: 1.15rem;
+}
+
+/* TITLE */
+.alert-catatan-title {
+    flex: 0 0 auto;
+
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--bs-emphasis-color);
+
+    white-space: nowrap;
+}
+
+/* META */
+.alert-catatan-meta {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+
+    flex: 0 0 auto;
+
+    font-size: .72rem;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+
+.alert-catatan-dot {
+    opacity: .5;
+}
+
+/* DESCRIPTION */
+.alert-catatan-description {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: .78rem;
+    color: var(--bs-body-color);
+}
+
+/* ACTION */
+.alert-catatan-action {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.btn-alert-catatan-view {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+
+    white-space: nowrap;
+
+    padding: .3rem .55rem;
+    border: 1px solid rgba(var(--bs-primary-rgb), .25);
+    border-radius: 7px;
+
+    background: rgba(var(--bs-primary-rgb), .08);
+    color: var(--bs-primary);
+
+    font-size: .72rem;
+    font-weight: 600;
+
+    transition: all .2s ease;
+}
+
+.btn-alert-catatan-view:hover {
+    background: var(--bs-primary);
+    color: #fff;
+    border-color: var(--bs-primary);
+}
+
+.alert-catatan-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+    height: 18px;
+    padding: 0 .3rem;
+
+    border-radius: 5px;
+
+    background: rgba(var(--bs-primary-rgb), .15);
+    font-size: .65rem;
+    font-weight: 700;
+}
+
+.btn-alert-catatan-view:hover .alert-catatan-count {
+    background: rgba(255, 255, 255, .2);
+}
+
+.alert-catatan-action.d-none {
+    display: none !important;
+}
+
+/* INTERNAL */
+.alert-catatan-pasien.is-internal .alert-catatan-shell {
+    border-left-color: var(--bs-info);
+}
+
+.alert-catatan-pasien.is-internal .alert-catatan-icon {
+    background: rgba(var(--bs-info-rgb), .12);
+    color: var(--bs-info);
+}
+
+/* INSURANCE */
+.alert-catatan-pasien.is-insurance .alert-catatan-shell {
+    border-left-color: var(--bs-warning);
+}
+
+.alert-catatan-pasien.is-insurance .alert-catatan-icon {
+    background: rgba(var(--bs-warning-rgb), .15);
+    color: var(--bs-warning-text-emphasis);
+}
+
+/* STATUS */
+.alert-catatan-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+
+    padding: 2px 6px;
+    border-radius: 5px;
+
+    font-size: .68rem;
+    font-weight: 600;
+}
+
+.alert-catatan-status.is-pending {
+    background: rgba(var(--bs-warning-rgb), .15);
+    color: var(--bs-warning-text-emphasis);
+}
+
+.alert-catatan-status.is-solved {
+    background: rgba(var(--bs-success-rgb), .12);
+    color: var(--bs-success);
+}
+
+/* ANIMATION */
+@keyframes alertCatatanFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .alert-catatan-shell {
+        gap: .45rem;
+        padding: .45rem .55rem;
+    }
+
+    .alert-catatan-title {
+        display: none;
+    }
+
+    .alert-catatan-meta {
+        font-size: .68rem;
+    }
+
+    .alert-catatan-description {
+        font-size: .72rem;
+    }
+
+    .btn-alert-catatan-view {
+        padding: .3rem .4rem;
+    }
+
+    .btn-alert-catatan-view span:not(.alert-catatan-count) {
+        display: none;
+    }
+}
