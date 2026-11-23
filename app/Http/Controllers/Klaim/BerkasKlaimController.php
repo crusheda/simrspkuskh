@@ -2230,17 +2230,36 @@ class BerkasKlaimController extends Controller
                     throw new \RuntimeException('Gagal membuat DOCX Resume Medis: ' . $docxPath);
                 }
 
+                // FIX ERROR "Array to string conversion"
+                // [$success, $convertLog, $exitCode] = $this->libreOffice->generatePdf(
+                //     $docxPath,
+                //     $outputDir
+                // );
+
+                // clearstatcache(true, $pdfPath);
+                // if (!$success || !File::exists($pdfPath) || File::size($pdfPath) === 0) {
+                //     throw new \RuntimeException(
+                //         'Gagal konversi DOCX ke PDF: ' . basename($docxPath)
+                //         . ' | exit=' . (string) $exitCode
+                //         . ' | log=' . (string) $convertLog
+                //     );
+                // }
                 [$success, $convertLog, $exitCode] = $this->libreOffice->generatePdf(
                     $docxPath,
                     $outputDir
                 );
 
                 clearstatcache(true, $pdfPath);
+
                 if (!$success || !File::exists($pdfPath) || File::size($pdfPath) === 0) {
+                    $convertLogText = is_array($convertLog)
+                        ? implode("\n", $convertLog)
+                        : (string) $convertLog;
+
                     throw new \RuntimeException(
                         'Gagal konversi DOCX ke PDF: ' . basename($docxPath)
                         . ' | exit=' . (string) $exitCode
-                        . ' | log=' . (string) $convertLog
+                        . ' | log=' . $convertLogText
                     );
                 }
 
