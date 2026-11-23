@@ -299,19 +299,27 @@
         const patientStatus = document.querySelector('#patientStatusTopbar');
         const patientBirth = document.querySelector('#patientBirthBar');
 
-        const norm = firstNonEmpty(metadata.norm, metadata.NORM);
+        const norm = firstNonEmpty(
+            metadata.norm,
+            metadata.NORM,
+            metadata.noRM,
+            metadata.NORMPASIEN
+        );
         const nama = firstNonEmpty(
             metadata.nama,
             metadata.namaPasien,
             metadata.NAMAPASIEN,
             metadata.namaLengkap,
-            metadata.NAMALENGKAPPASIEN
+            metadata.NAMALENGKAPPASIEN,
+            metadata.NAMA,
+            metadata.NAMA_PASIEN
         ) || 'Rekam Medis Pasien';
 
         const tanggalLahir = formatTanggalLahir(firstNonEmpty(
             metadata.tglLahir,
             metadata.tanggalLahir,
-            metadata.TGLLAHIRPASIEN
+            metadata.TGLLAHIRPASIEN,
+            metadata.TGL_LAHIR
         ));
 
         const umurPasien = firstNonEmpty(
@@ -340,27 +348,40 @@
             metadata.noBPJS,
             metadata.NOBPJS,
             metadata.noSEP,
-            metadata.NOSEP
+            metadata.NOSEP,
+            metadata.no_sep,
+            metadata.nomorSEP,
+            metadata.nomor_sep,
+            metadata.sep,
+            metadata.SEP
         );
 
         const namaRuangan = firstNonEmpty(
             metadata.namaRuangan,
-            metadata.NAMARUANGAN
+            metadata.NAMARUANGAN,
+            metadata.namaRuanganAsalKonsul,
+            metadata.RUANGAN
         );
 
         const namaDokter = firstNonEmpty(
             metadata.namaDokter,
-            metadata.NAMADOKTER
+            metadata.NAMADOKTER,
+            metadata.namaDokterAsalKonsul,
+            metadata.DOKTER
         );
 
         const tglMasuk = firstNonEmpty(
             metadata.tglMasuk,
-            metadata.MASUK
+            metadata.MASUK,
+            metadata.TGLMASUK,
+            metadata.tglDaftar,
+            metadata.TGLDAFTAR
         );
 
         const tglKeluar = firstNonEmpty(
             metadata.tglKeluar,
-            metadata.KELUAR
+            metadata.KELUAR,
+            metadata.TGLKELUAR
         );
 
         // =================================================
@@ -901,7 +922,7 @@
         tab.error = false;
     }
 
-    function createTab(nomor, type, metadata = {}) {
+    function createTab(nomor, type, metadata = {}, options = {}) {
         const normalizedNomor = normalizeVisitId(nomor);
         const normalizedType = normalizeClaimType(type);
 
@@ -917,10 +938,21 @@
         const existing = state.tabs.get(tabId);
 
         if (existing) {
-            existing.metadata = {
-                ...(existing.metadata || {}),
-                ...metadata,
-            };
+            // =================================================
+            // METADATA TAB EXISTING
+            // =================================================
+            // replaceMetadata = true:
+            // metadata dari endpoint merupakan sumber authoritative.
+            //
+            // replaceMetadata = false:
+            // pertahankan perilaku merge metadata lama.
+            // =================================================
+            existing.metadata = options.replaceMetadata
+                ? { ...metadata }
+                : {
+                    ...(existing.metadata || {}),
+                    ...metadata,
+                };
 
             existing.label = getTabLabel(existing.metadata);
 
@@ -930,7 +962,10 @@
                 );
 
                 if (labelElement) {
-                    renderTabLabel(labelElement, existing.metadata || {});
+                    renderTabLabel(
+                        labelElement,
+                        existing.metadata || {}
+                    );
                 }
 
                 existing.tabElement.title = existing.label;
@@ -942,7 +977,11 @@
                 if (closeButton) {
                     closeButton.setAttribute(
                         'aria-label',
-                        `Tutup ${existing.label}${getVisitKind(existing.metadata || {}) ? ` (${getVisitKind(existing.metadata || {})})` : ''}`
+                        `Tutup ${existing.label}${
+                            getVisitKind(existing.metadata || {})
+                                ? ` (${getVisitKind(existing.metadata || {})})`
+                                : ''
+                        }`
                     );
                 }
             }
@@ -1167,7 +1206,12 @@
         return true;
     }
 
-    function openClaim(nomor, type = 'smart_claim', metadata = {}) {
+    function openClaim(
+        nomor,
+        type = 'smart_claim',
+        metadata = {},
+        options = {}
+    ) {
         if (!getElements()) {
             console.error(
                 '[ClaimWorkspace] Elemen workspace tidak ditemukan.'
@@ -1190,24 +1234,28 @@
             const tab = createTab(
                 normalizedNomor,
                 normalizeClaimType(type),
-                metadata
+                metadata,
+                options
             );
 
             activateTab(tab.tabId);
 
             return true;
+
         } catch (error) {
             console.error('[ClaimWorkspace]', error);
 
             if (typeof window.iziToast !== 'undefined') {
                 window.iziToast.error({
                     title: 'Pesan System!',
-                    message: error.message || 'Gagal membuka detail klaim.',
+                    message: error.message ||
+                        'Gagal membuka detail klaim.',
                     position: 'topRight',
                 });
             } else {
                 window.alert(
-                    error.message || 'Gagal membuka detail klaim.'
+                    error.message ||
+                    'Gagal membuka detail klaim.'
                 );
             }
 

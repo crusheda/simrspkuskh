@@ -105,7 +105,7 @@
 
                         <label class="form-label">
                             <small>
-                                Lengkapi No.SEP dibawah dengan Format Nilai : 0151R013<b class="text-teal">xxx</b> (<b class="text-orange">19 Digit</b>)
+                                Lengkapi No.SEP dibawah dengan Format <br>Isian : 0151R013<b class="text-teal">xxx</b> (<b class="text-orange">19 Digit</b>)
                             </small>
                         </label>
 
@@ -807,9 +807,9 @@
                                 </td>
 
                                 <td class="text-end align-middle">
-                                    <a href="javascript:void(0);" class="">
+                                    <p class="mb-0">
                                         ${item.MASUK}
-                                    </a>
+                                    </p>
                                 </td>
 
                                 <td

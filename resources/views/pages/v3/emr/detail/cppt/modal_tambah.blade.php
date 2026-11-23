@@ -6,7 +6,7 @@
                 <i class="ph-duotone ph-plus-circle text-primary fs-20"></i>
                 <strong>Tambah Catatan CPPT</strong>
             </div>
-            <i class="ph ph-caret-down"></i>
+            <i class="ph-duotone ph-caret-down"></i>
         </button>
     </div>
     <div class="collapse show" id="collapseTambahCPPT">
@@ -260,12 +260,12 @@
                 </div>
                 {{-- BUTTON --}}
                 <div class="col-12">
-                    <div class="d-flex justify-content-end gap-2">
+                    <div class="d-flex justify-content-start gap-2">
                         {{-- <button type="button" class="btn btn-light" id="btn-batal-cppt" data-bs-toggle="collapse" data-bs-target="#collapseTambahCPPT" aria-expanded="true" aria-controls="collapseTambahCPPT">
-                            <i class="ph ph-x me-1"></i> Batal
+                            <i class="ph-duotone ph-x me-1"></i> Batal
                         </button> --}}
                         <button type="button" class="btn btn-primary" id="btn-simpan-cppt">
-                            <i class="ph ph-floppy-disk me-1"></i> Tambah CPPT
+                            <i class="ph-duotone ph-floppy-disk me-1"></i> Tambah CPPT
                         </button>
                     </div>
                 </div>
@@ -386,7 +386,7 @@
 
                 $container.html(`
                     <div class="list-group-item text-muted">
-                        <i class="ph ph-magnifying-glass me-1"></i>
+                        <i class="ph-duotone ph-magnifying-glass me-1"></i>
                         PPA tidak ditemukan
                     </div>
                 `).show();
@@ -560,7 +560,7 @@
 
                 $container.html(`
                     <div class="list-group-item text-muted">
-                        <i class="ph ph-magnifying-glass me-1"></i>
+                        <i class="ph-duotone ph-magnifying-glass me-1"></i>
                         Dokter tidak ditemukan
                     </div>
                 `).show();
@@ -918,7 +918,7 @@
                 $btn
                     .prop('disabled', false)
                     .html(`
-                        <i class="ph ph-floppy-disk me-1"></i>
+                        <i class="ph-duotone ph-floppy-disk me-1"></i>
                         Tambah CPPT
                     `);
             }

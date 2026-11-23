@@ -23,6 +23,7 @@ use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
+use App\Http\Controllers\Klaim\Smart\SmartClaimMetadataController;
 use App\Http\Controllers\Jasper\JasperController;
 use App\Http\Controllers\Jasper\JasperReportsController;
 use App\Modules\AiKlaim\Controllers\AiKlaimController;
@@ -74,6 +75,7 @@ Route::middleware(['auth']) // AUTHENTICATED
         Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
         Route::get('/smartclaim/{KUNJUNGAN}', SmartClaim::class)->name('v3.smartclaim.detail');
         Route::get('/smartclaim/{KUNJUNGAN}/farmasi', SmartClaim::class)->name('v3.smartclaim.detail.farmasi');
+        Route::get('/smartclaim/metadata-kunjungan/{kunjungan}',[SmartClaimMetadataController::class, 'metadataKunjungan'])->name('v3.smartclaim.metadata-kunjungan');
 
         Route::get('/profil', Profil::class)->name('v3.profil');
         Route::get('/capaian', Capaian::class)->name('v3.capaian');

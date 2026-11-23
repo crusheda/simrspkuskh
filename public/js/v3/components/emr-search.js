@@ -152,7 +152,7 @@
             <div class="emr-search-empty">
 
                 <div class="emr-search-empty-icon">
-                    <i class="bi bi-person-search"></i>
+                    <i class="bi bi-person"></i>
                 </div>
 
                 <h6 class="fw-semibold mb-1">

@@ -200,6 +200,34 @@
                     </button>
                 </li>
             @endif
+            {{-- RESUME MEDIS RAWAT JALAN --}}
+            @if (
+                Str::startsWith($list['show']->IDRUANGAN, '10201') || // RAWAT JALAN UMUM
+                Str::startsWith($list['show']->IDRUANGAN, '10207') // RAWAT JALAN REHAB MEDIK
+            )
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link d-flex flex-column align-items-start"
+                        data-bs-toggle="tab"
+                        data-bs-target="#fresumerajal"
+                        role="tab"
+                        aria-selected="false"
+                        tabindex="-1"
+                        id="tab-resume-rajal">
+
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="ph-duotone ph-clipboard-text"></i>
+                            Form Resume Medis
+
+                            <span
+                                class="badge rounded-pill bg-dark-subtle text-body-secondary"
+                                id="badge_tab_final_resume_rj">
+                                <i class="ri-loader-line ri-spin"></i>
+                            </span>
+                        </span>
+                    </button>
+                </li>
+            @endif
             @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
                 <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
@@ -214,12 +242,14 @@
                     </button>
                 </li>
             @endif
+            @hasrole('admin')
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="" data-bs-toggle="tab" href="#forder" role="tab"
                     aria-selected="false" tabindex="-1" id="tab-forder">
                     <i class="ph-duotone ph-first-aid-kit me-2"></i> Order Penunjang
                 </a>
             </li>
+            @endhasrole
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="" data-bs-toggle="tab" href="#konsul" role="tab"
                     aria-selected="false" tabindex="-1" id="tab-konsul" disabled>
@@ -355,8 +385,19 @@
             </div>
         </div>
         <div class="tab-content">
-            <div class="tab-pane" id="fresumeranap" role="tabpanel">
+            {{-- RESUME RAWAT INAP --}}
+            <div
+                class="tab-pane"
+                id="fresumeranap"
+                role="tabpanel">
                 @include('pages.v3.emr.detail.form.resume.ranap')
+            </div>
+            {{-- RESUME RAWAT JALAN --}}
+            <div
+                class="tab-pane"
+                id="fresumerajal"
+                role="tabpanel">
+                @include('pages.v3.emr.detail.form.resume.rajal')
             </div>
         </div>
         <div class="tab-content">
@@ -523,14 +564,14 @@
                 {{-- FOOTER --}}
                 <div class="modal-footer d-flex justify-content-between border-0 p-3">
                     <button type="button" class="btn btn-subtle-danger" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}', 0)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Sebelum Ini">
-                        <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i> Riwayat CPPT
+                        <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i> CPPT Kunjungan Sebelumnya
                     </button>
                     <div class="btn-group">
                         <button type="button" class="btn btn-subtle-secondary border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
-                            <i class="ph-duotone ph-x me-1"></i> Tutup
+                            <i class="ph-duotone ph-x me-1"></i> Tutup CPPT
                         </button>
                         <button type="button" class="btn btn-subtle-warning" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}', 1)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Saat Ini">
-                            <i class="ph-duotone ph-arrows-clockwise me-1"></i> Refresh
+                            <i class="ph-duotone ph-arrows-clockwise me-1"></i> CPPT Kunjungan Saat Ini
                         </button>
                     </div>
                 </div>

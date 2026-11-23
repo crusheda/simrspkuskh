@@ -14,10 +14,10 @@
                     <div>
                         <div class="d-flex align-items-center gap-2">
                             <h5 class="fw-bold mb-0">
-                                Formulir Resume Medis
+                                Formulir Resume Medis Rawat Inap
                             </h5>
 
-                            <span class="badge rounded-pill bg-dark-subtle text-body-secondary"
+                            <span class="badge bg-dark-subtle text-body-secondary"
                                 id="badge_final_resume">
                                 <i class="ri-loader-line ri-spin"></i>
                             </span>

@@ -1,0 +1,180 @@
+/* =========================================================
+RESUME MEDIS RAWAT JALAN SIGNATURE
+========================================================= */
+#form_resume_medis_rajal .resume-rj-signature-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    overflow: hidden;
+    border: 1px dashed var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background: var(--bs-white);
+}
+
+#form_resume_medis_rajal .resume-rj-signature-canvas {
+    display: block;
+    width: 100%;
+    height: 220px;
+    min-height: 220px;
+    touch-action: none;
+    cursor: crosshair;
+    pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+#form_resume_medis_rajal .resume-rj-signature-section { scroll-margin-top: 100px; }
+#form_resume_medis_rajal textarea.form-control { min-height: 95px; resize: vertical; }
+#form_resume_medis_rajal .resume-rj-signature-wrapper:focus-within { border-color: var(--bs-primary); }
+
+/* =========================================================
+   RESUME RJ - PRINT PREVIEW MODAL
+========================================================= */
+
+.resume-rj-preview-modal {
+    --resume-preview-bg: #f1f3f6;
+}
+
+.resume-rj-preview-modal .modal-content {
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+    background: var(--resume-preview-bg);
+}
+
+.resume-rj-preview-header {
+    min-height: 76px;
+    padding: 14px 24px;
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    z-index: 2;
+}
+
+.resume-rj-preview-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 24px;
+    color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+.resume-rj-preview-subtitle {
+    font-size: 12px;
+    color: var(--bs-secondary-color);
+    margin-top: 3px;
+}
+
+.resume-rj-preview-header .btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resume-rj-preview-header .btn-icon i {
+    font-size: 19px;
+}
+
+.resume-rj-preview-body {
+    position: relative;
+    height: calc(100dvh - 76px);
+    min-height: 300px;
+    padding: 0;
+    overflow: hidden;
+    background: #e9edf2;
+}
+
+.resume-rj-preview-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #e9edf2;
+    z-index: 1;
+}
+
+.resume-rj-preview-loading,
+.resume-rj-preview-error {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9edf2;
+}
+
+.resume-rj-preview-loading-content,
+.resume-rj-preview-error-content {
+    text-align: center;
+    padding: 32px;
+}
+
+.resume-rj-preview-loading-content .spinner-border {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.resume-rj-preview-error-content > i {
+    font-size: 52px;
+    color: var(--bs-danger);
+    margin-bottom: 12px;
+}
+
+.resume-rj-preview-error-content h5 {
+    margin-top: 12px;
+}
+
+.resume-rj-preview-error-content p {
+    max-width: 420px;
+}
+
+/* Dark Mode */
+[data-bs-theme="dark"] .resume-rj-preview-body {
+    background: #1a1a1a;
+}
+
+[data-bs-theme="dark"] .resume-rj-preview-loading,
+[data-bs-theme="dark"] .resume-rj-preview-error {
+    background: #1a1a1a;
+}
+
+/* Mobile */
+@media (max-width: 767.98px) {
+
+    .resume-rj-preview-header {
+        padding: 12px;
+        min-height: 66px;
+    }
+
+    .resume-rj-preview-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 21px;
+        border-radius: 11px;
+    }
+
+    .resume-rj-preview-header .modal-title {
+        font-size: 14px;
+    }
+
+    .resume-rj-preview-subtitle {
+        font-size: 10px;
+    }
+
+    .resume-rj-preview-header .btn-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .resume-rj-preview-body {
+        height: calc(100dvh - 66px);
+    }
+}

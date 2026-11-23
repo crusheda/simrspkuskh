@@ -334,28 +334,7 @@
                 </div>
                 <div class="modal-body p-3">
                     <h3>RESUME MEDIS <mark>An/<a id="show-nama-ttd-rj" class="text-primary"></a></mark></h3>
-                    {{-- <div class="table-responsive mt-2">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <td>Tenggal/Waktu Masuk</td>
-                                    <td>:</td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tampil-ttd-rj">
-                                <tr>
-                                    <td colspan="15">
-                                        <center>
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                        </center>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> --}}
                     <div id="tampil-ttd-rj"><hr><h5><i class="fas fa-sync fa-spin me-1"></i> Mengambil Data</h5><hr></div>
-                    {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
                     <div id="canvas"></div>
                 </div>
                 <div class="modal-footer">

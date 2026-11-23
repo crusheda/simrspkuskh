@@ -29,86 +29,8 @@
                             <a
                                 href="{{ url('/v3/smartclaim/' . rawurlencode($list['show']->NO_KUNJUNGAN_KONSUL)) }}"
                                 class="btn btn-warning btn-sm py-1"
-                                onclick="
-                                    event.preventDefault();
-
-                                    const nomorKunjungan = @js((string) $list['show']->NO_KUNJUNGAN_KONSUL);
-
-                                    if (
-                                        window.parent !== window &&
-                                        window.parent.ClaimWorkspace &&
-                                        typeof window.parent.ClaimWorkspace.openClaim === 'function'
-                                    ) {
-                                        const workspace = window.parent.ClaimWorkspace;
-
-                                        // Ambil identitas pasien dari tab yang sedang aktif.
-                                        const activeTab = typeof workspace.getActiveTab === 'function'
-                                            ? workspace.getActiveTab()
-                                            : null;
-
-                                        const source = activeTab?.metadata || {};
-
-                                        const statusVerif =
-                                            source.STATUSVERIF === true ||
-                                            Number(source.STATUSVERIF) === 1;
-
-                                        // Ambil hanya identitas pasien dan asuransi.
-                                        // SEP dan informasi kunjungan tidak diwariskan karena
-                                        // tombol ini membuka kunjungan utama yang berbeda.
-                                        const metadata = {
-                                            norm: source.norm ?? '',
-                                            nama: source.nama ?? source.namaPasien ?? '',
-                                            namaLengkap: source.namaLengkap ?? '',
-                                            panggilan: source.panggilan ?? '',
-                                            tglLahir: source.tglLahir ?? '',
-                                            umur: source.umur ?? '',
-                                            jenisKelamin: source.jenisKelamin ?? '',
-                                            nik: source.nik ?? '',
-                                            noHP: source.noHP ?? '',
-
-                                            namaAsuransi: source.namaAsuransi ?? '',
-                                            idAsuransi: source.idAsuransi ?? '',
-                                            refIdAsuransi: source.refIdAsuransi ?? '',
-                                            noAsuransi: source.noAsuransi ?? '',
-                                            noBPJS: source.noBPJS ?? '',
-                                            noSEP: source.noSEP ?? '',
-                                            tglSEP: source.tglSEP ?? '',
-                                            statusBPJS: source.statusBPJS ?? '',
-                                            prbPasien: source.prbPasien ?? '',
-
-                                            // Ruangan dan DPJP
-                                            idRuangan: source.idRuangan ?? '',
-                                            namaRuangan: source.namaRuangan,
-                                            namaRuanganAsalKonsul: source.namaRuanganAsalKonsul ?? '',
-                                            namaDokter: source.namaDokter ?? '',
-                                            namaDokterAsalKonsul: source.namaDokterAsalKonsul ?? '',
-
-                                            // Waktu kunjungan
-                                            tglDaftar: source.tglDaftar ?? '',
-                                            tglMasuk: source.tglMasuk ?? '',
-                                            tglKeluar: source.tglKeluar ?? '',
-
-                                            // Tombol ini menuju kunjungan utama.
-                                            jenisKunjungan: 'UTAMA',
-
-                                            // Status klaim
-                                            statusVerif: statusVerif,
-                                            statusKlaim: statusVerif
-                                                ? 'SUDAH DIVERIFIKASI'
-                                                : 'BELUM DIVERIFIKASI',
-
-                                            label: `SEP. ${source.noSEP ?? '-'}`
-                                        };
-
-                                        workspace.openClaim(
-                                            nomorKunjungan,
-                                            'smart_claim',
-                                            metadata
-                                        );
-                                    } else {
-                                        window.location.href = this.href;
-                                    }
-                                "
+                                data-main-visit="{{ $list['show']->NO_KUNJUNGAN_KONSUL }}"
+                                onclick="openMainClaimVisit(this, event)"
                             >
                                 <i class="ri-file-lock-line fs-20 me-1"></i>
                                 Lihat Klaim Berkas Kunjungan Utama
@@ -596,6 +518,160 @@
                 });
                 verify();
             });
+
+            async function openMainClaimVisit(element, event) {
+                event?.preventDefault();
+
+                const nomorKunjungan = String(
+                    element?.dataset?.mainVisit || ''
+                ).trim();
+
+                if (!nomorKunjungan) {
+                    if (window.iziToast) {
+                        window.iziToast.warning({
+                            title: 'Informasi',
+                            message: 'Nomor kunjungan utama tidak tersedia.',
+                            position: 'topRight',
+                        });
+                    } else {
+                        alert('Nomor kunjungan utama tidak tersedia.');
+                    }
+
+                    return false;
+                }
+
+                const workspace = window.parent?.ClaimWorkspace;
+
+                // =====================================================
+                // VALIDASI CLAIM WORKSPACE PARENT
+                // =====================================================
+                if (
+                    window.parent === window ||
+                    !workspace ||
+                    typeof workspace.openClaim !== 'function'
+                ) {
+                    window.location.href = element.href;
+                    return false;
+                }
+
+                // =====================================================
+                // URL ENDPOINT METADATA KUNJUNGAN UTAMA
+                // =====================================================
+                const metadataUrl = @js(
+                    route(
+                        'v3.smartclaim.metadata-kunjungan',
+                        ['kunjungan' => '__KUNJUNGAN__']
+                    )
+                ).replace(
+                    '__KUNJUNGAN__',
+                    encodeURIComponent(nomorKunjungan)
+                );
+
+                // =====================================================
+                // LOADING FEEDBACK
+                // =====================================================
+                // if (window.iziToast) {
+                //     window.iziToast.info({
+                //         title: 'Memuat',
+                //         message: 'Mengambil metadata kunjungan utama...',
+                //         position: 'topRight',
+                //         timeout: 1500,
+                //     });
+                // }
+
+                try {
+                    // =================================================
+                    // FETCH METADATA KUNJUNGAN UTAMA
+                    // =================================================
+                    const response = await fetch(metadataUrl, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success || !result.metadata) {
+                        throw new Error(
+                            result.message ||
+                            'Gagal mengambil metadata kunjungan utama.'
+                        );
+                    }
+
+                    const metadata = result.metadata;
+
+                    // =================================================
+                    // VALIDASI KONSISTENSI NOMOR KUNJUNGAN
+                    // =================================================
+                    if (
+                        String(result.kunjungan) !== String(nomorKunjungan) ||
+                        String(metadata.nomorKunjungan) !== String(nomorKunjungan)
+                    ) {
+                        throw new Error(
+                            'Nomor kunjungan dan metadata tidak sesuai.'
+                        );
+                    }
+
+                    // =================================================
+                    // PASTIKAN METADATA KUNJUNGAN UTAMA
+                    // =================================================
+                    metadata.jenisKunjungan = 'UTAMA';
+
+                    // =================================================
+                    // BUKA CLAIM WORKSPACE
+                    // =================================================
+                    const berhasil = workspace.openClaim(
+                        nomorKunjungan,
+                        'smart_claim',
+                        metadata,
+                        {
+                            replaceMetadata: true
+                        }
+                    );
+
+                    if (!berhasil) {
+                        throw new Error(
+                            'Claim Workspace gagal membuka kunjungan utama.'
+                        );
+                    }
+
+                    // if (window.iziToast) {
+                    //     window.iziToast.success({
+                    //         title: 'Berhasil',
+                    //         message: 'Metadata kunjungan utama berhasil dimuat.',
+                    //         position: 'topRight',
+                    //         timeout: 2000,
+                    //     });
+                    // }
+
+                    return true;
+
+                } catch (error) {
+                    console.error(
+                        '[SmartClaim] Gagal membuka kunjungan utama:',
+                        error
+                    );
+
+                    if (window.iziToast) {
+                        window.iziToast.error({
+                            title: 'Gagal',
+                            message: error.message ||
+                                'Gagal memuat metadata kunjungan utama.',
+                            position: 'topRight',
+                        });
+                    } else {
+                        alert(
+                            error.message ||
+                            'Gagal memuat metadata kunjungan utama.'
+                        );
+                    }
+
+                    return false;
+                }
+            }
 
             /**
              * SELECT2 UNIT TUJUAN
