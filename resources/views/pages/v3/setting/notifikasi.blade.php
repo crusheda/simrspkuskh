@@ -51,7 +51,7 @@
                                     id="filter-notifikasi-status"
                                 >
                                     <option value="">Semua Status</option>
-                                    <option value="Pending">Pending</option>
+                                    <option value="Pending" selected>Pending</option>
                                     <option value="Selesai">Selesai</option>
                                 </select>
 
@@ -1059,24 +1059,38 @@
         // Simpan instance agar bisa diperiksa saat Livewire navigasi.
         window.notifikasiDataTable = table;
 
-        // Filter status.
+        // =========================================================
+        // FILTER STATUS NOTIFIKASI
+        // Default: Pending
+        // =========================================================
         if (filterElement) {
-            $(filterElement)
+            const $filter = $(filterElement);
+
+            // Default filter saat pertama kali load
+            $filter.val('Pending');
+
+            function applyStatusFilter(status) {
+                if (!status) {
+                    table.column(5).search('').draw();
+                    return;
+                }
+
+                const keyword = '^' +
+                    $.fn.dataTable.util.escapeRegex(status) +
+                    '$';
+
+                table.column(5).search(keyword, true, false).draw();
+            }
+
+            // Terapkan filter saat dropdown berubah
+            $filter
                 .off('change.notifikasi')
                 .on('change.notifikasi', function () {
-                    const status = this.value;
-
-                    if (!status) {
-                        table.column(5).search('').draw();
-                        return;
-                    }
-
-                    const keyword = '^' +
-                        $.fn.dataTable.util.escapeRegex(status) +
-                        '$';
-
-                    table.column(5).search(keyword, true, false).draw();
+                    applyStatusFilter(this.value);
                 });
+
+            // Terapkan Pending langsung saat pertama kali tabel dimuat
+            applyStatusFilter('Pending');
         }
 
         console.info('[Notifikasi] DataTables berhasil diinisialisasi.');

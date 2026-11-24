@@ -1055,3 +1055,143 @@ body.emr-workspace-frame .emr-frame-content > section {
 
     box-sizing: border-box;
 }
+
+/* =========================================================
+    EMR ACTIVE FILTERS
+========================================================= */
+#emr-active-filters {
+    --emr-filter-border: var(--bs-border-color, #dee2e6);
+    --emr-filter-bg: var(--bs-tertiary-bg, #f8f9fa);
+    --emr-filter-text: var(--bs-body-color, #495057);
+
+    display: none;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--emr-filter-border);
+    border-radius: 12px;
+    background: var(--emr-filter-bg);
+    transition: all .25s ease;
+}
+
+#emr-active-filters.has-filters {
+    display: flex;
+}
+
+#emr-active-filters .emr-filter-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--emr-filter-text);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+#emr-active-filters .emr-filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 20px;
+    background: var(--bs-primary-bg-subtle, #e7f1ff);
+    color: var(--bs-primary, #0d6efd);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+#emr-active-filters .emr-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    padding: 5px 9px;
+    border: 1px solid var(--bs-primary-border-subtle, #cfe2ff);
+    border-radius: 8px;
+    background: var(--bs-primary-bg-subtle, #e7f1ff);
+    color: var(--bs-primary-text-emphasis, #084298);
+    font-size: 11px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+#emr-active-filters .emr-filter-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(13, 110, 253, .10);
+}
+
+#emr-active-filters .emr-filter-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#emr-active-filters .emr-filter-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    opacity: .65;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+#emr-active-filters .emr-filter-remove:hover {
+    opacity: 1;
+    background: rgba(220, 53, 69, .15);
+    color: var(--bs-danger, #dc3545);
+}
+
+#emr-active-filters .emr-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 5px 9px;
+    border: 1px dashed var(--bs-danger-border-subtle, #f5c2c7);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--bs-danger, #dc3545);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+#emr-active-filters .emr-filter-clear:hover {
+    background: var(--bs-danger-bg-subtle, #f8d7da);
+    border-style: solid;
+}
+
+#emr-active-filters .emr-filter-empty {
+    color: var(--bs-secondary-color, #6c757d);
+    font-size: 11px;
+}
+
+@media (max-width: 576px) {
+    #emr-active-filters {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    #emr-active-filters .emr-filter-heading {
+        width: 100%;
+        margin-bottom: 2px;
+    }
+
+    #emr-active-filters .emr-filter-clear {
+        margin-left: 0;
+    }
+}

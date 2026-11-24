@@ -76,6 +76,10 @@
                             </div>
                         </div>
                         <div class="table-responsive border-top p-3" id="show_table" hidden>
+
+                            {{-- ACTIVE FILTERS --}}
+                            <div id="emr-active-filters" class="emr-active-filters mb-3"></div>
+
                             <table class="table mb-0 table-hover table-display" id="vantable">
                                 <thead>
                                     <tr>
@@ -184,6 +188,194 @@
 
             // BUTTON FILTER READY
             $('#tombol-tampilkan').prop('disabled', false);
+
+            // =====================================================
+            // EMR WORKSPACE — SHORTCUT TAB CONTENT
+            // =====================================================
+            $('#vantable')
+                .off('click.emrShortcut', '.emr-shortcut-item')
+                .on(
+                    'click.emrShortcut',
+                    '.emr-shortcut-item',
+                    function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const targetTabId = this.dataset.emrTab;
+                        const row = this.closest('tr.emr-patient-row');
+
+                        if (!row || !targetTabId) {
+                            console.error('Data pasien atau target tab tidak ditemukan.');
+                            return;
+                        }
+
+                        // ==========================================
+                        // DECODE DATA
+                        // ==========================================
+                        function decodeData(value) {
+                            if (!value) return '';
+
+                            try {
+                                return decodeURIComponent(value);
+                            } catch (error) {
+                                return value;
+                            }
+                        }
+
+                        // ==========================================
+                        // DATA PASIEN DARI ROW
+                        // ==========================================
+                        const patient = {
+                            nomor: row.dataset.nomor,
+                            norm: row.dataset.norm,
+                            nama: decodeData(row.dataset.nama),
+                            tglLahir: row.dataset.tgllahir,
+                            umur: row.dataset.umur,
+                            namaRuangan: row.dataset.namaRuangan,
+                            namaDokter: decodeData(row.dataset.namaDokter),
+                            refIdAsuransi: row.dataset.refIdAsuransi,
+                            namaAsuransi: row.dataset.namaAsuransi,
+                            noAsuransi: decodeData(row.dataset.noAsuransi),
+                            tglMasuk: decodeData(row.dataset.tglMasuk),
+                            tglKeluar: decodeData(row.dataset.tglKeluar),
+                            statusKunjungan: row.dataset.statusKunjungan,
+                            url: row.dataset.href
+                        };
+
+                        // ==========================================
+                        // VALIDASI EMR WORKSPACE
+                        // ==========================================
+                        if (
+                            !window.EMRWorkspace ||
+                            typeof window.EMRWorkspace.openPatient !== 'function'
+                        ) {
+                            console.error('EMRWorkspace belum terinisialisasi.');
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Workspace belum tersedia',
+                                text: 'EMR Workspace belum terinisialisasi.'
+                            });
+
+                            return;
+                        }
+
+                        // ==========================================
+                        // OPEN TAB CONTENT DALAM IFRAME PASIEN
+                        // ==========================================
+                        function openTargetContent(frame) {
+                            if (!frame) {
+                                console.warn('Iframe pasien tidak ditemukan.');
+                                return;
+                            }
+
+                            try {
+                                const frameDocument = frame.contentDocument;
+
+                                if (!frameDocument) return;
+
+                                const targetButton =
+                                    frameDocument.getElementById(targetTabId);
+
+                                if (!targetButton) {
+                                    console.warn(
+                                        `Tab EMR tidak ditemukan: ${targetTabId}`
+                                    );
+                                    return;
+                                }
+
+                                // Bootstrap Tab API
+                                if (frame.contentWindow.bootstrap?.Tab) {
+                                    frame.contentWindow.bootstrap.Tab
+                                        .getOrCreateInstance(targetButton)
+                                        .show();
+                                } else {
+                                    targetButton.click();
+                                }
+
+                                console.info(
+                                    '[EMR Shortcut] Tab berhasil dibuka:',
+                                    targetTabId,
+                                    patient.nomor
+                                );
+
+                            } catch (error) {
+                                console.error(
+                                    '[EMR Shortcut] Gagal membuka content:',
+                                    error
+                                );
+                            }
+                        }
+
+                        // ==========================================
+                        // EVENT CONTENT LOADED
+                        // ==========================================
+                        function onWorkspaceContentLoaded(event) {
+                            const detail = event.detail || {};
+
+                            // Pastikan event untuk pasien yang sesuai
+                            if (
+                                String(detail.nomor) !==
+                                String(patient.nomor)
+                            ) {
+                                return;
+                            }
+
+                            document.removeEventListener(
+                                'emr:workspace:content-loaded',
+                                onWorkspaceContentLoaded
+                            );
+
+                            openTargetContent(detail.frame);
+                        }
+
+                        document.addEventListener(
+                            'emr:workspace:content-loaded',
+                            onWorkspaceContentLoaded
+                        );
+
+                        // ==========================================
+                        // BUKA / AKTIFKAN WORKSPACE PASIEN
+                        // ==========================================
+                        window.EMRWorkspace.openPatient(patient);
+
+                        // ==========================================
+                        // CEK TAB EXISTING
+                        // ==========================================
+                        const existingTab = window.EMRWorkspace
+                            .getTabs?.()
+                            .find(function (tab) {
+                                return String(tab.nomor) ===
+                                    String(patient.nomor);
+                            });
+
+                        // ==========================================
+                        // JIKA TAB SUDAH LOADED
+                        // LANGSUNG BUKA TARGET CONTENT
+                        // ==========================================
+                        if (existingTab && existingTab.loaded) {
+
+                            const panel = document.getElementById(
+                                `emrPanel-${existingTab.tabId}`
+                            );
+
+                            const frame = panel?.querySelector(
+                                'iframe.emr-patient-frame'
+                            );
+
+                            if (frame) {
+                                document.removeEventListener(
+                                    'emr:workspace:content-loaded',
+                                    onWorkspaceContentLoaded
+                                );
+
+                                requestAnimationFrame(function () {
+                                    openTargetContent(frame);
+                                });
+                            }
+                        }
+                    }
+                );
 
             // =====================================================
             // EMR WORKSPACE — OPEN PATIENT TAB
@@ -320,6 +512,95 @@
 
                     }
                 );
+
+            // =========================================================
+            // ACTIVE FILTER - UPDATE CHIP
+            // =========================================================
+            $('#filter_rawat, #filter_ruang, #filter_status, #filter_dpjp, #filter_penjamin')
+                .off('change.emrActiveFilter')
+                .on('change.emrActiveFilter', function () {
+                    renderActiveFilters();
+                });
+
+            // =========================================================
+            // ACTIVE FILTER - REMOVE SINGLE CHIP
+            // =========================================================
+            $('#emr-active-filters')
+                .off('click.emrRemoveFilter', '[data-remove-filter]')
+                .on('click.emrRemoveFilter', '[data-remove-filter]', function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const filterKey = this.dataset.removeFilter;
+
+                    switch (filterKey) {
+
+                        // ==============================================
+                        // JENIS PERAWATAN
+                        // Reset rawat -> 5
+                        // Ruangan dan DPJP mengikuti perubahan rawat
+                        // ==============================================
+                        case 'rawat':
+                            $('#filter_rawat')
+                                .val('5')
+                                .trigger('change');
+
+                            // getRuangan() akan mengatur Ruangan dan DPJP
+                            EMRPage.getRuangan();
+                            break;
+
+                        // ==============================================
+                        // RUANGAN
+                        // Reset ruangan -> 5
+                        // Kemudian refresh pilihan DPJP
+                        // ==============================================
+                        case 'ruang':
+                            $('#filter_ruang')
+                                .val('5')
+                                .trigger('change');
+
+                            EMRPage.getDPJP();
+                            break;
+
+                        // ==============================================
+                        // STATUS KUNJUNGAN
+                        // Reset status -> 5
+                        // ==============================================
+                        case 'status':
+                            $('#filter_status')
+                                .val('5')
+                                .trigger('change');
+
+                            EMRPage.filter();
+                            break;
+
+                        // ==============================================
+                        // DPJP
+                        // Reset dokter -> 5
+                        // ==============================================
+                        case 'dpjp':
+                            $('#filter_dpjp')
+                                .val('5')
+                                .trigger('change.select2');
+
+                            renderActiveFilters();
+                            EMRPage.filter();
+                            break;
+
+                        // ==============================================
+                        // PENJAMIN
+                        // Reset penjamin -> 0
+                        // ==============================================
+                        case 'penjamin':
+                            $('#filter_penjamin')
+                                .val('0')
+                                .trigger('change');
+
+                            EMRPage.filter();
+                            break;
+                    }
+                });
         });
 
         /**
@@ -481,6 +762,9 @@
                         .prop('disabled', false)
                         .trigger('change.select2');
 
+                    // Update chip filter
+                    renderActiveFilters();
+
                     // Perbarui tabel menggunakan filter yang terpilih
                     filter();
                 },
@@ -502,7 +786,106 @@
             });
         }
 
+        // =========================================================
+        // EMR ACTIVE FILTER CHIPS
+        // =========================================================
+        function renderActiveFilters() {
+            const container = $('#emr-active-filters');
+
+            if (!container.length) return;
+
+            const filters = [
+                {
+                    key: 'rawat',
+                    selector: '#filter_rawat',
+                    defaultValue: '5',
+                    label: 'Rawat'
+                },
+                {
+                    key: 'ruang',
+                    selector: '#filter_ruang',
+                    defaultValue: '5',
+                    label: 'Ruangan'
+                },
+                {
+                    key: 'status',
+                    selector: '#filter_status',
+                    defaultValue: '5',
+                    label: 'Status'
+                },
+                {
+                    key: 'dpjp',
+                    selector: '#filter_dpjp',
+                    defaultValue: '5',
+                    label: 'DPJP'
+                },
+                {
+                    key: 'penjamin',
+                    selector: '#filter_penjamin',
+                    defaultValue: '0',
+                    label: 'Penjamin'
+                }
+            ];
+
+            const activeFilters = filters.filter(function (filter) {
+                const element = $(filter.selector);
+
+                return element.length &&
+                    String(element.val() ?? '') !== filter.defaultValue;
+            });
+
+            if (!activeFilters.length) {
+                container
+                    .removeClass('has-filters')
+                    .empty();
+
+                return;
+            }
+
+            let html = `
+                <div class="emr-filter-heading">
+                    <i class="ph-duotone ph-funnel"></i>
+                    Filter Aktif
+                    <span class="emr-filter-count">${activeFilters.length}</span>
+                </div>
+            `;
+
+            activeFilters.forEach(function (filter) {
+                const selectedOption = $(filter.selector)
+                    .find('option:selected');
+
+                const selectedText = selectedOption.text().trim();
+
+                html += `
+                    <div class="emr-filter-chip"
+                        data-filter-key="${filter.key}"
+                        title="${filter.label}: ${selectedText}">
+
+                        <span class="emr-filter-chip-label">
+                            ${filter.label}: ${selectedText}
+                        </span>
+
+                        <button type="button"
+                            class="emr-filter-remove"
+                            data-remove-filter="${filter.key}"
+                            aria-label="Hapus filter ${filter.label}"
+                            title="Hapus filter ${filter.label}">
+
+                            <i class="ph-duotone ph-x"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            container
+                .html(html)
+                .addClass('has-filters');
+        }
+
         function filter() {
+            // Update visual filter aktif
+            renderActiveFilters();
+            // Remove init Table EMR if exist
             if (tableEMR) {
                 tableEMR.destroy();
             }
@@ -633,24 +1016,99 @@
                                             <!-- Informasi Pasien -->
                                             <td class="ps-3">
                                                 <h4>
-                                                    <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
+                                                    <b data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Nomor Rekam Medis">
                                                         RM. ${item.NORM}
                                                     </b>
                                                     -
                                                     <b class="text-primary">${item.NAMAPASIEN}</b>
                                                 </h4>
 
-                                                <h6 class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="">
+                                                <h6 class="text-dark">
                                                     <b>DPJP : ${item.NAMADOKTER}</b>
                                                 </h6>
 
-                                                <h6 class="fw-medium text-dark" href="javascript:void(0);">
-                                                    Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> <i class="ri-subtract-line"></i>
-                                                    <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> <i class="ri-subtract-line"></i></b>
+                                                <h6 class="fw-medium text-dark">
+                                                    Ruangan <b class="text-pink">${item.NAMARUANGAN}</b>
+                                                    <i class="ri-subtract-line"></i>
+
+                                                    <b ${sepNF?'hidden':''}>
+                                                        <b class="text-lavender"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="bottom"
+                                                        title="Nomor SEP">${SEP}</b>
+                                                        <i class="ri-subtract-line"></i>
+                                                    </b>
+
                                                     <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
                                                 </h6>
 
                                                 ${status}
+
+                                                <!-- SHORTCUT EMR -->
+                                                <div class="dropdown mt-2 emr-row-shortcut">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                                        data-bs-toggle="dropdown"
+                                                        aria-expanded="false">
+
+                                                        <i class="ph-duotone ph-squares-four me-1"></i>
+                                                        Shortcut EMR
+                                                    </button>
+
+                                                    <div class="dropdown-menu shadow-sm">
+                                                        <button
+                                                            type="button"
+                                                            class="dropdown-item emr-shortcut-item"
+                                                            data-emr-tab="tab-fpengkajian">
+
+                                                            <i class="ph-duotone ph-user-list me-2"></i>
+                                                            Pengkajian Awal
+                                                        </button>
+                                                        ${
+                                                            item.RUANGAN?.startsWith('10203')
+                                                                ? `
+                                                                    <button
+                                                                        type="button"
+                                                                        class="dropdown-item emr-shortcut-item"
+                                                                        data-emr-tab="tab-resume-ranap">
+                                                                        <i class="ph-duotone ph-clipboard-text me-2"></i>
+                                                                        Resume Medis Rawat Inap
+                                                                    </button>
+                                                                `
+                                                                : ''
+                                                        }
+                                                        ${
+                                                            item.RUANGAN?.startsWith('10201') ||
+                                                            item.RUANGAN?.startsWith('10207')
+                                                                ? `
+                                                                    <button
+                                                                        type="button"
+                                                                        class="dropdown-item emr-shortcut-item"
+                                                                        data-emr-tab="tab-resume-rajal">
+                                                                        <i class="ph-duotone ph-clipboard-text me-2"></i>
+                                                                        Resume Medis Rawat Jalan
+                                                                    </button>
+                                                                `
+                                                                : ''
+                                                        }
+                                                        ${
+                                                            item.RUANGAN?.startsWith('10207')
+                                                                ? `
+                                                                    <button
+                                                                        type="button"
+                                                                        class="dropdown-item emr-shortcut-item"
+                                                                        data-emr-tab="tab-fmrehab">
+                                                                        <i class="ph-duotone ph-archive-box me-2"></i>
+                                                                        Program Rehab Medik
+                                                                    </button>
+                                                                `
+                                                                : ''
+                                                        }
+                                                    </div>
+                                                </div>
                                             </td>
 
                                             <!-- Waktu -->
