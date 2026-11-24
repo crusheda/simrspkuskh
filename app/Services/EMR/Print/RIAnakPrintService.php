@@ -3995,9 +3995,8 @@ class RIAnakPrintService implements PrintDataInterface
         }
 
         $lines[] = '';
-        $lines[] = str_repeat('─', 38);
-        $lines[] = 'Akhir laporan laboratorium';
-
+        // $lines[] = str_repeat('─', 38);
+        // $lines[] = 'Akhir laporan laboratorium';
         return implode("\n", $lines);
     }
 
@@ -4046,7 +4045,7 @@ class RIAnakPrintService implements PrintDataInterface
 
             $nomorLaporan = $index + 1;
 
-            $lines[] = '';
+            // $lines[] = '';
             $lines[] = 'LAPORAN RADIOLOGI ' . $nomorLaporan;
 
             /*
@@ -4171,9 +4170,9 @@ class RIAnakPrintService implements PrintDataInterface
             }
         }
 
-        $lines[] = '';
-        $lines[] = str_repeat('─', 38);
-        $lines[] = 'Akhir laporan radiologi';
+        // $lines[] = '';
+        // $lines[] = str_repeat('─', 38);
+        // $lines[] = 'Akhir laporan radiologi';
 
         return implode("\n", $lines);
     }

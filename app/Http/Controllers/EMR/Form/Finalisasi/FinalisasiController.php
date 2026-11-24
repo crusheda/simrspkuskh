@@ -754,6 +754,7 @@ class FinalisasiController extends Controller
             )
             ->where('diag.NOPEN', $getDataKunjungan->NOPEN)
             ->where('diag.STATUS', 1)
+            ->orderBy('diag.UTAMA', 'asc')
             ->get();
 
         $diagnosa = $getDiagnosa
@@ -856,6 +857,18 @@ class FinalisasiController extends Controller
             $sub
         );
 
+        //DPJP Kunjungan
+        $dpjp = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+            ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
+            ->where('pk.NOMOR', $kunjungan)
+            ->select(
+                'dr.ID',
+                'dr.NIP',
+                'pe.ID AS ID_VERIFIKATOR_CPPT'
+            )
+            ->first();
+
         //DOKTER CPPT
         $dokter = DB::table('aplikasi.pengguna AS pe')
             ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
@@ -877,7 +890,23 @@ class FinalisasiController extends Controller
             )
             ->first();
 
-        $petugas = $dokter->ID ? $dokter : $tenagaMedis;
+        $petugas = $dpjp->ID ? $dpjp : $tenagaMedis;
+
+        $verifikasi = DB::table('medicalrecord.verifikasi_cppt')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if (!$verifikasi) {
+            $idVerifikasi = DB::table('medicalrecord.verifikasi_cppt')
+                ->insertGetId([
+                    'KUNJUNGAN'     => $kunjungan,
+                    'BATAS_TANGGAL' => now(),
+                    'OLEH'          => $dpjp->ID_VERIFIKATOR_CPPT,
+                    'STATUS'        => 1,
+                ]);
+        } else {
+            $idVerifikasi = $verifikasi->ID;
+        }
 
         $dataCppt = [
             'KUNJUNGAN' => $kunjungan,
@@ -887,6 +916,7 @@ class FinalisasiController extends Controller
             'ASSESMENT' => $soap['ASSESMENT'] ?? '',
             'PLANNING' => $soap['PLANNING'] ?? '',
             'INSTRUKSI' => $soap['INSTRUKSI'] ?? '',
+            'VERIFIKASI' => $idVerifikasi,
             'JENIS' => 1,
             'TENAGA_MEDIS' => $petugas->ID,
             'OLEH' => auth()->id(),
@@ -906,9 +936,12 @@ class FinalisasiController extends Controller
 
         if ($pushCppt) {
 
+            $dataUpdateCppt = $dataCppt;
+            unset($dataUpdateCppt['TANGGAL']);
+
             DB::table('medicalrecord.cppt')
                 ->where('ID', $pushCppt->ID_CPPT)
-                ->update($dataCppt);
+                ->update($dataUpdateCppt);
 
             DB::table('medicalrecord.push_cppt')
                 ->where('ID_CPPT', $pushCppt->ID_CPPT)
@@ -1702,6 +1735,7 @@ class FinalisasiController extends Controller
                     'diag.UTAMA',
                     'mrc.STR as NAMA_DIAGNOSA',
                 ])
+                ->orderBy('diag.UTAMA', 'asc')
                 ->get();
         }
 
@@ -1787,20 +1821,20 @@ class FinalisasiController extends Controller
                 $this->soapValue($tataLaksana);
         }
 
-        if ($this->soapValue($targetTerapi)) {
-            $p[] = 'Target Terapi: ' .
-                $this->soapValue($targetTerapi);
-        }
+        // if ($this->soapValue($targetTerapi)) {
+        //     $p[] = 'Target Terapi: ' .
+        //         $this->soapValue($targetTerapi);
+        // }
 
-        if ($this->soapValue($planTataLaksanaPenunjang)) {
-            $p[] = 'Plan Tata Laksana Penunjang: ' .
-                $this->soapValue($planTataLaksanaPenunjang);
-        }
+        // if ($this->soapValue($planTataLaksanaPenunjang)) {
+        //     $p[] = 'Plan Tata Laksana Penunjang: ' .
+        //         $this->soapValue($planTataLaksanaPenunjang);
+        // }
 
-        if ($this->soapValue($rencanaKonsultasi)) {
-            $p[] = 'Rencana Konsultasi: ' .
-                $this->soapValue($rencanaKonsultasi);
-        }
+        // if ($this->soapValue($rencanaKonsultasi)) {
+        //     $p[] = 'Rencana Konsultasi: ' .
+        //         $this->soapValue($rencanaKonsultasi);
+        // }
 
         if ($kriteriaPulang) {
             $rows = [];

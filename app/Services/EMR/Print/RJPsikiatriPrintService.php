@@ -2763,9 +2763,8 @@ class RJPsikiatriPrintService implements PrintDataInterface
         }
 
         $lines[] = '';
-        $lines[] = str_repeat('─', 38);
-        $lines[] = 'Akhir laporan laboratorium';
-
+        // $lines[] = str_repeat('─', 38);
+        // $lines[] = 'Akhir laporan laboratorium';
         return implode("\n", $lines);
     }
 
@@ -2814,7 +2813,7 @@ class RJPsikiatriPrintService implements PrintDataInterface
 
             $nomorLaporan = $index + 1;
 
-            $lines[] = '';
+            // $lines[] = '';
             $lines[] = 'LAPORAN RADIOLOGI ' . $nomorLaporan;
 
             /*
@@ -2939,9 +2938,9 @@ class RJPsikiatriPrintService implements PrintDataInterface
             }
         }
 
-        $lines[] = '';
-        $lines[] = str_repeat('─', 38);
-        $lines[] = 'Akhir laporan radiologi';
+        // $lines[] = '';
+        // $lines[] = str_repeat('─', 38);
+        // $lines[] = 'Akhir laporan radiologi';
 
         return implode("\n", $lines);
     }
