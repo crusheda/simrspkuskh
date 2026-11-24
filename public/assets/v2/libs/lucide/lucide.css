@@ -9,7 +9,8 @@
 }
 
 [class^="icon-"], [class*=" icon-"] {
-  font-family: 'lucide' !important;font-size: inherit;
+  font-family: 'lucide'; /* !important */
+  font-size: inherit;
   font-style:normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

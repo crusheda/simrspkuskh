@@ -178,3 +178,129 @@ RESUME MEDIS RAWAT JALAN SIGNATURE
         height: calc(100dvh - 66px);
     }
 }
+/* =========================================================
+   RESUME RJ - SIGNATURE AREA
+========================================================= */
+
+#form_resume_medis_rajal .resume-rj-signature-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    overflow: hidden;
+    border: 1px dashed var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background: var(--bs-body-bg);
+}
+
+/* =========================================================
+   SAVED SIGNATURE
+========================================================= */
+
+#form_resume_medis_rajal .resume-rj-signature-saved {
+    width: 100%;
+    min-height: 220px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+#form_resume_medis_rajal .resume-rj-signature-saved img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 190px;
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+}
+
+#form_resume_medis_rajal .resume-rj-signature-saved-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--bs-success);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+#form_resume_medis_rajal .resume-rj-signature-canvas-wrap {
+    position: relative;
+    width: 100%;
+}
+
+#form_resume_medis_rajal .resume-rj-signature-canvas {
+    display: block;
+    width: 100%;
+    height: 220px;
+    min-height: 220px;
+    touch-action: none;
+    cursor: crosshair;
+    pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+#form_resume_medis_rajal .resume-rj-signature-empty {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--bs-secondary-color);
+}
+
+#form_resume_medis_rajal .resume-rj-signature-empty i {
+    font-size: 42px;
+    opacity: 0.5;
+}
+
+/* =========================================================
+   SIGNATURE SECTION
+========================================================= */
+
+#form_resume_medis_rajal .resume-rj-signature-section {
+    scroll-margin-top: 100px;
+}
+
+#form_resume_medis_rajal .resume-rj-signature-wrapper:focus-within {
+    border-color: var(--bs-primary);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    #form_resume_medis_rajal .resume-rj-signature-saved {
+        min-height: 190px;
+        padding: 12px;
+    }
+
+    #form_resume_medis_rajal .resume-rj-signature-saved img {
+        height: 160px;
+    }
+
+    #form_resume_medis_rajal .resume-rj-signature-canvas {
+        height: 190px;
+        min-height: 190px;
+    }
+
+    #form_resume_medis_rajal .resume-rj-signature-empty {
+        min-height: 190px;
+    }
+}

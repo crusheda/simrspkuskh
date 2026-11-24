@@ -129,6 +129,7 @@
 
         <button type="button" class="icon-button" id="cariEMRPasien" aria-label="Cari EMR Pasien">
             <i class="bi bi-search"></i>
+            <span class="d-none d-md-inline ms-1">Cari EMR Pasien</span>
         </button>
 
         {{-- DROPDOWN MENU PASIEN (hanya aktif saat workspace pasien) --}}

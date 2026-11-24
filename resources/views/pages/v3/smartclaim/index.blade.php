@@ -788,8 +788,8 @@
                                         </a>
                                     </h5>
 
-                                    <p class="mb-0 fs-16">
-                                        RM.${item.NORM} -
+                                    <p class="mb-0 fs-16 fw-bold">
+                                        RM. ${item.NORM} -
                                         <b class="text-skyblue">
                                             ${item.NAMAPASIEN}
                                         </b>

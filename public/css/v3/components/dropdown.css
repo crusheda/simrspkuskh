@@ -1,0 +1,267 @@
+
+/* =========================================================
+   SIRMED V3 — GLOBAL DROPDOWN
+   Modern • Compact • Theme-aware
+   Applies to all Bootstrap dropdowns
+   ========================================================= */
+
+
+/* =========================================================
+   DROPDOWN TOGGLE
+   ========================================================= */
+
+.dropdown > [data-bs-toggle="dropdown"] {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
+}
+
+.dropdown > [data-bs-toggle="dropdown"]:hover {
+    border-color: var(--bs-border-color);
+}
+
+.dropdown > [data-bs-toggle="dropdown"]:active {
+    transform: scale(0.96);
+}
+
+.dropdown > [data-bs-toggle="dropdown"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+
+/* =========================================================
+   DROPDOWN MENU
+   ========================================================= */
+
+.dropdown-menu {
+    --bs-dropdown-bg: var(--bs-body-bg);
+    --bs-dropdown-border-color: var(--bs-border-color);
+    --bs-dropdown-link-color: var(--bs-body-color);
+    --bs-dropdown-link-hover-color: var(--bs-emphasis-color);
+    --bs-dropdown-link-hover-bg: var(--bs-tertiary-bg);
+    --bs-dropdown-link-active-color: var(--bs-emphasis-color);
+    --bs-dropdown-link-active-bg: var(--bs-tertiary-bg);
+
+    min-width: 11rem;
+    padding: 0.4rem;
+
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.85rem;
+
+    box-shadow:
+        0 0.5rem 1.25rem rgba(0, 0, 0, 0.08),
+        0 0.125rem 0.35rem rgba(0, 0, 0, 0.04);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   DROPDOWN ITEM
+   ========================================================= */
+
+.dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    padding: 0.6rem 0.75rem;
+    margin: 0.1rem 0;
+
+    border-radius: 0.55rem;
+
+    font-size: 0.825rem;
+    font-weight: 500;
+    line-height: 1.4;
+
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease;
+
+    white-space: nowrap;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    transform: translateX(2px);
+}
+
+.dropdown-menu .dropdown-item:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.dropdown-menu .dropdown-item > i,
+.dropdown-menu .dropdown-item > svg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+
+    font-size: 0.9rem;
+    opacity: 0.85;
+
+    transition: opacity 0.18s ease;
+}
+
+.dropdown-menu .dropdown-item:hover > i,
+.dropdown-menu .dropdown-item:hover > svg {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   PRIMARY
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-primary {
+    color: var(--bs-primary) !important;
+}
+
+.dropdown-menu .dropdown-item.text-primary:hover {
+    background: rgba(var(--bs-primary-rgb), 0.09);
+    color: var(--bs-primary) !important;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-success {
+    color: var(--bs-success) !important;
+}
+
+.dropdown-menu .dropdown-item.text-success:hover {
+    background: rgba(var(--bs-success-rgb), 0.09);
+    color: var(--bs-success) !important;
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-info {
+    color: var(--bs-info) !important;
+}
+
+.dropdown-menu .dropdown-item.text-info:hover {
+    background: rgba(var(--bs-info-rgb), 0.09);
+    color: var(--bs-info) !important;
+}
+
+
+/* =========================================================
+   WARNING
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-warning {
+    color: var(--bs-warning-text-emphasis, var(--bs-warning)) !important;
+}
+
+.dropdown-menu .dropdown-item.text-warning:hover {
+    background: rgba(var(--bs-warning-rgb), 0.10);
+}
+
+
+/* =========================================================
+   DANGER
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-danger {
+    color: var(--bs-danger) !important;
+}
+
+.dropdown-menu .dropdown-item.text-danger:hover {
+    background: rgba(var(--bs-danger-rgb), 0.09);
+    color: var(--bs-danger) !important;
+}
+
+
+/* =========================================================
+   SECONDARY / MUTED
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.text-secondary:hover {
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-emphasis-color) !important;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.dropdown-menu .dropdown-divider {
+    margin: 0.35rem 0;
+    border-color: var(--bs-border-color);
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.dropdown-menu .dropdown-item.disabled,
+.dropdown-menu .dropdown-item:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+[data-bs-theme="dark"] .dropdown-menu {
+    box-shadow:
+        0 0.75rem 1.5rem rgba(0, 0, 0, 0.28),
+        0 0.125rem 0.35rem rgba(0, 0, 0, 0.18);
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item.text-primary:hover {
+    background: rgba(var(--bs-primary-rgb), 0.14);
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item.text-success:hover {
+    background: rgba(var(--bs-success-rgb), 0.14);
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item.text-info:hover {
+    background: rgba(var(--bs-info-rgb), 0.14);
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item.text-warning:hover {
+    background: rgba(var(--bs-warning-rgb), 0.14);
+}
+
+[data-bs-theme="dark"] .dropdown-menu .dropdown-item.text-danger:hover {
+    background: rgba(var(--bs-danger-rgb), 0.14);
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .dropdown-menu *,
+    .dropdown-menu *::before,
+    .dropdown-menu *::after,
+    .dropdown [data-bs-toggle="dropdown"] {
+        transition: none !important;
+        animation: none !important;
+    }
+}

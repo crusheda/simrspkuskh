@@ -30,49 +30,106 @@
                 <fieldset id="resume_rj_fields">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="resume_rj_subjektif" class="form-label fw-semibold">Subjektif (S)</label>
-                            <textarea name="SUBYEKTIF" id="resume_rj_subjektif" class="form-control" rows="5" placeholder="Keluhan utama, riwayat penyakit sekarang, riwayat penyakit dahulu, alergi, dan informasi subjektif lainnya..."></textarea>
+                            <label for="resume_rj_subjektif" class="form-label fw-semibold">Subjektif (<b class="text-danger">S</b>) - <i class="text-muted">View Only</i></label>
+                            <textarea name="SUBYEKTIF" id="resume_rj_subjektif" class="form-control" rows="5" placeholder="..." readonly></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="resume_rj_objektif" class="form-label fw-semibold">Objektif (O)</label>
-                            <textarea name="OBYEKTIF" id="resume_rj_objektif" class="form-control" rows="5" placeholder="Pemeriksaan fisik, tanda vital, dan hasil pemeriksaan penunjang..."></textarea>
+                            <label for="resume_rj_objektif" class="form-label fw-semibold">Objektif (<b class="text-danger">O</b>) - <i class="text-muted">View Only</i></label>
+                            <textarea name="OBYEKTIF" id="resume_rj_objektif" class="form-control" rows="5" placeholder="..." readonly></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="resume_rj_assessment" class="form-label fw-semibold">Assessment (A)</label>
-                            <textarea name="ASSESMENT" id="resume_rj_assessment" class="form-control" rows="4" placeholder="Diagnosis / masalah klinis..."></textarea>
+                            <label for="resume_rj_assessment" class="form-label fw-semibold">Assessment (<b class="text-danger">A</b>) - <i class="text-muted">View Only</i></label>
+                            <textarea name="ASSESMENT" id="resume_rj_assessment" class="form-control" rows="4" placeholder="..." readonly></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="resume_rj_planning" class="form-label fw-semibold">Planning (P)</label>
-                            <textarea name="PLANNING" id="resume_rj_planning" class="form-control" rows="4" placeholder="Rencana terapi, tindakan, pemeriksaan, dan tindak lanjut..."></textarea>
+                            <label for="resume_rj_planning" class="form-label fw-semibold">Planning (<b class="text-danger">P</b>) - <i class="text-muted">View Only</i></label>
+                            <textarea name="PLANNING" id="resume_rj_planning" class="form-control" rows="4" placeholder="..." readonly></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="resume_rj_instruksi" class="form-label fw-semibold">Instruksi (I)</label>
-                            <textarea name="INSTRUKSI" id="resume_rj_instruksi" class="form-control" rows="4" placeholder="Instruksi kepada pasien, edukasi, dan anjuran..."></textarea>
+                            <label for="resume_rj_instruksi" class="form-label fw-semibold">Instruksi (<b class="text-primary">I</b>) - <i class="text-muted">View Only</i></label>
+                            <textarea name="INSTRUKSI" id="resume_rj_instruksi" class="form-control" rows="4" placeholder="..." readonly></textarea>
                         </div>
                     </div>
                 </fieldset>
             </form>
-
             <div class="resume-rj-signature-section mt-4">
                 <div class="card border">
                     <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                        <h6 class="mb-0"><i class="ph-duotone-duotone ph-signature me-2"></i>Tanda Tangan Elektronik Dokter</h6>
-                        <span id="resume_rj_tte_status" class="badge bg-secondary">Belum ditandatangani</span>
+                        <h6 class="mb-0">
+                            <i class="ph-duotone ph-signature me-2"></i>
+                            Tanda Tangan Elektronik Dokter
+                        </h6>
+                        <span id="resume_rj_tte_status" class="badge bg-secondary">
+                            Belum ditandatangani
+                        </span>
                     </div>
                     <div class="card-body">
+                        <!-- AREA TTE -->
                         <div class="resume-rj-signature-wrapper" id="resume_rj_signature_wrapper">
-                            <canvas id="canvas_signature_resume_rj" class="resume-rj-signature-canvas"></canvas>
-                        </div>
-                        <small class="text-body-secondary d-block mt-2">Tanda tangan pada area di atas menggunakan mouse atau layar sentuh.</small>
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <button type="button" class="btn btn-subtle-danger" id="btn_clear_signature_resume_rj"><i class="ph-duotone ph-eraser me-1"></i>Hapus Tanda Tangan</button>
-                        </div>
-                        <div id="resume_rj_signature_preview_wrap" class="mt-3 d-none">
-                            <div class="border rounded p-2 d-inline-block">
-                                <img id="resume_rj_signature_preview" alt="Tanda tangan dokter tersimpan" style="max-width:280px;max-height:130px">
+                            <!-- TTE YANG SUDAH TERSIMPAN -->
+                            <div id="resume_rj_signature_saved" class="resume-rj-signature-saved d-none">
+                                <img
+                                    id="resume_rj_signature_preview"
+                                    src=""
+                                    alt="Tanda tangan dokter tersimpan"
+                                >
+                                <div class="resume-rj-signature-saved-info">
+                                    <i class="ph ph-check-circle-fill me-1"></i>
+                                    Tanda tangan elektronik telah tersimpan
+                                </div>
                             </div>
-                            <div class="small text-body-secondary mt-1" id="resume_rj_signature_saved_at"></div>
+                            <!-- CANVAS TTE BARU / UPDATE -->
+                            <div id="resume_rj_signature_canvas_wrap" class="resume-rj-signature-canvas-wrap d-none">
+                                <canvas
+                                    id="canvas_signature_resume_rj"
+                                    class="resume-rj-signature-canvas">
+                                </canvas>
+                            </div>
+                            <!-- BELUM ADA TTE -->
+                            <div id="resume_rj_signature_empty" class="resume-rj-signature-empty d-none">
+                                <i class="ph-duotone ph-signature"></i>
+                                <span>Belum ada tanda tangan elektronik</span>
+                            </div>
                         </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small
+                                id="resume_rj_signature_hint"
+                                class="text-body-secondary d-block mt-2">
+                                Tanda tangan elektronik dokter telah tersimpan.
+                            </small>
+                            <div
+                                id="resume_rj_signature_saved_at"
+                                class="small text-body-secondary mt-2">
+                            </div>
+                        </div>
+                        <!-- BUTTON -->
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <!-- Update TTE -->
+                            <button
+                                type="button"
+                                class="btn btn-subtle-primary d-none"
+                                id="btn_update_signature_resume_rj">
+                                <i class="ph-duotone ph-pencil-simple me-1"></i>
+                                Perbarui TTE
+                            </button>
+                            <!-- Clear Canvas -->
+                            <button
+                                type="button"
+                                class="btn btn-subtle-danger d-none"
+                                id="btn_clear_signature_resume_rj">
+                                <i class="ph-duotone ph-eraser me-1"></i>
+                                Hapus Tanda Tangan
+                            </button>
+                            <!-- Cancel Update -->
+                            <button
+                                type="button"
+                                class="btn btn-subtle-secondary d-none"
+                                id="btn_cancel_signature_resume_rj">
+                                <i class="ph-duotone ph-x me-1"></i>
+                                Batal Perbarui
+                            </button>
+                        </div>
+                        <!-- TTE META -->
                     </div>
                 </div>
             </div>
@@ -96,7 +153,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <!-- HEADER -->
-            <div class="modal-header resume-rj-preview-header">
+            <div class="modal-header resume-rj-preview-header d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
                     <div class="resume-rj-preview-icon">
                         <i class="ph-duotone ph-file-pdf"></i>

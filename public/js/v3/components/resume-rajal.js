@@ -49,7 +49,12 @@
             tgl_difinal: ''
         };
 
+        /* =========================================================
+        * SIGNATURE STATE
+        * ========================================================= */
         let signatureSavedUrl = null;
+        let signatureSavedAt = null;
+        let signatureEditing = false;
 
         const canvas = document.getElementById('canvas_signature_resume_rj');
         const ctx = canvas ? canvas.getContext('2d') : null;
@@ -133,6 +138,21 @@
                 loading || saving
             );
 
+            $('#btn_update_signature_resume_rj').prop(
+                'disabled',
+                loading || saving || isFinal
+            );
+
+            $('#btn_save_signature_resume_rj').prop(
+                'disabled',
+                loading || saving || isFinal
+            );
+
+            $('#btn_cancel_signature_resume_rj').prop(
+                'disabled',
+                loading || saving
+            );
+
             if (loading) {
                 $badge
                     .attr('class', 'badge bg-secondary')
@@ -207,49 +227,216 @@
         }
 
         /* =========================================================
-         * FILL FORM
-         * ========================================================= */
-        function fill(data = {}) {
-            Object.keys(data).forEach(function (name) {
+        * FILL FORM
+        * ========================================================= */
+        function fill(data_ori = {}, data_final = {}) {
+            Object.keys(data_ori).forEach(function (name) {
+                const finalValue = data_final[name];
+
+                const hasFinalValue =
+                    finalValue !== null &&
+                    finalValue !== undefined &&
+                    finalValue !== '';
+
+                const rawValue = hasFinalValue
+                    ? finalValue
+                    : (data_ori[name] ?? '');
+
+                // Convert HTML menjadi plain text
+                const value = htmlToText(rawValue);
+
                 $fieldset
                     .find(`[name="${name}"]`)
-                    .val(data[name] ?? '');
+                    .val(value);
             });
+
+            // Field yang hanya terdapat pada data_final
+            Object.keys(data_final).forEach(function (name) {
+                if (Object.prototype.hasOwnProperty.call(data_ori, name)) {
+                    return;
+                }
+
+                const value = htmlToText(data_final[name] ?? '');
+
+                $fieldset
+                    .find(`[name="${name}"]`)
+                    .val(value);
+            });
+        }
+
+        /* =========================================================
+        * HTML TO PLAIN TEXT
+        * ========================================================= */
+        function htmlToText(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            const html = String(value);
+
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+
+            // BR menjadi newline
+            temp.querySelectorAll('br').forEach(function (br) {
+                br.replaceWith('\n');
+            });
+
+            // Beberapa elemen block diberi pemisah baris
+            temp.querySelectorAll('p, div, li, tr, h1, h2, h3, h4, h5, h6')
+                .forEach(function (element) {
+                    element.appendChild(document.createTextNode('\n'));
+                });
+
+            // Ambil text tanpa HTML
+            let text = temp.textContent || temp.innerText || '';
+
+            // Bersihkan spasi HTML
+            text = text.replace(/\u00a0/g, ' ');
+
+            // Rapikan newline berlebih, maksimal 2 newline berurutan
+            text = text.replace(/\n{3,}/g, '\n\n');
+
+            // Rapikan spasi berlebih per baris
+            text = text
+                .split('\n')
+                .map(line => line.trim())
+                .join('\n');
+
+            return text.trim();
         }
 
         /* =========================================================
          * SIGNATURE STATUS
          * ========================================================= */
         function setSignatureSaved(url, date) {
-            hasSignature = !!url;
             signatureSavedUrl = url || null;
+            signatureSavedAt = date || null;
 
-            if (hasSignature) {
-                $tteStatus
-                    .attr('class', 'badge bg-success')
-                    .text('Tanda tangan tersimpan');
+            if (!url) {
+                resetSignatureSaved();
+                return;
+            }
 
-                $signaturePreview
-                    .attr('src', url);
+            const image = new Image();
 
-                $signaturePreviewWrap
+            image.onload = function () {
+                hasSignature = true;
+
+                $('#resume_rj_signature_preview')
+                    .attr('src', url)
                     .removeClass('d-none');
 
-                $signatureDate.text(
-                    date ? `Disimpan ${date}` : ''
+                renderSignatureState();
+            };
+
+            image.onerror = function () {
+                hasSignature = false;
+
+                signatureSavedUrl = null;
+                signatureSavedAt = null;
+
+                $('#resume_rj_signature_preview')
+                    .attr('src', '')
+                    .addClass('d-none');
+
+                renderSignatureState();
+
+                notify(
+                    'error',
+                    'Tanda Tangan',
+                    'File tanda tangan ditemukan, tetapi gambar tidak dapat dimuat.'
                 );
+
+                console.error('Gagal memuat file TTE:', url);
+            };
+
+            image.src = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
+        }
+        function resetSignatureSaved() {
+            hasSignature = false;
+            signatureSavedUrl = null;
+            signatureSavedAt = null;
+
+            $('#resume_rj_signature_preview')
+                .attr('src', '')
+                .addClass('d-none');
+
+            renderSignatureState();
+        }
+
+        /* =========================================================
+        * RENDER SIGNATURE STATE
+        * ========================================================= */
+        function renderSignatureState() {
+
+            const $saved = $('#resume_rj_signature_saved');
+            const $canvasWrap = $('#resume_rj_signature_canvas_wrap');
+
+            const $update = $('#btn_update_signature_resume_rj');
+            const $clear = $('#btn_clear_signature_resume_rj');
+            const $cancel = $('#btn_cancel_signature_resume_rj');
+            const $save = $('#btn_save_signature_resume_rj');
+
+            const $hint = $('#resume_rj_signature_hint');
+
+            if (hasSignature && signatureSavedUrl && !signatureEditing) {
+
+                // Signature tersimpan
+                $saved.removeClass('d-none');
+                $canvasWrap.addClass('d-none');
+
+                $update.removeClass('d-none');
+                $clear.addClass('d-none');
+                $cancel.addClass('d-none');
+                $save.addClass('d-none');
+
+                $hint.text('Tanda tangan elektronik dokter telah tersimpan.');
+
+                $tteStatus
+                    .attr('class', 'badge bg-success')
+                    .text('Sudah ditandatangani');
+
+            } else if (signatureEditing) {
+
+                // Mode update TTE
+                $saved.addClass('d-none');
+                $canvasWrap.removeClass('d-none');
+
+                $update.addClass('d-none');
+                $clear.removeClass('d-none');
+                $cancel.removeClass('d-none');
+                $save.removeClass('d-none');
+
+                $hint.text('Silakan buat tanda tangan baru pada area di atas.');
+
+                $tteStatus
+                    .attr('class', 'badge bg-warning text-dark')
+                    .text('Memperbarui TTE');
+
             } else {
+
+                // Belum memiliki TTE
+                $saved.addClass('d-none');
+                $canvasWrap.removeClass('d-none');
+
+                $update.addClass('d-none');
+                $clear.removeClass('d-none');
+                $cancel.addClass('d-none');
+                $save.removeClass('d-none');
+
+                $hint.text('Tanda tangan pada area di atas menggunakan mouse atau layar sentuh.');
+
                 $tteStatus
                     .attr('class', 'badge bg-secondary')
                     .text('Belum ditandatangani');
-
-                $signaturePreviewWrap
-                    .addClass('d-none');
-
-                $signaturePreview.attr('src', '');
-
-                $signatureDate.text('');
             }
+
+            $('#resume_rj_signature_saved_at').text(
+                hasSignature && signatureSavedAt && !signatureEditing
+                    ? 'Tanda tangan tersimpan pada ' + signatureSavedAt
+                    : ''
+            );
         }
 
         /* =========================================================
@@ -645,7 +832,8 @@
                     dataType: 'json'
                 });
 
-                fill(response.data || {});
+                // fill(response.data || {});
+                fill(response.data_ori, response.data_final);
 
                 isFinal = !!response.is_final;
 
@@ -653,6 +841,13 @@
                     response.final_meta ||
                     finalMeta
                 );
+
+                console.log('Signature element check:', {
+                    status: $('#resume_rj_tte_status').length,
+                    preview: $('#resume_rj_signature_preview').length,
+                    previewWrap: $('#resume_rj_signature_preview_wrap').length,
+                    url: response.signature
+                });
 
                 setSignatureSaved(
                     response.signature || null,
@@ -674,16 +869,25 @@
         }
 
         /* =========================================================
-         * SAVE SIGNATURE
-         * ========================================================= */
+        * SAVE SIGNATURE
+        * ========================================================= */
         async function saveSignature() {
+
+            if (isFinal) {
+                notify(
+                    'warning',
+                    'Resume sudah final',
+                    'Batalkan finalisasi terlebih dahulu jika ingin memperbarui TTE.'
+                );
+                return;
+            }
+
             if (!hasInk) {
                 notify(
                     'warning',
                     'Tanda tangan kosong',
                     'Silakan tanda tangan terlebih dahulu.'
                 );
-
                 return;
             }
 
@@ -702,26 +906,31 @@
                     }
                 });
 
+                // Keluar dari mode edit
+                signatureEditing = false;
+
+                // Reset ink canvas
+                clearCanvas();
+
+                // Load signature yang baru tersimpan
                 setSignatureSaved(
                     response.signature,
                     response.signature_tanggal
                 );
 
-                clearCanvas();
-
                 notify(
                     'success',
                     'TTE tersimpan',
-                    response.message ||
-                        'Tanda tangan berhasil disimpan'
+                    response.message || 'Tanda tangan berhasil disimpan'
                 );
+
             } catch (xhr) {
                 notify(
                     'error',
                     'Gagal menyimpan TTE',
-                    xhr.responseJSON?.message ||
-                        'Tanda tangan tidak dapat disimpan'
+                    xhr.responseJSON?.message || 'Tanda tangan tidak dapat disimpan'
                 );
+
             } finally {
                 saving = false;
                 updateStatus();
@@ -1182,6 +1391,62 @@
             'click',
             saveSignature
         );
+
+        /* =========================================================
+        * UPDATE SIGNATURE
+        * ========================================================= */
+        $('#btn_update_signature_resume_rj')
+            .off('click')
+            .on('click', function () {
+
+                if (isFinal) {
+                    notify(
+                        'warning',
+                        'Resume sudah final',
+                        'Batalkan finalisasi terlebih dahulu untuk memperbarui TTE.'
+                    );
+                    return;
+                }
+
+                signatureEditing = true;
+
+                clearCanvas();
+                renderSignatureState();
+
+                requestAnimationFrame(function () {
+                    resizeCanvas(false);
+                });
+            });
+
+        /* =========================================================
+        * CANCEL UPDATE SIGNATURE
+        * ========================================================= */
+        $('#btn_cancel_signature_resume_rj')
+            .off('click')
+            .on('click', function () {
+
+                signatureEditing = false;
+
+                // Bersihkan coretan sementara
+                clearCanvas();
+
+                // Kembali menampilkan TTE tersimpan
+                renderSignatureState();
+            });
+
+        /* =========================================================
+        * CLEAR SIGNATURE CANVAS
+        * ========================================================= */
+        // $('#btn_clear_signature_resume_rj').on('click', function () {
+
+        //     const canvas = document.getElementById('canvas_signature_resume_rj');
+
+        //     if (!canvas) return;
+
+        //     const ctx = canvas.getContext('2d');
+
+        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // });
 
         /* =========================================================
          * INITIAL LOAD

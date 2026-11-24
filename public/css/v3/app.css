@@ -614,20 +614,50 @@ a {
 }
 
 .icon-button {
-    width: 39px;
+    font-family: var(--typo-font-family) !important;
+    min-width: 39px;
     height: 39px;
-    display: inline-grid;
-    place-items: center;
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
     border: 1px solid var(--border);
     border-radius: 12px;
     background: var(--surface);
     color: var(--text);
-    font-size: 18px
+
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.icon-button i {
+    font-size: 18px;
+    line-height: 1;
 }
 
 .icon-button:hover {
     color: var(--primary);
-    border-color: var(--primary)
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+.icon-button:active {
+    transform: scale(0.97);
+}
+
+/* MOBILE: Icon only */
+@media (max-width: 767.98px) {
+    .icon-button {
+        width: 39px;
+        min-width: 39px;
+        padding: 0;
+    }
 }
 
 .sidebar-toggle {
