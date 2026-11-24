@@ -65,33 +65,120 @@ class ResumeRajalController extends Controller
             ];
     }
 
+    private function getResume(string $kunjungan): object
+    {
+        $sql = "
+            SELECT
+                master.getReplaceFont(CONCAT(
+                    'Anamnesis / Riwayat Penyakit Sekarang : ',
+                    IFNULL(anm.DESKRIPSI,'-'),'<br>',
+                    'Keluhan Utama : ',
+                    IFNULL(IF(
+                        IFNULL(ku.DESKRIPSI,(
+                            SELECT ku.DESKRIPSI
+                            FROM medicalrecord.keluhan_utama ku
+                            LEFT JOIN pendaftaran.kunjungan pku ON pku.NOMOR=ku.KUNJUNGAN
+                            WHERE pku.NOPEN=pp.NOMOR AND pku.REF IS NULL LIMIT 1
+                        ))='-',
+                        '-',
+                        IF(ku.DESKRIPSI='','-',(
+                            SELECT ku.DESKRIPSI
+                            FROM medicalrecord.keluhan_utama ku
+                            LEFT JOIN pendaftaran.kunjungan pku ON pku.NOMOR=ku.KUNJUNGAN
+                            WHERE pku.NOPEN=pp.NOMOR AND pku.REF IS NULL LIMIT 1
+                        ))
+                    ),'-'),
+                    IF((SELECT sub.SUBYEKTIF
+                        FROM medicalrecord.cppt sub
+                        LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=sub.KUNJUNGAN
+                        WHERE pkrp.NOMOR=pk.NOMOR AND sub.`STATUS`=1
+                        ORDER BY sub.TANGGAL DESC LIMIT 1) IS NULL,
+                        '',
+                        CONCAT('<br><br>',(
+                            SELECT sub.SUBYEKTIF
+                            FROM medicalrecord.cppt sub
+                            LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=sub.KUNJUNGAN
+                            WHERE pkrp.NOMOR=pk.NOMOR AND sub.`STATUS`=1
+                            ORDER BY sub.TANGGAL DESC LIMIT 1
+                        ))
+                    )
+                )) SUBYEKTIF,
+                master.getReplaceFont(CONCAT(IFNULL((
+                    SELECT oby.OBYEKTIF
+                    FROM medicalrecord.cppt oby
+                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=oby.KUNJUNGAN
+                    WHERE pkrp.NOMOR=pk.NOMOR AND oby.`STATUS`=1
+                    ORDER BY oby.TANGGAL DESC LIMIT 1
+                ),'-'))) OBYEKTIF,
+                master.getReplaceFont(CONCAT(IFNULL((
+                    SELECT ass.ASSESMENT
+                    FROM medicalrecord.cppt ass
+                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=ass.KUNJUNGAN
+                    WHERE pkrp.NOMOR=pk.NOMOR AND ass.`STATUS`=1
+                    ORDER BY ass.TANGGAL DESC LIMIT 1
+                ),'-'))) ASSESMENT,
+                master.getReplaceFont(CONCAT(IFNULL((
+                    SELECT pln.PLANNING
+                    FROM medicalrecord.cppt pln
+                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=pln.KUNJUNGAN
+                    WHERE pkrp.NOMOR=pk.NOMOR AND pln.`STATUS`=1
+                    ORDER BY pln.TANGGAL DESC LIMIT 1
+                ),'-'))) PLANNING,
+                master.getReplaceFont(IFNULL((
+                    SELECT ins.INSTRUKSI
+                    FROM medicalrecord.cppt ins
+                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=ins.KUNJUNGAN
+                    WHERE pkrp.NOMOR=pk.NOMOR AND ins.`STATUS`=1
+                    ORDER BY ins.TANGGAL DESC LIMIT 1
+                ),'-')) INSTRUKSI,
+                rrj.finalisasi,
+                rrj.finalisasi_oleh,
+                rrj.finalisasi_tanggal
+            FROM pendaftaran.kunjungan pk
+            LEFT JOIN medicalrecord.anamnesis anm ON pk.NOMOR=anm.KUNJUNGAN AND anm.`STATUS`!=0
+            LEFT JOIN medicalrecord.keluhan_utama ku ON pk.NOMOR=ku.KUNJUNGAN AND ku.`STATUS`!=0
+            LEFT JOIN pendaftaran.pendaftaran pp ON pk.NOPEN=pp.NOMOR AND pp.`STATUS`!=0
+            LEFT JOIN simrspku_klaim.resume_rawat_jalan rrj ON pk.NOMOR=rrj.kunjungan
+            WHERE pk.`STATUS`!=0
+            AND pk.NOMOR=?
+            GROUP BY pk.NOMOR";
+
+        return DB::selectOne($sql, [$kunjungan]) ?? (object) [];
+    }
+
     public function show(string $kunjungan)
     {
         $visit = $this->validKunjungan($kunjungan);
 
-        $resume = $this->record($kunjungan);
+        $resumeOri = $this->getResume($kunjungan);
 
-        $finalUser = $resume->finalisasi_oleh
+        $resumeData = $this->record($kunjungan);
+
+        $finalUser = $resumeData->finalisasi_oleh
             ? DB::table('aplikasi.pengguna')
-                ->where('ID', $resume->finalisasi_oleh)
+                ->where('ID', $resumeData->finalisasi_oleh)
                 ->first()
             : null;
 
         // TTE dari tabel simrspku_klaim.tanda_tangan
         $signature = $this->signatureRecord($kunjungan);
 
+        $signatureUrl = $signature
+            ? Storage::disk('public')->url($signature->signature_path)
+            : null;
+
         return response()->json([
             'success' => true,
             'kunjungan' => $visit,
-            'data' => $resume,
-            'is_final' => (bool) ($resume->finalisasi ?? 0),
+            'data_ori' => $resumeOri,
+            'data_final' => $resumeData,
+            'is_final' => (bool) ($resumeData->finalisasi ?? 0),
 
             'final_meta' => [
                 'oleh_nama' => $finalUser->NAMA ?? null,
-                'tgl_difinal' => $resume->finalisasi_tanggal,
-                'tgl_difinal_text' => $resume->finalisasi_tanggal
-                    ? Carbon::parse($resume->finalisasi_tanggal)
-                        ->translatedFormat('d F Y H:i')
+                'tgl_difinal' => $resumeData->finalisasi_tanggal,
+                'tgl_difinal_text' => $resumeData->finalisasi_tanggal
+                    ? Carbon::parse($resumeData->finalisasi_tanggal)->translatedFormat('d F Y H:i')
                     : null,
             ],
 
@@ -112,7 +199,9 @@ class ResumeRajalController extends Controller
     {
         $this->validKunjungan($kunjungan);
         $resume = $this->record($kunjungan);
+
         abort_if((bool) $resume->finalisasi, 409, 'Resume sudah difinalisasi. Batalkan finalisasi terlebih dahulu.');
+
         $data = $request->validate([
             'SUBYEKTIF' => ['nullable', 'string', 'max:20000'],
             'OBYEKTIF' => ['nullable', 'string', 'max:20000'],
@@ -122,8 +211,11 @@ class ResumeRajalController extends Controller
         ]);
         $data['kunjungan'] = $kunjungan;
         $data['updated_at'] = now();
+
         if (empty($resume->created_at)) $data['created_at'] = now();
+
         DB::table($this->table)->updateOrInsert(['kunjungan' => $kunjungan], $data);
+
         return response()->json(['success' => true, 'message' => 'Resume RJ berhasil disimpan.', 'data' => $this->record($kunjungan)]);
     }
 
@@ -354,8 +446,7 @@ class ResumeRajalController extends Controller
 
         try {
 
-            $response = app(BerkasKlaimController::class)
-                ->generateResumeMedis($kunjungan);
+            $response = app(BerkasKlaimController::class)->generateResumeMedis($kunjungan);
 
             // Pastikan response berupa PDF
             $response->headers->set('Content-Type', 'application/pdf');

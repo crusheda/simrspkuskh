@@ -1459,8 +1459,7 @@ class BerkasKlaimController extends Controller
 
                 if ($ttdKunjungan) {
                     $signaturePath = (string) ($ttdKunjungan->signature_path ?? '');
-                    $bolehDipakai = $allowAnyVisitSignature
-                        || Str::startsWith($signaturePath, 'signatures/pegawai');
+                    $bolehDipakai = $allowAnyVisitSignature || Str::startsWith($signaturePath, 'signatures'); // signatures/pegawai
 
                     if ($bolehDipakai && $signaturePath !== '') {
                         $candidate = storage_path('app/public/' . $signaturePath);
@@ -1610,6 +1609,9 @@ class BerkasKlaimController extends Controller
                 $resume->NAMADOKTER,
                 false
             );
+
+            // print_r($signatureMain);
+            // die();
 
             if (!$signatureMain) {
                 return response()->json([

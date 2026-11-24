@@ -528,6 +528,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
         Route::post('emr/resume/ranap/{kunjungan}/batal', [ResumeRanapController::class, 'batalFinal']);
         Route::get('emr/resume/ranap/preview/{kunjungan}', [ResumeRanapController::class, 'printPreview']);
 
+        // FORM FINALISASI RESUME MEDIS (RAWAT JALAN)
         Route::get('emr/resume/rajal/{kunjungan}', [ResumeRajalController::class, 'show']);
         Route::post('emr/resume/rajal/{kunjungan}/simpan', [ResumeRajalController::class, 'store']);
         Route::post('emr/resume/rajal/{kunjungan}/finalisasi', [ResumeRajalController::class, 'finalisasi']);
