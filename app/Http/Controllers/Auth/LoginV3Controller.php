@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers\Auth;
@@ -21,23 +20,29 @@ class LoginV3Controller extends Controller
         ]);
 
         try {
-            $authenticated = $authService->authenticate(
+            $result = $authService->authenticate(
                 $request->name,
                 $request->password
             );
 
-            if (!$authenticated) {
-                return back()->withErrors([
-                    'name' => 'Username atau password salah.',
-                ]);
+            // Login gagal
+            if (!$result['success']) {
+                return back()
+                    ->withInput($request->only('name'))
+                    ->withErrors([
+                        'name' => $result['message'],
+                    ]);
             }
 
+            // Login berhasil
             return redirect()->route('v3.emr');
 
         } catch (RuntimeException $e) {
-            return back()->withErrors([
-                'name' => $e->getMessage(),
-            ]);
+            return back()
+                ->withInput($request->only('name'))
+                ->withErrors([
+                    'name' => $e->getMessage(),
+                ]);
         }
     }
 }

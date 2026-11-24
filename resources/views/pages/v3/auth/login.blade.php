@@ -115,11 +115,11 @@
                             required
                             @error('name') aria-invalid="true" @enderror>
 
-                        @error('name')
+                        {{-- @error('name')
                             <div class="invalid-feedback d-block">
                                 {{ $message }}
                             </div>
-                        @enderror
+                        @enderror --}}
 
                     </div>
 
@@ -187,11 +187,11 @@
 
                         </div>
 
-                        @error('password')
+                        {{-- @error('password')
                             <div class="invalid-feedback d-block">
                                 {{ $message }}
                             </div>
-                        @enderror
+                        @enderror --}}
 
                     </div>
 

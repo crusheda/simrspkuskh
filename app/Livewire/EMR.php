@@ -20,6 +20,11 @@ class EMR extends Component
 
     public function mount(): void
     {
+        if (!Auth::user()->hasPermissionTo('emr')) {
+            $this->redirectRoute('v3.dashboard');
+            return;
+        }
+
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
 
         $user = Auth::user();

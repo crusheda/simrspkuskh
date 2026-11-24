@@ -51,15 +51,15 @@
     <script src="{{ asset('js/jquery.min.js') }}"></script>
 
     {{-- Legacy auth/vendor CSS --}}
-    <link rel="stylesheet" href="{{ asset('assets/v2/auth/css/style.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/v2/auth/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/fonts/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/libs/flaticon/css/all/all.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/libs/lucide/lucide.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/libs/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/libs/simplebar/simplebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/v2/libs/node-waves/waves.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/v2/libs/bootstrap-select/css/bootstrap-select.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/v2/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/v2/libs/bootstrap-select/css/bootstrap-select.min.css') }}"> --}}
+    {{-- <link rel="stylesheet" href="{{ asset('assets/v2/css/styles.css') }}"> --}}
 
     {{-- SIRMED v.3 Login CSS --}}
     <link rel="stylesheet" href="{{ asset('css/v3/pages/auth.css') }}">
@@ -83,9 +83,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     {{-- Legacy NexLink scripts --}}
-    <script src="{{ asset('assets/v2/libs/global/global.min.js') }}"></script>
-    <script src="{{ asset('assets/v2/js/appSettings.js') }}"></script>
-    <script src="{{ asset('assets/v2/js/main.js') }}"></script>
+    {{-- <script src="{{ asset('assets/v2/libs/global/global.min.js') }}"></script>
+    <script src="{{ asset('assets/v2/js/appSettings.js') }}"></script> --}}
+    {{-- <script src="{{ asset('assets/v2/js/main.js') }}"></script> --}}
 
     @stack('scripts')
     @livewireScripts

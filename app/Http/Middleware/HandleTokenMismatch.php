@@ -23,9 +23,8 @@ class HandleTokenMismatch
             }
 
             // Tentukan route login berdasarkan URL yang diakses
-            $loginRoute = $request->is('v3/*') || $request->is('v3')
-                ? 'v3.login'
-                : 'login';
+            // $loginRoute = $request->is('v3/*') || $request->is('v3') ? 'v3.login' : 'login';
+            $loginRoute = $request->is('v3/*') || $request->is('v3') ? 'v3.login' : 'v3.login';
 
             return redirect()
                 ->route($loginRoute)

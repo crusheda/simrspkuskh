@@ -33,7 +33,7 @@ class Login extends Component
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        // Rate limit login berdasarkan username dan IP
+        // Rate limit berdasarkan username dan IP
         $key = Str::lower($this->name) . '|' . request()->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -48,26 +48,27 @@ class Login extends Component
         }
 
         try {
-            $authenticated = $authService->authenticate(
+            $result = $authService->authenticate(
                 $this->name,
                 $this->password
             );
 
-            if (!$authenticated) {
+            // =====================================================
+            // LOGIN GAGAL
+            // =====================================================
+            if (!$result['success']) {
                 RateLimiter::hit($key, 60);
 
-                $this->addError(
-                    'name',
-                    'Username atau password salah.'
-                );
+                $this->addError('name', $result['message']);
 
                 return;
             }
 
+            // =====================================================
+            // LOGIN BERHASIL
+            // =====================================================
             RateLimiter::clear($key);
 
-            // Login berhasil
-            // $this->redirectRoute('v3.emr', navigate: false);
             $this->redirectByPermission();
 
         } catch (RuntimeException $e) {
@@ -77,8 +78,7 @@ class Login extends Component
 
     public function render()
     {
-        return view('pages.v3.auth.login')
-            ->layout('layouts.v3.auth.index');
+        return view('pages.v3.auth.login')->layout('layouts.v3.auth.index');
     }
 
     private function redirectByPermission(): void

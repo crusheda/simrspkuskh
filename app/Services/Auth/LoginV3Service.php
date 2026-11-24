@@ -11,9 +11,11 @@ use Throwable;
 
 class LoginV3Service
 {
-    public function authenticate(string $username, string $password): bool
+    public function authenticate(string $username, string $password): array
     {
-        // Periksa koneksi database aplikasi
+        // =====================================================
+        // CEK KONEKSI DATABASE
+        // =====================================================
         try {
             DB::connection('db_aplikasi')->getPdo();
         } catch (Throwable $e) {
@@ -22,7 +24,9 @@ class LoginV3Service
             );
         }
 
-        // Cari pengguna berdasarkan LOGIN
+        // =====================================================
+        // CARI PENGGUNA
+        // =====================================================
         try {
             $user = Pengguna::where('LOGIN', $username)->first();
         } catch (Throwable $e) {
@@ -31,17 +35,47 @@ class LoginV3Service
             );
         }
 
-        // Verifikasi username dan password
-        if (!$user || !Hash::check($password, $user->PASSWORD)) {
-            return false;
+        // =====================================================
+        // USER TIDAK DITEMUKAN
+        // =====================================================
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'Username atau password yang Anda masukkan tidak sesuai.',
+            ];
         }
 
-        // Login pengguna
+        // =====================================================
+        // AKUN TIDAK AKTIF
+        // =====================================================
+        if ((int) $user->STATUS !== 1) {
+            return [
+                'success' => false,
+                'message' => 'Akun Anda Dinonaktifkan. Silakan hubungi administrator.',
+            ];
+        }
+
+        // =====================================================
+        // VERIFIKASI PASSWORD
+        // =====================================================
+        if (!Hash::check($password, $user->PASSWORD)) {
+            return [
+                'success' => false,
+                'message' => 'Username atau password yang Anda masukkan tidak sesuai.',
+            ];
+        }
+
+        // =====================================================
+        // LOGIN
+        // =====================================================
         Auth::login($user);
 
         // Regenerasi session untuk keamanan
         session()->regenerate();
 
-        return true;
+        return [
+            'success' => true,
+            'message' => 'Login berhasil.',
+        ];
     }
 }

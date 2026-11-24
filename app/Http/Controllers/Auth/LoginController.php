@@ -29,10 +29,12 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('v2.dashboard');
+            // return redirect()->route('v2.dashboard');
+            return redirect()->route('v3.emr');
         } else {
             // return redirect()->route('v2.login');
-            return view('pages.v2.auth.login');
+            // return view('pages.v2.auth.login');
+            return redirect()->route('v3.login');
         }
     }
 
@@ -62,7 +64,7 @@ class LoginController extends Controller
         // Gunakan DB untuk mengambil data pengguna berdasarkan username LOGIN
         try {
             // QUERY KE DATABASE
-            $user = Pengguna::where('LOGIN', $request->name)->first();
+            $user = Pengguna::where('LOGIN', $request->name)->where('STATUS', 1)->first();
         } catch (QueryException | PDOException $e) {
 
             // KHUSUS JIKA DATABASE TIDAK TERHUBUNG
@@ -75,7 +77,6 @@ class LoginController extends Controller
             // Error DB lain → lempar ulang
             throw $e;
         }
-        // $user = DB::table('aplikasi.pengguna')->where('LOGIN', $credentials[$this->username()])->first();
 
         // Verifikasi password
         if ($user && Hash::check($request->password, $user->PASSWORD)) {
@@ -143,7 +144,8 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();  // Regenerasi token CSRF untuk keamanan
 
-        return redirect('/v2/login');  // Redirect ke halaman login setelah logout
+        // return redirect('/v2/login');  // Redirect ke halaman login setelah logout
+        return redirect('/v3/login');  // Redirect ke halaman login setelah logout
     }
 
     /**
@@ -152,7 +154,8 @@ class LoginController extends Controller
      * @var string
      */
     // protected $redirectTo = RouteServiceProvider::HOME;
-    protected $redirectTo = '/v2/dashboard';
+    // protected $redirectTo = '/v2/dashboard';
+    protected $redirectTo = '/v3/dashboard';
 
     /**
      * Create a new controller instance.

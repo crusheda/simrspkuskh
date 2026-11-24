@@ -107,12 +107,15 @@ Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // NEW SIRMED VERSI 2
-Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+// Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+Route::get('/', function () { return redirect()->route('v3.emr'); });
 Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
-    Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+    // Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+    Route::get('/', function () { return redirect()->route('v2.emr'); });
 
     // Route::get('login', function () { return view('pages.v2.auth.login'); })->name('v2.login');
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('v2.login');
+    Route::get('/login', function () { return redirect()->route('v3.login'); });
+    // Route::get('login', [LoginController::class, 'showLoginForm'])->name('v2.login');
 
     // Route::fallback(function () {
     //     return response()->view('pages.errors.custom-404', [], 404);
