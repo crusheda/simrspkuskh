@@ -30,6 +30,7 @@ class ResumeRajalController extends Controller
     {
         return DB::table('simrspku_klaim.tanda_tangan')
             ->where('kunjungan', $kunjungan)
+            ->where('signature_path', 'LIKE', 'signatures/ttd_%')
             ->whereNull('deleted_at')
             ->orderByDesc('id')
             ->first();

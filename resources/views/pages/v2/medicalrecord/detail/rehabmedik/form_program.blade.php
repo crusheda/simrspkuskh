@@ -35,8 +35,27 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_s_t" rows="4" class="form-control" placeholder="..."></textarea>
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label">Keluhan Utama</label>
+                                    <input class="form-control" id="kelu" placeholder="...">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Detil Subjective</label>
+                                    <textarea id="cppt_s_t" rows="6" class="form-control" placeholder="..."></textarea>
+                                </div>
+                            </div>
                         </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
+                            <textarea id="cppt_a_t" rows="8" class="form-control" placeholder="..."></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label"><i><b>Procedure</b></i> <a class="text-danger">*</a></label>
+                            <textarea id="cppt_p_t" rows="3" class="form-control" placeholder="..."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
                             <div class="row" id="ttv_objective">
@@ -163,18 +182,17 @@
                                         <label class="form-label">
                                             Frekuensi Nadi
                                         </label>
+                                        <div class="input-group flex-grow-1 mb-2">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                name="nadi"
+                                            >
+                                            <span class="input-group-text">
+                                                X/menit
+                                            </span>
+                                        </div>
                                         <div class="d-flex align-items-center gap-3">
-                                            <div class="input-group flex-grow-1">
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    name="nadi"
-                                                >
-                                                <span class="input-group-text">
-                                                    X/menit
-                                                </span>
-                                            </div>
-
                                             {{-- REGULER --}}
                                             <div class="form-check m-0">
                                                 <input
@@ -216,17 +234,19 @@
                                         <label class="form-label">
                                             Frekuensi Nafas
                                         </label>
+
+                                        <div class="input-group flex-grow-1 mb-3">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                name="nafas"
+                                            >
+                                            <span class="input-group-text">
+                                                X/menit
+                                            </span>
+                                        </div>
+
                                         <div class="d-flex align-items-center gap-3">
-                                            <div class="input-group flex-grow-1">
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    name="nafas"
-                                                >
-                                                <span class="input-group-text">
-                                                    X/menit
-                                                </span>
-                                            </div>
 
                                             {{-- SIMETRIS --}}
                                             <div class="form-check m-0">
@@ -349,17 +369,7 @@
                                 </div>
                             </div>
                             <label class="form-label">Pemeriksaan Fisik</label>
-                            <textarea id="cppt_o_t" rows="3" class="form-control" placeholder="..."></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a_t" rows="4" class="form-control" placeholder="..."></textarea>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Procedure</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_p_t" rows="19" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_o_t" rows="8" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -854,6 +864,7 @@
             tgl_keluar: window.EMRData.tgl_keluar,
 
             // CPPT
+            kelu: $('#kelu').val(),
             cppt_s_t: $('#cppt_s_t').val(),
             cppt_o_t: $('#cppt_o_t').val(),
             cppt_a_t: $('#cppt_a_t').val(),
@@ -1257,7 +1268,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex-shrink-2 ms-4 d-flex flex-column gap-1">
-                                                <button class="btn btn-sm btn-outline-warning text-white" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${btnDis}>
+                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${btnDis}>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi" ${btnDis}>
@@ -1433,6 +1444,7 @@
                 // $('#cppt_o_t').val(res.data.OBYEKTIF ?? '');
                 // $('#cppt_a_t').val(res.data.ASSESMENT ?? '');
                 // $('#cppt_p_t').val(res.data.PROCEDURE ?? '');
+                $('#kelu').val(res.kelu ?? '');
                 $('#cppt_s_t').val(res.data.SUBYEKTIF ?? '');
                 $('#cppt_o_t').val(
                     objectiveTanpaTTVProgramTerapi(
@@ -1508,6 +1520,7 @@
             tgl_keluar: window.EMRData.tgl_keluar,
 
             // CPPT
+            kelu: $('#kelu').val(),
             cppt_s_t: $('#cppt_s_t').val(),
             cppt_o_t: $('#cppt_o_t').val(),
             cppt_a_t: $('#cppt_a_t').val(),

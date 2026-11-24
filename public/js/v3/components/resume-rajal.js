@@ -64,6 +64,42 @@
         let lastPoint = null;
 
         /* =========================================================
+         * RESUME RAJAL ACCESS BY RUANGAN CHOICED
+         * ========================================================= */
+        function isResumeRajalExcluded(idRuangan) {
+            const excludedRooms = ['10207%', '102010103'];
+            const id = String(idRuangan ?? '');
+
+            return excludedRooms.some(pattern => {
+                const regex = new RegExp(
+                    '^' + pattern
+                        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                        .replace(/%/g, '.*') + '$'
+                );
+
+                return regex.test(id);
+            });
+        }
+
+        function toggleResumeRajal(idRuangan) {
+            const excluded = isResumeRajalExcluded(idRuangan);
+
+            if (excluded) {
+                // Badge Final / Belum Final
+                $badge.prop('hidden',true);
+                $tabBadge.prop('hidden',true);
+            }
+
+            // Section TTE Dokter
+            document.getElementById('resume_rj_signature_section')
+                ?.classList.toggle('d-none', excluded);
+
+            // Semua tombol Resume Rajal
+            document.getElementById('resume_rj_actions')
+                ?.classList.toggle('d-none', excluded);
+        }
+
+        /* =========================================================
          * NOTIFICATION
          * ========================================================= */
         function notify(type, title, message) {
@@ -842,12 +878,14 @@
                     finalMeta
                 );
 
-                console.log('Signature element check:', {
-                    status: $('#resume_rj_tte_status').length,
-                    preview: $('#resume_rj_signature_preview').length,
-                    previewWrap: $('#resume_rj_signature_preview_wrap').length,
-                    url: response.signature
-                });
+                // console.log('Signature element check:', {
+                //     status: $('#resume_rj_tte_status').length,
+                //     preview: $('#resume_rj_signature_preview').length,
+                //     previewWrap: $('#resume_rj_signature_preview_wrap').length,
+                //     url: response.signature
+                // });
+
+                toggleResumeRajal(response.kunjungan.RUANGAN);
 
                 setSignatureSaved(
                     response.signature || null,

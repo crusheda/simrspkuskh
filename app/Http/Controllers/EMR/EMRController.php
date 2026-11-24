@@ -920,7 +920,7 @@ class EMRController extends Controller
         ]);
     }
 
-    public function searchEMRKunjungan(Request $request)
+    public function searchEMRKunjungan(Request $request) // SEARCH EMR SIRMED V2
     {
         $norm = trim($request->norm);
 
@@ -1008,19 +1008,13 @@ class EMRController extends Controller
         ]);
     }
 
-    public function searchByNoRM(Request $request)
+
+    public function searchByKeyword(Request $request) // SEARCH EMR SIRMED V3
     {
-        $norm = preg_replace('/\D/', '', trim($request->norm ?? ''));
+        $keyword = trim((string) $request->input('keyword', ''));
 
-        // Hilangkan 0 di depan NORM
-        $norm = ltrim($norm, '0');
-
-        // Jika semua angka adalah 0
-        if ($norm === '') {
-            $norm = '0';
-        }
-
-        if ($norm === '') {
+        // Minimal 3 karakter untuk mengurangi query yang terlalu berat
+        if (mb_strlen($keyword) < 3) {
             return response()->json([
                 'success' => true,
                 'data' => [],
@@ -1030,28 +1024,81 @@ class EMRController extends Controller
         $user = auth()->user();
         $isAdmin = $user->hasRole('admin');
 
+        // Deteksi apakah keyword berupa angka
+        $isNumeric = preg_match('/^\d+$/', $keyword);
+
+        // Escape karakter khusus LIKE
+        $escapedKeyword = str_replace(
+            ['\\', '%', '_'],
+            ['\\\\', '\\%', '\\_'],
+            $keyword
+        );
+
+        // Pencarian nomor: prefix
+        $searchKeyword = $escapedKeyword . '%';
+
+        // Pencarian nama: contains
+        $searchNameKeyword = '%' . $escapedKeyword . '%';
+
         $data = DB::table('pendaftaran.pendaftaran as pp')
+
             ->join('pendaftaran.kunjungan as pk', function ($join) {
                 $join->on('pk.NOPEN', '=', 'pp.NOMOR')
                     ->where('pk.STATUS', '!=', 0);
             })
+
             ->leftJoin('master.pasien as ps', 'ps.NORM', '=', 'pp.NORM')
+
             ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+
             ->leftJoin('pendaftaran.penjamin as pj', 'pj.NOPEN', '=', 'pp.NOMOR')
+
             ->leftJoin('master.dokter as dr', 'dr.ID', '=', 'pk.DPJP')
+
             ->leftJoin('master.referensi as ref', function ($join) {
                 $join->on('ref.ID', '=', 'pj.JENIS')
                     ->where('ref.STATUS', 1)
                     ->where('ref.JENIS', 10);
             })
-            ->where('pp.NORM', $norm)
+
+            // =============================================
+            // PENCARIAN
+            // RM / NOMOR KUNJUNGAN / NOMOR ASURANSI / NAMA
+            // =============================================
+            ->where(function ($q) use ($searchKeyword, $searchNameKeyword) {
+
+                // Nomor Rekam Medis
+                $q->where('pp.NORM', 'LIKE', $searchKeyword)
+
+                    // Nomor Pendaftaran
+                    ->orWhere('pk.NOPEN', 'LIKE', $searchKeyword)
+
+                    // Nomor Kunjungan
+                    ->orWhere('pk.NOMOR', 'LIKE', $searchKeyword)
+
+                    // Nomor Asuransi (BPJS / lainnya, alphanumeric)
+                    ->orWhere('pj.NOMOR', 'LIKE', $searchKeyword)
+
+                    // Nama Pasien
+                    ->orWhereRaw(
+                        'master.getNamaLengkap(ps.NORM) LIKE ?',
+                        [$searchNameKeyword]
+                    );
+
+            })
+
+            // Status pendaftaran
             ->where('pp.STATUS', '!=', 0)
+
+            // Filter ruangan yang diperbolehkan
             ->where(function ($q) {
                 $q->where('pk.RUANGAN', 'LIKE', '10201%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '10207%');
             })
+
+            // Hak akses ruangan untuk non-admin
             ->when(!$isAdmin, function ($query) use ($user) {
                 $query->whereExists(function ($subquery) use ($user) {
                     $subquery->select(DB::raw(1))
@@ -1061,11 +1108,22 @@ class EMRController extends Controller
                         ->where('par.STATUS', 1);
                 });
             })
+
+            // Data yang dikembalikan
             ->select([
                 'pp.NORM',
-                DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
-                DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
-                DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+
+                DB::raw(
+                    'master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'
+                ),
+
+                DB::raw(
+                    'master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'
+                ),
+
+                DB::raw(
+                    'master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'
+                ),
 
                 'pp.NOMOR as NOPENDAFTARAN',
                 'pp.TANGGAL as TGLDAFTAR',
@@ -1077,13 +1135,17 @@ class EMRController extends Controller
 
                 'ru.DESKRIPSI as NAMARUANGAN',
 
+                'pj.NOMOR as NOMORASURANSI',
+
                 'ref.ID AS IDPENJAMIN',
                 'ref.DESKRIPSI AS NAMAPENJAMIN',
 
                 DB::raw("
                     master.getNamaLengkapPegawai(
                         CASE
-                            WHEN dr.NIP IS NULL OR dr.NIP = 0 OR dr.NIP = ''
+                            WHEN dr.NIP IS NULL
+                                OR dr.NIP = 0
+                                OR dr.NIP = ''
                             THEN pj.DPJP_LAYANAN
                             ELSE dr.NIP
                         END
@@ -1093,7 +1155,13 @@ class EMRController extends Controller
                 'pp.STATUS as STATUSDAFTAR',
                 'pk.STATUS as STATUSKUNJUNGAN',
             ])
+
+            // Kunjungan terbaru
             ->orderByDesc('pk.MASUK')
+
+            // Batasi hasil
+            ->limit(50)
+
             ->get();
 
         return response()->json([

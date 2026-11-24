@@ -73,6 +73,7 @@
         const patientInsuranceName = document.getElementById('patientInsuranceNameTopbar');
         const patientRefIdAsuransi = document.getElementById('patientRefIdAsuransiTopbar');
         const patientDropdownContainer = document.getElementById('patientDropdownContainer');
+        const cariEMRPasien = document.getElementById('cariEMRPasien');
         const appTopbar = document.getElementById('appTopbar');
 
         const patientTglMasuk = document.getElementById(
@@ -824,6 +825,10 @@
                 appTopbar.classList.add('is-home-mode');
             }
 
+            if (cariEMRPasien) {
+                cariEMRPasien.style.display = '';
+            }
+
             if (patientDropdownContainer) {
                 patientDropdownContainer.style.display = 'none';
             }
@@ -1014,6 +1019,7 @@
             }
 
             if (appTopbar) appTopbar.classList.remove('is-home-mode');
+            if (cariEMRPasien) cariEMRPasien.style.display = '';
             if (patientDropdownContainer) patientDropdownContainer.style.display = '';
 
             // =================================================

@@ -127,7 +127,7 @@
     {{-- ACTIONS: MENU PASIEN, NOTIFIKASI, TEMA, PROFIL --}}
     <div class="topbar-actions">
 
-        <button type="button" class="icon-button" id="cariEMRPasien" aria-label="Cari EMR Pasien">
+        <button type="button" class="icon-button" id="cariEMRPasien" style="display: none;" aria-label="Cari EMR Pasien">
             <i class="bi bi-search"></i>
             <span class="d-none d-md-inline ms-1">Cari EMR Pasien</span>
         </button>
@@ -327,7 +327,7 @@
                         </h5>
 
                         <div class="small text-body-secondary">
-                            Cari pasien berdasarkan Nomor Rekam Medis
+                            Cari Pasien berdasarkan Keyword
                         </div>
                     </div>
 
@@ -341,7 +341,6 @@
 
             </div>
 
-
             <!-- BODY -->
             <div class="modal-body p-3 p-md-4">
 
@@ -349,22 +348,20 @@
                 <div class="emr-search-box mb-4">
 
                     <label for="cariEMRNorm" class="form-label fw-semibold">
-                        Nomor Rekam Medis (NORM)
+                        Cari Rekam Medis Pasien
                     </label>
 
                     <div class="input-group input-group-lg emr-search-input-group">
 
                         <span class="input-group-text">
-                            <i class="bi bi-person-vcard"></i>
+                            <i class="bi bi-search"></i>
                         </span>
 
                         <input type="text"
-                               class="form-control"
-                               id="cariEMRNorm"
-                               placeholder="Masukkan nomor RM"
-                               maxlength="8"
-                               inputmode="numeric"
-                               autocomplete="off" autofocus>
+                            class="form-control fs-14"
+                            id="cariEMRNorm"
+                            placeholder="Tuliskan No.RM / No.Pendaftaran / No.Kunjungan / No.Asuransi / Nama Lengkap Pasien"
+                            autocomplete="off">
 
                         <button type="button"
                                 class="btn btn-primary"
@@ -377,15 +374,14 @@
                     </div>
 
                     <div class="form-text">
-                        Maksimal 8 digit. Angka 0 di depan akan otomatis disesuaikan saat pencarian.
+                        Ketik minimal 3 karakter. Pencarian dapat menggunakan nomor RM, nomor pendaftaran,
+                        nomor kunjungan, nomor Asuransi, atau nama lengkap pasien.
                     </div>
 
                 </div>
 
-
                 <!-- INFO SEARCH -->
                 <div id="cariEMRInfo" class="mb-3"></div>
-
 
                 <!-- RESULT -->
                 <div id="cariEMRHasil">

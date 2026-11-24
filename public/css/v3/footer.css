@@ -1,0 +1,277 @@
+
+/* =========================================================
+   SIRMED V3 — MODERN APP FOOTER
+   Desktop • Tablet • Mobile • Light/Dark
+========================================================= */
+
+:root {
+    --footer-height: 58px;
+    --footer-bg: var(--surface);
+    --footer-border: var(--border);
+    --footer-text: var(--muted);
+    --footer-brand: var(--text);
+    --footer-accent: var(--primary);
+}
+
+/* =========================================================
+   FOOTER CONTAINER
+========================================================= */
+
+.content-footer {
+    position: fixed;
+    left: var(--sidebar, 268px);
+    right: 0;
+    bottom: 0;
+    z-index: 1010;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-height: var(--footer-height);
+    padding: 10px 28px;
+
+    border-top: 1px solid var(--footer-border);
+    background: var(--footer-bg);
+
+    color: var(--footer-text);
+    font-size: 11px;
+    line-height: 1.4;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease;
+
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   BRAND LEFT
+========================================================= */
+
+.content-footer .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    min-width: 0;
+
+    color: var(--footer-text);
+    white-space: nowrap;
+}
+
+.content-footer .footer-brand > span {
+    opacity: .8;
+}
+
+.content-footer .footer-brand strong {
+    color: var(--footer-brand);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .65px;
+}
+
+/* Separator */
+
+.content-footer .footer-brand strong::before {
+    content: "";
+    display: inline-block;
+
+    width: 3px;
+    height: 3px;
+    margin: 0 8px 2px 2px;
+
+    border-radius: 50%;
+    background: var(--footer-accent);
+}
+
+/* =========================================================
+   RIGHT AREA
+========================================================= */
+
+.content-footer .footer-right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+/* Clock */
+
+#footer-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: var(--footer-text);
+
+    font-family: "Poppins", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+
+    letter-spacing: .2px;
+}
+
+#footer-clock b {
+    color: var(--footer-brand);
+    font-weight: 700;
+}
+
+/* Clock indicator */
+
+#footer-clock::before {
+    content: "";
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: #22c55e;
+
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+}
+
+/* =========================================================
+   HEART
+========================================================= */
+
+.content-footer .footer-heart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ef476f;
+    font-size: 11px;
+
+    animation: footer-heart-pulse 2.4s ease-in-out infinite;
+}
+
+/* =========================================================
+   HOVER / INTERACTION
+========================================================= */
+
+.content-footer .footer-heart:hover {
+    color: #ff1744;
+    transform: scale(1.15);
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] .content-footer {
+    background: var(--surface);
+    border-top-color: var(--border);
+}
+
+[data-bs-theme="dark"] .content-footer .footer-brand strong,
+[data-bs-theme="dark"] #footer-clock b {
+    color: var(--text);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1199.98px) {
+    .content-footer {
+        padding-inline: 22px;
+    }
+}
+
+/* =========================================================
+   MOBILE / TABLET
+   Sidebar sudah tidak mengambil ruang
+========================================================= */
+
+@media (max-width: 991.98px) {
+    .content-footer {
+        left: 0;
+        padding-inline: 20px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+    :root {
+        --footer-height: 58px;
+    }
+
+    .content-footer {
+        min-height: var(--footer-height);
+
+        padding: 9px 14px;
+
+        gap: 4px;
+    }
+
+    .content-footer .footer-brand {
+        gap: 4px;
+        font-size: 10px;
+    }
+
+    .content-footer .footer-brand strong {
+        font-size: 10px;
+    }
+
+    .content-footer .footer-brand strong::before {
+        margin-right: 5px;
+    }
+
+    .content-footer .footer-right {
+        gap: 9px;
+    }
+
+    #footer-clock {
+        font-size: 10px;
+    }
+
+    #footer-clock::before {
+        width: 6px;
+        height: 6px;
+    }
+
+    .content-footer .footer-heart {
+        font-size: 10px;
+    }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes footer-heart-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.13);
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY — REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .content-footer,
+    .content-footer .footer-heart {
+        transition: none;
+        animation: none;
+    }
+}

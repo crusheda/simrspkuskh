@@ -1,10 +1,24 @@
+
 /* =========================================================
    SIRMED V3 — EMR SEARCH
-   Search patient by NORM and open patient visit workspace
+   Smart Search:
+   - Nomor RM (NORM)
+   - Nomor Kunjungan (NOKUNJUNGAN)
+   - Nomor Asuransi (pendaftaran.penjamin.NOMOR)
+   - Nama Pasien
+   - Partial Search
+   - Debounce
+   - Abort previous request
+   - Prevent stale response
+   - Open EMR Workspace
 ========================================================= */
 
 (() => {
     'use strict';
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
 
     const modalElement = document.getElementById('modalCariEMR');
 
@@ -12,28 +26,53 @@
         return;
     }
 
-    modalElement.dataset.initialized = 'true';
-
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-
     const input = document.getElementById('cariEMRNorm');
     const searchButton = document.getElementById('btnCariEMR');
     const resultContainer = document.getElementById('cariEMRHasil');
     const infoContainer = document.getElementById('cariEMRInfo');
-    const modalCariEMR = document.getElementById('modalCariEMR');
-    const inputCariEMR = document.getElementById('cariEMRNorm');
 
-    let autoSearchTimer = null;
-    const AUTO_SEARCH_DELAY = 1000; // 5 Detik Auto Search after texting
+    if (!input || !searchButton || !resultContainer || !infoContainer) {
+        console.warn('[EMRSearch] Element modal tidak lengkap.');
+        return;
+    }
 
-    let lastSearchedNorm = '';
-    let isSearching = false;
+    if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+        console.error('[EMRSearch] Bootstrap Modal tidak tersedia.');
+        return;
+    }
+
+    if (typeof $ === 'undefined' || !$.ajax) {
+        console.error('[EMRSearch] jQuery AJAX tidak tersedia.');
+        return;
+    }
+
+    modalElement.dataset.initialized = 'true';
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    /* =====================================================
+       CONFIG
+    ===================================================== */
 
     const SEARCH_URL = '/api/v3/search/emr';
     const EMR_PAGE_URL = '/v3/emr';
 
-    let searchRequest = null;
+    const AUTO_SEARCH_DELAY = 700;
+    const MIN_SEARCH_LENGTH = 3;
 
+    const PENDING_PATIENT_KEY = 'sirmed_emr_search_open_patient';
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let autoSearchTimer = null;
+
+    let lastSearchedKeyword = '';
+    let currentRequestKeyword = '';
+
+    let searchRequest = null;
+    let requestSequence = 0;
 
     /* =====================================================
        UTILITIES
@@ -52,7 +91,7 @@
     function formatDate(value) {
         if (!value) return '-';
 
-        const date = new Date(value.replace(' ', 'T'));
+        const date = new Date(String(value).replace(' ', 'T'));
 
         if (Number.isNaN(date.getTime())) {
             return value;
@@ -69,7 +108,7 @@
     function formatDateTime(value) {
         if (!value) return '-';
 
-        const date = new Date(value.replace(' ', 'T'));
+        const date = new Date(String(value).replace(' ', 'T'));
 
         if (Number.isNaN(date.getTime())) {
             return value;
@@ -100,7 +139,7 @@
             return {
                 text: 'Kunjungan Selesai',
                 class: 'status-finished',
-            icon: 'bi-check-circle'
+                icon: 'bi-check-circle'
             };
         }
 
@@ -108,7 +147,7 @@
             return {
                 text: 'Kunjungan Batal',
                 class: 'status-cancelled',
-                icon: 'bi-x-circle'
+            icon: 'bi-x-circle'
             };
         }
 
@@ -119,6 +158,10 @@
         };
     }
 
+
+    /* =====================================================
+       INFO
+    ===================================================== */
 
     function showInfo(message, type = 'info') {
         const icon = type === 'danger'
@@ -147,6 +190,10 @@
     }
 
 
+    /* =====================================================
+       EMPTY STATE
+    ===================================================== */
+
     function showEmpty(message, description = '') {
         resultContainer.innerHTML = `
             <div class="emr-search-empty">
@@ -167,6 +214,18 @@
         `;
     }
 
+
+    function showInitialState() {
+        showEmpty(
+            'Cari pasien terlebih dahulu',
+            'Masukkan nomor RM, nomor kunjungan, nomor asuransi, atau nama pasien.'
+        );
+    }
+
+
+    /* =====================================================
+       LOADING
+    ===================================================== */
 
     function showLoading() {
         resultContainer.innerHTML = `
@@ -194,7 +253,9 @@
 
         searchButton.innerHTML = isLoading
             ? `
-                <span class="spinner-border spinner-border-sm"></span>
+                <span class="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"></span>
               `
             : `
                 <i class="bi bi-search"></i>
@@ -203,138 +264,211 @@
 
 
     /* =====================================================
+       CANCEL REQUEST
+    ===================================================== */
+
+    function cancelCurrentRequest() {
+        requestSequence++;
+
+        if (searchRequest && searchRequest.readyState !== 4) {
+            searchRequest.abort();
+        }
+
+        searchRequest = null;
+        currentRequestKeyword = '';
+
+        setLoading(false);
+    }
+
+
+    /* =====================================================
        OPEN MODAL
     ===================================================== */
 
-    document.getElementById('cariEMRPasien')?.addEventListener('click', function () {
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('#cariEMRPasien');
+
+        if (!button) return;
+
+        event.preventDefault();
 
         modal.show();
-
-        setTimeout(() => {
-            input.focus();
-        }, 300);
-
     });
 
 
     /* =====================================================
-       INPUT ONLY NUMBER — MAX 8 DIGIT
+       SEARCH ACTION
     ===================================================== */
-
-    input.addEventListener('input', function () {
-
-        this.value = this.value
-            .replace(/\D/g, '')
-            .substring(0, 8);
-
-    });
-
-
-    /* =====================================================
-    ENTER TO SEARCH
-    ===================================================== */
-
     input.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            clearTimeout(autoSearchTimer);
-            searchPatient();
-        }
+        if (event.key !== 'Enter') return;
+
+        event.preventDefault();
+
+        clearTimeout(autoSearchTimer);
+
+        searchPatient(input.value.trim(), true);
     });
+
 
     searchButton.addEventListener('click', function () {
         clearTimeout(autoSearchTimer);
-        searchPatient();
+
+        searchPatient(input.value.trim(), true);
     });
 
 
     /* =====================================================
-    AUTO SEARCH - 5 SECONDS
+       AUTO SEARCH
     ===================================================== */
-
     input.addEventListener('input', function () {
-
-        // Hanya angka, maksimal 8 digit
-        this.value = this.value.replace(/\D/g, '').slice(0, 8);
+        const keyword = this.value.trim();
 
         clearTimeout(autoSearchTimer);
 
-        const norm = normalizeNorm(this.value);
+        // Batalkan request sebelumnya jika keyword berubah
+        if (currentRequestKeyword && currentRequestKeyword !== keyword) {
+            cancelCurrentRequest();
+        }
 
-        // Jika input kosong
-        if (!norm) {
-            lastSearchedNorm = '';
-            showEmpty();
+        // Keyword kosong
+        if (!keyword) {
+            lastSearchedKeyword = '';
+
+            cancelCurrentRequest();
+
             clearInfo();
+            showInitialState();
+
             return;
         }
 
-        // Jika NORM sama dengan pencarian terakhir
-        if (norm === lastSearchedNorm) {
+        // Keyword kurang dari minimum
+        if (keyword.length < MIN_SEARCH_LENGTH) {
+            lastSearchedKeyword = '';
+
+            cancelCurrentRequest();
+
+            clearInfo();
+
+            showEmpty(
+                'Masukkan minimal 3 karakter',
+                'Pencarian akan dilakukan setelah minimal 3 karakter.'
+            );
+
             return;
         }
 
-        // Auto-search setelah berhenti mengetik 5 detik
+        // Jika keyword sama dengan yang sedang dicari
+        if (keyword === currentRequestKeyword) {
+            return;
+        }
+
+        // Jika keyword sama dengan hasil pencarian sebelumnya
+        if (keyword === lastSearchedKeyword) {
+            return;
+        }
+
         autoSearchTimer = setTimeout(() => {
-            searchPatient();
+            searchPatient(keyword);
         }, AUTO_SEARCH_DELAY);
-
     });
 
-    function normalizeNorm(value) {
-        return String(value ?? '')
-            .replace(/\D/g, '')
-            .replace(/^0+/, '');
-    }
 
     /* =====================================================
        SEARCH PATIENT
     ===================================================== */
-    async function searchPatient() {
+
+    function searchPatient(keyword = input.value.trim(), force = false) {
         clearTimeout(autoSearchTimer);
 
-        const norm = normalizeNorm(input.value);
+        keyword = String(keyword ?? '').trim();
 
-        if (!norm) {
-            showEmpty();
+        if (!keyword) {
+            cancelCurrentRequest();
+
+            clearInfo();
+            showInitialState();
+
             return;
         }
 
-        // Jangan request jika nomor yang sama sedang dicari
-        if (isSearching) {
+        if (keyword.length < MIN_SEARCH_LENGTH) {
+            cancelCurrentRequest();
+
+            clearInfo();
+
+            showEmpty(
+                'Masukkan minimal 3 karakter',
+                'Pencarian akan dilakukan setelah minimal 3 karakter.'
+            );
+
             return;
         }
 
-        // Jika nomor yang sama sudah selesai dicari, tidak perlu request ulang
-        if (norm === lastSearchedNorm) {
+        // Jangan mengulang keyword yang sama
+        if (!force && keyword === lastSearchedKeyword) {
             return;
         }
 
-        isSearching = true;
-        lastSearchedNorm = norm;
+        // Jangan mengulang request keyword yang sama
+        if (!force && keyword === currentRequestKeyword) {
+            return;
+        }
+
+        // Batalkan request sebelumnya jika masih berjalan
+        if (searchRequest && searchRequest.readyState !== 4) {
+            searchRequest.abort();
+        }
+
+        const currentSequence = ++requestSequence;
+
+        currentRequestKeyword = keyword;
+        lastSearchedKeyword = keyword;
 
         clearInfo();
         showLoading();
         setLoading(true);
+
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
         searchRequest = $.ajax({
             url: SEARCH_URL,
             method: 'POST',
             dataType: 'json',
             data: {
-                norm: norm
+                keyword: keyword
             },
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': csrfToken
             },
 
+            /* =============================================
+               SUCCESS
+            ============================================= */
+
             success: function (response) {
+
+                // Abaikan response dari request lama
+                if (currentSequence !== requestSequence) {
+                    return;
+                }
+
+                // Input sudah berubah sejak request dikirim
+                if (input.value.trim() !== keyword) {
+                    return;
+                }
 
                 if (!response || response.success !== true) {
                     showEmpty(
                         'Pencarian gagal',
                         'Server tidak memberikan respons pencarian yang valid.'
                     );
+
+                    showInfo(
+                        'Respons server tidak valid.',
+                        'danger'
+                    );
+
                     return;
                 }
 
@@ -345,10 +479,14 @@
                 if (data.length === 0) {
                     showEmpty(
                         'Pasien tidak ditemukan',
-                        'Tidak ditemukan kunjungan pasien dengan nomor rekam medis tersebut.'
+                        'Tidak ditemukan pasien atau kunjungan sesuai kata pencarian.'
                     );
 
-                    showInfo('Tidak ada data kunjungan ditemukan.', 'danger');
+                    showInfo(
+                        'Tidak ada data ditemukan.',
+                        'danger'
+                    );
+
                     return;
                 }
 
@@ -358,12 +496,22 @@
                     `${data.length} kunjungan ditemukan.`,
                     'success'
                 );
-
             },
+
+
+            /* =============================================
+               ERROR
+            ============================================= */
 
             error: function (xhr, status) {
 
+                // Abort bukan error yang perlu ditampilkan
                 if (status === 'abort') {
+                    return;
+                }
+
+                // Abaikan error dari request lama
+                if (currentSequence !== requestSequence) {
                     return;
                 }
 
@@ -379,16 +527,27 @@
                     'Pencarian gagal. Silakan coba kembali.',
                     'danger'
                 );
-
             },
 
+
+            /* =============================================
+               COMPLETE
+            ============================================= */
+
             complete: function () {
-                isSearching = false;
-                setLoading(false);
+
+                // Callback request lama tidak boleh mengubah UI
+                // request terbaru
+                if (currentSequence !== requestSequence) {
+                    return;
+                }
+
                 searchRequest = null;
+                currentRequestKeyword = '';
+
+                setLoading(false);
             }
         });
-
     }
 
 
@@ -397,6 +556,10 @@
     ===================================================== */
 
     function renderPatientVisits(data) {
+        if (!Array.isArray(data) || data.length === 0) {
+            showInitialState();
+            return;
+        }
 
         const patient = data[0];
 
@@ -466,7 +629,6 @@
 
 
         data.forEach((item, index) => {
-
             const status = getStatusKunjungan(item.STATUSKUNJUNGAN);
 
             const statusBadge = `
@@ -545,10 +707,26 @@
            CLICK VISIT
         ================================================= */
 
-        resultContainer.querySelectorAll('[data-emr-visit-index]')
+        resultContainer
+            .querySelectorAll('[data-emr-visit-index]')
             .forEach(element => {
 
                 element.addEventListener('click', function () {
+                    const index = Number(this.dataset.emrVisitIndex);
+                    const visit = data[index];
+
+                    if (!visit) return;
+
+                    openSelectedVisit(visit);
+                });
+
+
+                element.addEventListener('keydown', function (event) {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+
+                    event.preventDefault();
 
                     const index = Number(this.dataset.emrVisitIndex);
                     const visit = data[index];
@@ -556,29 +734,34 @@
                     if (!visit) return;
 
                     openSelectedVisit(visit);
-
-                });
-
-
-                element.addEventListener('keydown', function (event) {
-
-                    if (event.key === 'Enter' || event.key === ' ') {
-
-                        event.preventDefault();
-
-                        const index = Number(this.dataset.emrVisitIndex);
-                        const visit = data[index];
-
-                        if (!visit) return;
-
-                        openSelectedVisit(visit);
-
-                    }
-
                 });
 
             });
+    }
 
+
+    /* =====================================================
+       HIDE MODAL THEN CALLBACK
+    ===================================================== */
+
+    function hideModalThen(callback) {
+
+        // Modal sudah tertutup
+        if (!modalElement.classList.contains('show')) {
+            if (typeof callback === 'function') {
+                callback();
+            }
+
+            return;
+        }
+
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }, { once: true });
+
+        modal.hide();
     }
 
 
@@ -587,16 +770,20 @@
     ===================================================== */
 
     function openSelectedVisit(visit) {
-
         const nomor = String(visit.NOKUNJUNGAN ?? '').trim();
 
         if (!nomor) {
-            showInfo('Nomor kunjungan tidak ditemukan.', 'danger');
+            showInfo(
+                'Nomor kunjungan tidak ditemukan.',
+                'danger'
+            );
+
             return;
         }
 
         const patient = {
             nomor: nomor,
+
             norm: String(visit.NORM ?? ''),
             nama: String(visit.NAMAPASIEN ?? 'Pasien'),
 
@@ -608,7 +795,7 @@
             refIdAsuransi: String(visit.IDPENJAMIN ?? ''),
             namaAsuransi: String(visit.NAMAPENJAMIN ?? ''),
 
-            noAsuransi: '',
+            noAsuransi: String(visit.NOMORASURANSI ?? ''),
 
             tglMasuk: String(visit.TGLMASUK ?? ''),
             tglKeluar: String(visit.TGLKELUAR ?? ''),
@@ -627,10 +814,9 @@
             window.EMRWorkspace &&
             typeof window.EMRWorkspace.openPatient === 'function'
         ) {
-
-            modal.hide();
-
-            window.EMRWorkspace.openPatient(patient);
+            hideModalThen(() => {
+                window.EMRWorkspace.openPatient(patient);
+            });
 
             return;
         }
@@ -638,79 +824,68 @@
 
         /* =================================================
            NOT IN EMR PAGE
-           Store patient temporarily and redirect
+           STORE PATIENT TEMPORARILY AND REDIRECT
         ================================================= */
 
         try {
-
             sessionStorage.setItem(
-                'sirmed_emr_search_open_patient',
+                PENDING_PATIENT_KEY,
                 JSON.stringify(patient)
             );
-
         } catch (error) {
-
-            console.error('[EMRSearch] Gagal menyimpan data kunjungan:', error);
-
+            console.error(
+                '[EMRSearch] Gagal menyimpan data kunjungan:',
+                error
+            );
         }
 
         modal.hide();
 
         window.location.href = EMR_PAGE_URL;
-
     }
 
 
     /* =====================================================
        AUTO OPEN PATIENT AFTER REDIRECT
-       Dipanggil ketika halaman index EMR sudah siap
     ===================================================== */
 
     function openPendingPatient() {
-
         let patient = null;
 
         try {
-
-            const raw = sessionStorage.getItem(
-                'sirmed_emr_search_open_patient'
-            );
+            const raw = sessionStorage.getItem(PENDING_PATIENT_KEY);
 
             if (!raw) return;
 
             patient = JSON.parse(raw);
 
-            sessionStorage.removeItem(
-                'sirmed_emr_search_open_patient'
-            );
+            sessionStorage.removeItem(PENDING_PATIENT_KEY);
 
         } catch (error) {
-
-            console.error('[EMRSearch] Data pasien pending tidak valid:', error);
-
-            sessionStorage.removeItem(
-                'sirmed_emr_search_open_patient'
+            console.error(
+                '[EMRSearch] Data pasien pending tidak valid:',
+                error
             );
 
-            return;
+            sessionStorage.removeItem(PENDING_PATIENT_KEY);
 
+            return;
         }
 
         if (!patient) return;
 
-
-        // Workspace bisa saja belum siap saat script pertama berjalan.
+        // Tunggu EMRWorkspace tersedia
         let attempt = 0;
 
-        const openInterval = setInterval(() => {
+        const maxAttempt = 40;
 
+        const openInterval = setInterval(() => {
             attempt++;
 
             if (
                 window.EMRWorkspace &&
                 typeof window.EMRWorkspace.openPatient === 'function'
             ) {
-
                 clearInterval(openInterval);
 
                 window.EMRWorkspace.openPatient(patient);
@@ -718,26 +893,16 @@
                 return;
             }
 
-            if (attempt >= 40) {
-
+            if (attempt >= maxAttempt) {
                 clearInterval(openInterval);
 
                 console.error(
                     '[EMRSearch] EMRWorkspace tidak berhasil diinisialisasi.'
                 );
-
             }
 
         }, 250);
-
     }
-
-
-    /* =====================================================
-       INIT
-    ===================================================== */
-
-    openPendingPatient();
 
 
     /* =====================================================
@@ -745,22 +910,37 @@
     ===================================================== */
 
     modalElement.addEventListener('hidden.bs.modal', function () {
+        clearTimeout(autoSearchTimer);
+
+        cancelCurrentRequest();
 
         input.value = '';
+        lastSearchedKeyword = '';
+
         clearInfo();
 
-        showEmpty(
-            'Cari pasien terlebih dahulu',
-            'Masukkan nomor rekam medis pasien kemudian tekan Cari Pasien.'
-        );
-
+        showInitialState();
     });
 
-    modalCariEMR.addEventListener('shown.bs.modal', function () {
-        setTimeout(() => {
-            inputCariEMR.focus();
-            inputCariEMR.select();
-        }, 100);
+
+    /* =====================================================
+       MODAL FOCUS
+    ===================================================== */
+
+    modalElement.addEventListener('shown.bs.modal', function () {
+        requestAnimationFrame(() => {
+            input.focus();
+            input.select();
+        });
     });
+
+
+    /* =====================================================
+       INIT
+    ===================================================== */
+
+    showInitialState();
+
+    openPendingPatient();
 
 })();

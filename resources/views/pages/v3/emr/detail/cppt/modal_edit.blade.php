@@ -22,7 +22,7 @@
 
                     <div>
                         <div class="d-flex align-items-center gap-2">
-                            <h5 class="fw-bold mb-0" id="modalEditCPPTLabel">
+                            <h5 class="fw-bold mb-0 text-muted" id="modalEditCPPTLabel">
                                 Ubah CPPT
                             </h5>
 
@@ -32,7 +32,7 @@
                             </span>
                         </div>
 
-                        <small class="">
+                        <small class=" text-muted">
                             Perbarui Catatan Perkembangan Pasien Terintegrasi
                         </small>
                     </div>
@@ -62,7 +62,7 @@
                 {{-- Informasi waktu dan PPA --}}
                 <div class="card border shadow-none rounded-3 mb-4">
                     <div class="card-header bg-warning-subtle text-white border-0 py-2 px-3" id="infoCPPTEditModal">
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 text-muted">
                             <i class="ph-duotone ph-calendar-check fs-20"></i>
                             <strong>Informasi Catatan</strong>
                         </div>

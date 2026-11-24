@@ -2121,6 +2121,12 @@ class ApiNewRehabMedikController extends Controller
             ], 404);
         }
 
+        $keluhanUtama = DB::table('medicalrecord.keluhan_utama')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
         return response()->json([
             'status' => true,
             'data' => $data,
@@ -2128,6 +2134,8 @@ class ApiNewRehabMedikController extends Controller
             'kunjungan' => $KUNJUNGAN,
             'group' => $GROUP,
             'queue' => $QUEUE,
+
+            'kelu' => $keluhanUtama,
 
             // Muat kembali data TTV dan nutrisi.
             'ttv' => $this->ambilTTVProgramTerapi($KUNJUNGAN),
@@ -2332,9 +2340,8 @@ class ApiNewRehabMedikController extends Controller
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $kunjungan,
                 'TANGGAL'      => $tglPush,
-                'SUBYEKTIF'    => $request->cppt_s_t,
 
-                // TTV otomatis diletakkan di atas teks Objective.
+                'SUBYEKTIF'    => $this->buildSubjectiveProgramTerapi($request),
                 'OBYEKTIF'     => $this->objectiveDenganTTVProgramTerapi($request),
 
                 'ASSESMENT'    => $request->cppt_a_t,
@@ -2398,6 +2405,24 @@ class ApiNewRehabMedikController extends Controller
                 $ppaTtv
             );
 
+            /*
+            * 2C. SIMPAN KELUHAN UTAMA
+            *
+            */
+            DB::table('medicalrecord.keluhan_utama')
+            ->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'DESKRIPSI'    => $request->kelu ?? '',
+                    'SNOMED_CT_ID' => 0,
+                    'TANGGAL'      => now(),
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                ]
+            );
+
             /* ==========================
             * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
             * ========================== */
@@ -2414,8 +2439,10 @@ class ApiNewRehabMedikController extends Controller
                 'TGLLAHIRPASIEN'    => $dataPasien->TGLLAHIRPASIEN ?? '',
                 'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
                 'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
-                'SUBYEKTIF'         => $request->cppt_s_t,
+                'KELUHANUTAMA'      => $request->kelu,
+                // 'SUBYEKTIF'         => $request->cppt_s_t,
                 // 'OBYEKTIF'          => $request->cppt_o_t,
+                'SUBYEKTIF'         => $this->buildSubjectiveProgramTerapi($request),
                 'OBYEKTIF'          => $this->objectiveDenganTTVProgramTerapi($request),
                 'ASSESMENT'         => $request->cppt_a_t,
                 'PROCEDURE'         => $request->cppt_p_t,
@@ -2865,6 +2892,20 @@ class ApiNewRehabMedikController extends Controller
                 $ppaTtv
             );
 
+            /*
+            * 2C. SIMPAN PERUBAHAN KELUHAN UTAMA
+            *
+            */
+            DB::table('medicalrecord.keluhan_utama')->where('KUNJUNGAN', $request->kunjungan)->update(
+                [
+                    'DESKRIPSI'    => $request->kelu ?? '',
+                    'SNOMED_CT_ID' => 0,
+                    'TANGGAL'      => now(),
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                ]
+            );
+
             /* ==========================
             * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
             * ========================== */
@@ -2881,6 +2922,7 @@ class ApiNewRehabMedikController extends Controller
                 'TGLLAHIRPASIEN'    => $dataPasien->TGLLAHIRPASIEN ?? '',
                 'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
                 'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
+                'KELUHANUTAMA'      => $request->kelu,
                 'SUBYEKTIF'         => $request->cppt_s_t,
                 'OBYEKTIF'          => $this->objectiveDenganTTVProgramTerapi($request),
                 'ASSESMENT'         => $request->cppt_a_t,
@@ -2920,6 +2962,24 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> $e->getMessage()
             ], 500);
         }
+    }
+
+    private function buildSubjectiveProgramTerapi(Request $request): string
+    {
+        $keluhanUtama = trim((string) $request->input('kelu', ''));
+        $subjective = trim((string) $request->input('cppt_s_t', ''));
+
+        $result = [];
+
+        if ($keluhanUtama !== '') {
+            $result[] = 'Keluhan Utama : ' . $keluhanUtama;
+        }
+
+        if ($subjective !== '') {
+            $result[] = $subjective;
+        }
+
+        return implode("\n", $result);
     }
 
     /**

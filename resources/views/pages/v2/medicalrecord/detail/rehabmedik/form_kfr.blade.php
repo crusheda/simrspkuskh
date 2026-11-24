@@ -2,13 +2,34 @@
     <div class="col-md-7">
         <div class="card table-card border shadow-none mb-2">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h6 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir <b class="text-teal">Rawat Jalan KFR</b> <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span></h6>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="cppt-modal-icon bg-white bg-opacity-50 text-warning-emphasis">
+                        <i class="ph-duotone ph-clipboard-text fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="fw-bold mb-0">
+                                Formulir <b class="text-teal">Rawat Jalan KFR</b>
+                            </h5>
+                            <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span>
+                        </div>
+                        <small class="text-body-secondary">
+                            KUNJ # <b>{{ $list['KUNJUNGAN'] }}</b>
+                        </small>
+                    </div>
+                </div>
                 <div class="btn-group">
                     @role(['admin','dokterspesialis','fisioterapis','okupasiterapi','terapiwicara'])
-                        <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
+                        <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled>
+                            <i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama
+                        </button>
                     @endrole
-                    <button class="btn btn-subtle-primary btn-sm" onclick="loadCpptKfr()" id="btn-refresh-riwayat-cppt" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
-                    <button class="btn btn-subtle-warning btn-sm" onclick="loadRiwayatKfr()" id="btn-refresh-riwayat-form-kfr" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir KFR"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-subtle-primary btn-sm" onclick="loadCpptKfr()" id="btn-refresh-riwayat-cppt" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button class="btn btn-subtle-warning btn-sm" onclick="loadRiwayatKfr()" id="btn-refresh-riwayat-form-kfr" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir KFR">
+                        <i class="fas fa-sync"></i>
+                    </button>
                 </div>
             </div>
 

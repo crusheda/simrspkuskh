@@ -52,7 +52,7 @@
                     </div>
                 </fieldset>
             </form>
-            <div class="resume-rj-signature-section mt-4">
+            <div class="resume-rj-signature-section mt-4" id="resume_rj_signature_section">
                 <div class="card border">
                     <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <h6 class="mb-0">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex flex-wrap justify-content-start gap-2 mt-4">
+            <div class="d-flex flex-wrap justify-content-start gap-2 mt-4" id="resume_rj_actions">
                 <button type="button" class="btn btn-subtle-secondary" id="btn_print_resume_rj"><i class="ph-duotone ph-printer me-1"></i>Print Preview</button>
                 <button type="button" class="btn btn-primary" id="btn_final_resume_rj"><i class="ph-duotone ph-check-circle me-1"></i>Finalisasi Resume</button>
                 <button type="button" class="btn btn-subtle-warning d-none" id="btn_batal_final_resume_rj"><i class="ph-duotone ph-arrow-counter-clockwise me-1"></i>Batal Finalisasi</button>
