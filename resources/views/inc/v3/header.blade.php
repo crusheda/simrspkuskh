@@ -263,7 +263,7 @@
                 @hasrole('admin')
                 {{-- Pengaturan Akun --}}
                 <li>
-                    <a href="{{ route('v2.roles') }}" class="dropdown-item">
+                    <a href="{{ route('v3.setting.permissions') }}" class="dropdown-item" wire:navigate>
                         <i class="bi bi-gear me-2"></i>
                         Pengaturan Akses Pengguna
                     </a>

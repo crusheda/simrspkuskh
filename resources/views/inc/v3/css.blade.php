@@ -63,6 +63,7 @@
 <link rel="stylesheet" href="{{ asset('css/v3/pages/dashboard.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/notifikasi.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/profil.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/pages/roles.css') }}">
 
 <style>
     canvas {

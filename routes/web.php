@@ -36,6 +36,8 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Setting\Profil;
 use App\Livewire\Setting\Notifikasi;
 use App\Livewire\Setting\Capaian;
+use App\Livewire\Setting\Roles as SettingRoles;
+use App\Livewire\Setting\Permissions as SettingPermissions;
 use App\Livewire\Dashboard;
 use App\Livewire\Monitoring;
 use App\Livewire\EMR;
@@ -84,6 +86,8 @@ Route::middleware(['auth']) // AUTHENTICATED
         Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
         Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData'])->name('v3.notifikasi.data');
         Route::get('/setting/notifikasi/data/{id}', [NotifikasiController::class, 'showDetail'])->name('v3.notifikasi.detail');
+        Route::get('/setting/roles', SettingRoles::class)->name('v3.setting.roles');
+        Route::get('/setting/permissions', SettingPermissions::class)->name('v3.setting.permissions');
 
         // Helper
         Route::get('/system/simgos-status', [SystemHealthController::class, 'simgos'])->name('system.simgos-status');

@@ -48,7 +48,7 @@
                 </p>
 
                 <h1 class="sirmed-title">
-                    SIRMED <span>v.3</span>
+                    SIRMED <span>v<b class="text-white">.</b>3</span>
                 </h1>
 
                 <p class="sirmed-hospital">
@@ -145,7 +145,7 @@
                                 @error('password') aria-invalid="true" @enderror>
 
                             <button
-                                class="cl-login04__eye"
+                                class="cl-login04__eye text-muted"
                                 type="button"
                                 id="togglePassword"
                                 aria-label="Tampilkan password"
@@ -262,7 +262,7 @@
                 </form>
 
                 {{-- ACCOUNT INFORMATION --}}
-                <p class="cl-login04__foot">
+                {{-- <p class="cl-login04__foot">
 
                     Belum memiliki Akun?
 
@@ -275,13 +275,13 @@
 
                     </a>
 
-                </p>
+                </p> --}}
 
             </div>
 
             {{-- FOOTER --}}
             <p class="cl-login04__demo">
-                @ Tim IT RS
+                Copyright {{ date('Y') }} @ Tim IT RS
             </p>
 
         </section>
