@@ -34,7 +34,13 @@
                     <input type="text" class="form-control" id="kode_program_terapi" hidden>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="cppt-section-number">1.</span>
+                                <label class="form-label mb-0">
+                                    <i><b>Subjective</b></i>
+                                    <a class="text-danger">*</a>
+                                </label>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label">Keluhan Utama</label>
@@ -42,334 +48,369 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Detil Subjective</label>
-                                    <textarea id="cppt_s_t" rows="6" class="form-control" placeholder="..."></textarea>
+                                    <textarea id="cppt_s_t"
+                                        rows="6"
+                                        class="form-control"
+                                        placeholder="..."></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a_t" rows="8" class="form-control" placeholder="..."></textarea>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="cppt-section-number">3.</span>
+                                <label class="form-label mb-0">
+                                    <i><b>Assessment</b></i>
+                                    <a class="text-danger">*</a>
+                                </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+                                    <textarea id="cppt_a_t" rows="10" class="form-control" placeholder="..."></textarea>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Procedure</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_p_t" rows="3" class="form-control" placeholder="..."></textarea>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="cppt-section-number">4.</span>
+                                <label class="form-label mb-0">
+                                    <i><b>Procedure</b></i>
+                                    <a class="text-danger">*</a>
+                                </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+                                    <textarea id="cppt_p_t" rows="10" class="form-control" placeholder="..."></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
-                            <div class="row" id="ttv_objective">
-                                <div class="col-md-12" id="ttv_full">
-                                    {{-- KEADAAN UMUM --}}
-                                    <div class="form-group">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label">
-                                                Keadaan Umum
-                                            </label>
-                                            <textarea
-                                                class="form-control"
-                                                name="keu"
-                                                rows="1" placeholder="..."
-                                            ></textarea>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="cppt-section-number">2.</span>
+                                <label class="form-label mb-0">
+                                    <i><b>Objective</b></i>
+                                    <a class="text-danger">*</a>
+                                </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+                                    <div class="row" id="ttv_objective">
+                                        <div class="col-md-12" id="ttv_full">
+                                            {{-- KEADAAN UMUM --}}
+                                            <div class="form-group">
+                                                <div class="form-group mb-3">
+                                                    <label class="form-label">
+                                                        Keadaan Umum
+                                                    </label>
+                                                    <textarea
+                                                        class="form-control"
+                                                        name="keu"
+                                                        rows="1" placeholder="..."
+                                                    ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+            
+                                        {{-- ==========================================================
+                                            KOLOM KIRI
+                                        =========================================================== --}}
+                                        <div class="col-md-6" id="ttv_kiri">
+            
+                                            {{-- GCS --}}
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    GCS (<i>Glasgow Coma Scale</i>)
+                                                </label>
+                                                <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap">
+            
+                                                    {{-- EYE --}}
+                                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                        <label class="form-check-label">
+                                                            Eye
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control form-control-sm"
+                                                            name="gcs_e"
+                                                            min="1"
+                                                            max="4"
+                                                            style="width: 100px;" {{-- flex: 0 0 60px; --}}
+                                                            placeholder=""
+                                                        >
+                                                    </div>
+            
+                                                    {{-- VERBAL --}}
+                                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                        <label class="form-check-label">
+                                                            Verbal
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control form-control-sm"
+                                                            name="gcs_v"
+                                                            min="1"
+                                                            max="5"
+                                                            style="width: 100px;"
+                                                            placeholder=""
+                                                        >
+                                                    </div>
+            
+                                                    {{-- MOTOR --}}
+                                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                        <label class="form-check-label">
+                                                            Move
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control form-control-sm"
+                                                            name="gcs_m"
+                                                            min="1"
+                                                            max="6"
+                                                            style="width: 100px;"
+                                                            placeholder=""
+                                                        >
+                                                    </div>
+            
+                                                    {{-- TOTAL --}}
+                                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                        <label class="form-check-label">
+                                                            Total
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control form-control-sm"
+                                                            name="gcs_t"
+                                                            style="width: 100px;"
+                                                            placeholder=""
+                                                            readonly
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            {{-- TEKANAN DARAH --}}
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    Tekanan Darah
+                                                </label>
+                                                <div class="input-group">
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        name="td_up"
+                                                    >
+                                                    <div class="input-group-text">
+                                                        /
+                                                    </div>
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        name="td_down"
+                                                    >
+                                                    <div class="input-group-text">
+                                                        mmHg
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            {{-- FREKUENSI NADI --}}
+                                            <div class="form-group mb-3" id="frekuensi_nadi">
+                                                <label class="form-label">
+                                                    Frekuensi Nadi
+                                                </label>
+                                                <div class="input-group flex-grow-1 mb-2">
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        name="nadi"
+                                                    >
+                                                    <span class="input-group-text">
+                                                        X/menit
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    {{-- REGULER --}}
+                                                    <div class="form-check m-0">
+                                                        <input
+                                                            class="form-check-input single-checkbox"
+                                                            type="checkbox"
+                                                            name="nadi_cb"
+                                                            value="1"
+                                                            checked
+                                                        >
+                                                        <label class="form-check-label">
+                                                            Reguler
+                                                        </label>
+                                                    </div>
+            
+                                                    {{-- IREGULER --}}
+                                                    <div class="form-check m-0">
+                                                        <input
+                                                            class="form-check-input single-checkbox"
+                                                            type="checkbox"
+                                                            name="nadi_cb"
+                                                            value="2"
+                                                        >
+                                                        <label class="form-check-label">
+                                                            Ireguler
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+            
+                                        {{-- ==========================================================
+                                            KOLOM KANAN
+                                        =========================================================== --}}
+                                        <div class="col-md-6" id="ttv_kanan">
+                                            <div id="posisi_nadi_neonatus"></div>
+            
+                                            {{-- FREKUENSI NAFAS --}}
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    Frekuensi Nafas
+                                                </label>
+            
+                                                <div class="input-group flex-grow-1 mb-3">
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        name="nafas"
+                                                    >
+                                                    <span class="input-group-text">
+                                                        X/menit
+                                                    </span>
+                                                </div>
+            
+                                                <div class="d-flex align-items-center gap-3">
+            
+                                                    {{-- SIMETRIS --}}
+                                                    <div class="form-check m-0">
+                                                        <input
+                                                            class="form-check-input single-checkbox"
+                                                            type="checkbox"
+                                                            name="nafas_cb"
+                                                            value="1"
+                                                            checked
+                                                        >
+                                                        <label class="form-check-label">
+                                                            Simetris
+                                                        </label>
+                                                    </div>
+            
+                                                    {{-- ASIMETRIS --}}
+                                                    <div class="form-check m-0">
+                                                        <input
+                                                            class="form-check-input single-checkbox"
+                                                            type="checkbox"
+                                                            name="nafas_cb"
+                                                            value="2"
+                                                        >
+                                                        <label class="form-check-label">
+                                                            Asimetris
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            {{-- SUHU + SPO2 --}}
+                                            <div class="row">
+            
+                                                {{-- SUHU --}}
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">
+                                                            Suhu
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="suhu">
+                                                            <div class="input-group-text">
+                                                                °C
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                {{-- SPO2 --}}
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">
+                                                            SpO2
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="spo2">
+                                                            <div class="input-group-text">
+                                                                %
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            {{-- BB + TB --}}
+                                            <div class="row">
+            
+                                                {{-- BB --}}
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">
+                                                            BB
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="bb"
+                                                                step="0.1"
+                                                                min="0">
+                                                            <div class="input-group-text">
+                                                                Kg
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                {{-- TB --}}
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">
+                                                            TB
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="tb"
+                                                                step="0.1"
+                                                                min="0">
+                                                            <div class="input-group-text">
+                                                                Cm
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+                                            {{-- IMT --}}
+                                            <div class="form-group mt-2">
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="imt"
+                                                    hidden
+                                                >
+                                                <div
+                                                    id="hasil_imt"
+                                                    class="alert alert-danger d-flex align-items-center d-none"
+                                                    role="alert"
+                                                >
+                                                    <i class="ri-spam-line me-2"></i>
+                                                    <span id="hasil_imt_text"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- ==========================================================
-                                    KOLOM KIRI
-                                =========================================================== --}}
-                                <div class="col-md-6" id="ttv_kiri">
-
-                                    {{-- GCS --}}
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">
-                                            GCS (<i>Glasgow Coma Scale</i>)
-                                        </label>
-                                        <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap">
-
-                                            {{-- EYE --}}
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">
-                                                    Eye
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="gcs_e"
-                                                    min="1"
-                                                    max="4"
-                                                    style="width: 70px; flex: 0 0 60px;"
-                                                    placeholder=""
-                                                >
-                                            </div>
-
-                                            {{-- VERBAL --}}
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">
-                                                    Verbal
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="gcs_v"
-                                                    min="1"
-                                                    max="5"
-                                                    style="width: 70px; flex: 0 0 60px;"
-                                                    placeholder=""
-                                                >
-                                            </div>
-
-                                            {{-- MOTOR --}}
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">
-                                                    Move
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="gcs_m"
-                                                    min="1"
-                                                    max="6"
-                                                    style="width: 70px; flex: 0 0 60px;"
-                                                    placeholder=""
-                                                >
-                                            </div>
-
-                                            {{-- TOTAL --}}
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">
-                                                    Total
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="gcs_t"
-                                                    style="width: 70px; flex: 0 0 60px;"
-                                                    placeholder=""
-                                                    readonly
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- TEKANAN DARAH --}}
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">
-                                            Tekanan Darah
-                                        </label>
-                                        <div class="input-group">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                name="td_up"
-                                            >
-                                            <div class="input-group-text">
-                                                /
-                                            </div>
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                name="td_down"
-                                            >
-                                            <div class="input-group-text">
-                                                mmHg
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- FREKUENSI NADI --}}
-                                    <div class="form-group mb-3" id="frekuensi_nadi">
-                                        <label class="form-label">
-                                            Frekuensi Nadi
-                                        </label>
-                                        <div class="input-group flex-grow-1 mb-2">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                name="nadi"
-                                            >
-                                            <span class="input-group-text">
-                                                X/menit
-                                            </span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-3">
-                                            {{-- REGULER --}}
-                                            <div class="form-check m-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="nadi_cb"
-                                                    value="1"
-                                                    checked
-                                                >
-                                                <label class="form-check-label">
-                                                    Reguler
-                                                </label>
-                                            </div>
-
-                                            {{-- IREGULER --}}
-                                            <div class="form-check m-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="nadi_cb"
-                                                    value="2"
-                                                >
-                                                <label class="form-check-label">
-                                                    Ireguler
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- ==========================================================
-                                    KOLOM KANAN
-                                =========================================================== --}}
-                                <div class="col-md-6" id="ttv_kanan">
-                                    <div id="posisi_nadi_neonatus"></div>
-
-                                    {{-- FREKUENSI NAFAS --}}
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">
-                                            Frekuensi Nafas
-                                        </label>
-
-                                        <div class="input-group flex-grow-1 mb-3">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                name="nafas"
-                                            >
-                                            <span class="input-group-text">
-                                                X/menit
-                                            </span>
-                                        </div>
-
-                                        <div class="d-flex align-items-center gap-3">
-
-                                            {{-- SIMETRIS --}}
-                                            <div class="form-check m-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="nafas_cb"
-                                                    value="1"
-                                                    checked
-                                                >
-                                                <label class="form-check-label">
-                                                    Simetris
-                                                </label>
-                                            </div>
-
-                                            {{-- ASIMETRIS --}}
-                                            <div class="form-check m-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="nafas_cb"
-                                                    value="2"
-                                                >
-                                                <label class="form-check-label">
-                                                    Asimetris
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- SUHU + SPO2 --}}
-                                    <div class="row">
-
-                                        {{-- SUHU --}}
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label">
-                                                    Suhu
-                                                </label>
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" name="suhu">
-                                                    <div class="input-group-text">
-                                                        °C
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- SPO2 --}}
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label">
-                                                    SpO2
-                                                </label>
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" name="spo2">
-                                                    <div class="input-group-text">
-                                                        %
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- BB + TB --}}
-                                    <div class="row">
-
-                                        {{-- BB --}}
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label">
-                                                    BB
-                                                </label>
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" name="bb"
-                                                        step="0.1"
-                                                        min="0">
-                                                    <div class="input-group-text">
-                                                        Kg
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- TB --}}
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label class="form-label">
-                                                    TB
-                                                </label>
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" name="tb"
-                                                        step="0.1"
-                                                        min="0">
-                                                    <div class="input-group-text">
-                                                        Cm
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- IMT --}}
-                                    <div class="form-group mt-2">
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            name="imt"
-                                            hidden
-                                        >
-                                        <div
-                                            id="hasil_imt"
-                                            class="alert alert-danger d-flex align-items-center d-none"
-                                            role="alert"
-                                        >
-                                            <i class="ri-spam-line me-2"></i>
-                                            <span id="hasil_imt_text"></span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label">Pemeriksaan Fisik</label>
+                                    <textarea id="cppt_o_t" rows="15" class="form-control" placeholder="..."></textarea>
                                 </div>
                             </div>
-                            <label class="form-label">Pemeriksaan Fisik</label>
-                            <textarea id="cppt_o_t" rows="8" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                 </div>

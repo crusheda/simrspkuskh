@@ -191,8 +191,7 @@
                             Form Resume Medis
 
                             <span
-                                class="badge rounded-pill bg-dark-subtle text-body-secondary"
-                                id="badge_tab_final_resume">
+                                class="badge bg-dark-subtle text-body-secondary" id="badge_tab_final_resume">
                                 <i class="ri-loader-line ri-spin"></i>
                             </span>
                         </span>
@@ -220,7 +219,7 @@
                             Form Resume Medis
 
                             <span
-                                class="badge rounded-pill bg-dark-subtle text-body-secondary"
+                                class="badge bg-dark-subtle text-body-secondary"
                                 id="badge_tab_final_resume_rj">
                                 <i class="ri-loader-line ri-spin"></i>
                             </span>
@@ -300,6 +299,15 @@
                                                 <i class="ph-duotone ph-copy me-1"></i>
                                                 Copy Nomor Kunjungan
                                             </button>
+                                            <div class="dropdown-divider"></div>
+                                            {{-- BUKA WORKSPACE BARU --}}
+                                            <a class="dropdown-item fs-14"
+                                                href="{{ url('/v3/emr/' . $list['KUNJUNGAN'] . '?workspace=1') }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+                                                <i class="ph-duotone ph-arrow-square-out me-1"></i>
+                                                Buka Content Workspace
+                                            </a>
                                         </div>
                                     </div>
                                 @endhasrole
@@ -1620,7 +1628,7 @@
                                     </div>
 
                                     <div class="flex-grow-1 mx-2">
-                                        <h6 class="mb-0">${item.NAMARUANGAN} ${item.NOKUNJUNGAN == kunjungan? `<badge class="badge badge-sm text-bg-warning p-1">SAAT INI</badge>` : ``}</h6>
+                                        <h6 class="mb-0">${item.NAMARUANGAN} ${item.NOKUNJUNGAN == kunjungan? `<badge class="badge badge-sm text-bg-danger p-1 ms-1">SAAT INI</badge>` : ``}</h6>
                                         <p class="mb-0">${dokter}</p>
                                     </div>
 

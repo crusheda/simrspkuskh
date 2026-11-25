@@ -1,0 +1,790 @@
+
+/* ==========================================================
+   RESUME RANAP - FIELD INFORMATION
+   ========================================================== */
+
+/* ---------- INFO BUTTON ---------- */
+.resume-info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    margin-left: 5px;
+
+    border: 1px solid var(--bs-border-color);
+    border-radius: 50%;
+
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-secondary-color);
+
+    font-size: 13px;
+    line-height: 1;
+
+    cursor: pointer;
+    vertical-align: middle;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.resume-info-btn:hover {
+    color: var(--bs-body-color);
+    background: var(--bs-warning-bg-subtle);
+    border-color: var(--bs-warning);
+    transform: translateY(-1px);
+}
+
+.resume-info-btn:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(var(--bs-info-rgb), .2);
+}
+
+.resume-info-btn i {
+    font-size: 14px;
+}
+
+
+/* ---------- LABEL WITH INFO ---------- */
+.resume-field-label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.resume-field-label .resume-info-btn {
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================
+   MODAL
+   ========================================================== */
+
+.resume-info-modal .modal-dialog {
+    max-width: 700px;
+}
+
+.resume-info-modal .modal-content {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 18px;
+    overflow: hidden;
+
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
+}
+
+
+/* ---------- HEADER ---------- */
+.resume-info-modal .modal-header {
+    padding: 18px 22px;
+
+    border-bottom: 1px solid var(--bs-border-color);
+    background: var(--bs-tertiary-bg);
+}
+
+.resume-info-modal .modal-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.resume-info-modal .modal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+    border-radius: 12px;
+
+    background: var(--bs-info-bg-subtle);
+    color: var(--bs-info);
+
+    font-size: 20px;
+}
+
+.resume-info-modal .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.resume-info-modal .modal-subtitle {
+    font-size: 12px;
+    color: var(--bs-secondary-color);
+    margin-top: 3px;
+}
+
+.resume-info-modal .btn-close {
+    margin-left: auto;
+}
+
+
+/* ---------- BODY ---------- */
+.resume-info-modal .modal-body {
+    padding: 22px;
+}
+
+.resume-info-modal .info-section {
+    margin-bottom: 20px;
+}
+
+.resume-info-modal .info-section:last-child {
+    margin-bottom: 0;
+}
+
+.resume-info-modal .info-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    margin-bottom: 8px;
+    color: var(--bs-emphasis-color);
+}
+
+.resume-info-modal .info-section-title i {
+    color: var(--bs-info);
+    font-size: 16px;
+}
+
+.resume-info-modal .info-description {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0;
+}
+
+
+/* ---------- SOURCE BADGE ---------- */
+.resume-info-modal .source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 8px;
+    background: var(--bs-info-bg-subtle);
+    color: var(--bs-info-text-emphasis);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.resume-info-modal .source-badge i {
+    font-size: 14px;
+}
+
+
+/* ---------- IMAGE PREVIEW ---------- */
+.resume-info-modal .info-image-wrapper {
+    position: relative;
+    overflow: hidden;
+
+    border: 1px solid var(--bs-border-color);
+    border-radius: 14px;
+
+    background: var(--bs-tertiary-bg);
+}
+
+.resume-info-modal .info-image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: contain;
+    background: var(--bs-body-bg);
+    padding: 8px;
+}
+
+.resume-info-modal .info-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+
+    min-height: 220px;
+    padding: 30px;
+
+    color: var(--bs-secondary-color);
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--bs-tertiary-bg),
+            var(--bs-body-bg)
+        );
+}
+
+.resume-info-modal .info-image-placeholder i {
+    font-size: 42px;
+    opacity: .5;
+}
+
+.resume-info-modal .info-image-placeholder-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.resume-info-modal .info-image-placeholder-text {
+    font-size: 12px;
+    opacity: .75;
+}
+
+
+/* ---------- IMAGE CAPTION ---------- */
+.resume-info-modal .info-image-caption {
+    padding: 10px 12px;
+
+    border-top: 1px solid var(--bs-border-color);
+
+    font-size: 11px;
+    color: var(--bs-secondary-color);
+    background: var(--bs-tertiary-bg);
+}
+
+
+/* ---------- FOOTER ---------- */
+.resume-info-modal .modal-footer {
+    padding: 14px 22px;
+
+    border-top: 1px solid var(--bs-border-color);
+    background: var(--bs-tertiary-bg);
+}
+
+
+/* ---------- ANIMATION ---------- */
+.resume-info-modal .modal-content {
+    animation: resume-info-modal-in .2s ease;
+}
+
+@keyframes resume-info-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 576px) {
+    .resume-info-modal .modal-dialog {
+        margin: 10px;
+    }
+
+    .resume-info-modal .modal-header {
+        padding: 15px;
+    }
+
+    .resume-info-modal .modal-body {
+        padding: 16px;
+    }
+
+    .resume-info-modal .modal-footer {
+        padding: 12px 16px;
+    }
+
+    .resume-info-modal .modal-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 18px;
+    }
+
+    .resume-info-modal .modal-title {
+        font-size: 14px;
+    }
+
+    .resume-info-modal .info-image-placeholder {
+        min-height: 170px;
+    }
+}
+/* =========================================================
+   RESUME RANAP - INFO IMAGE FIX
+========================================================= */
+
+.resume-info-modal .info-image-wrapper {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+}
+
+.resume-info-modal img.info-image {
+    display: block !important;
+    position: relative;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 420px !important;
+    min-height: 0 !important;
+    object-fit: contain;
+    object-position: center;
+    visibility: visible;
+    opacity: 1;
+    margin: 0 auto;
+    transition: none !important;
+}
+
+/* Placeholder ketika gambar tidak tersedia */
+.resume-info-modal .info-image-placeholder {
+    width: 100%;
+    min-height: 180px;
+}
+
+/* Caption */
+.resume-info-modal .info-image-caption {
+    text-align: center;
+    margin-top: 10px;
+}
+/* ======================================================
+   RESUME INFO MULTIPLE IMAGES
+   ====================================================== */
+
+.resume-info-modal .info-images-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+.resume-info-modal .info-image-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    background: var(--bs-tertiary-bg);
+}
+
+.resume-info-modal .info-image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 480px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 8px;
+    background: var(--bs-body-bg);
+}
+
+.resume-info-modal .info-image-caption {
+    font-size: 0.85rem;
+    color: var(--bs-secondary-color);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.resume-info-modal .info-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 220px;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed var(--bs-border-color);
+    border-radius: 12px;
+    color: var(--bs-secondary-color);
+}
+
+.resume-info-modal .info-image-placeholder > i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.resume-info-modal .info-image-placeholder-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.resume-info-modal .info-image-placeholder-text {
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   RESUME RANAP - PRINT PREVIEW MODAL
+   ========================================================= */
+
+.resume-ranap-preview-modal {
+    --preview-header-height: 72px;
+}
+
+/* =========================================================
+   MODAL CONTENT
+   ========================================================= */
+
+.resume-ranap-preview-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 0;
+    border-radius: 0;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.resume-ranap-preview-modal .resume-ranap-preview-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: var(--preview-header-height);
+    padding: 12px 20px;
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    z-index: 2;
+}
+
+.resume-ranap-preview-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.resume-ranap-preview-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
+    font-size: 24px;
+}
+
+.resume-ranap-preview-header-info {
+    min-width: 0;
+}
+
+.resume-ranap-preview-modal .modal-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--bs-body-color);
+}
+
+.resume-ranap-preview-subtitle {
+    margin-top: 3px;
+    font-size: 0.78rem;
+    color: var(--bs-secondary-color);
+}
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.resume-ranap-preview-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.resume-ranap-preview-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.resume-ranap-preview-modal .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 10px;
+    font-size: 19px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.resume-ranap-preview-modal .btn-icon:hover {
+    transform: translateY(-1px);
+}
+
+.resume-ranap-preview-modal .btn-icon:active {
+    transform: scale(0.96);
+}
+
+/* =========================================================
+   BODY / PDF AREA
+   ========================================================= */
+
+.resume-ranap-preview-modal .resume-ranap-preview-body {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #525659;
+}
+
+.resume-ranap-preview-iframe {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    background: #525659;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.resume-ranap-preview-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    background: var(--bs-body-bg);
+    transition: opacity 0.2s ease;
+}
+
+.resume-ranap-preview-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+}
+
+.resume-ranap-preview-loading .spinner-border {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-width: 3px;
+}
+
+.resume-ranap-preview-loading h6 {
+    font-weight: 600;
+    color: var(--bs-body-color);
+}
+
+.resume-ranap-preview-loading small {
+    font-size: 0.8rem;
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.resume-ranap-preview-error {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    padding: 24px;
+    background: var(--bs-body-bg);
+}
+
+.resume-ranap-preview-error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 420px;
+    text-align: center;
+}
+
+.resume-ranap-preview-error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+    border-radius: 20px;
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
+    font-size: 40px;
+}
+
+.resume-ranap-preview-error-content h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+}
+
+.resume-ranap-preview-error-content p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+.resume-ranap-preview-error-content .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 10px;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+[data-bs-theme="dark"] .resume-ranap-preview-modal
+.resume-ranap-preview-header {
+    background: var(--bs-body-bg);
+    border-bottom-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .resume-ranap-preview-modal
+.resume-ranap-preview-icon {
+    background: rgba(var(--bs-danger-rgb), 0.15);
+    color: var(--bs-danger);
+}
+
+[data-bs-theme="dark"] .resume-ranap-preview-modal
+.resume-ranap-preview-body {
+    background: #303234;
+}
+
+[data-bs-theme="dark"] .resume-ranap-preview-iframe {
+    background: #303234;
+}
+
+/* =========================================================
+   RESPONSIVE - TABLET & MOBILE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .resume-ranap-preview-modal .resume-ranap-preview-header {
+        min-height: 64px;
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .resume-ranap-preview-header-left {
+        gap: 10px;
+    }
+
+    .resume-ranap-preview-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        font-size: 21px;
+    }
+
+    .resume-ranap-preview-modal .modal-title {
+        font-size: 0.88rem;
+    }
+
+    .resume-ranap-preview-subtitle {
+        font-size: 0.68rem;
+    }
+
+    .resume-ranap-preview-actions {
+        gap: 5px;
+    }
+
+    .resume-ranap-preview-status {
+        min-height: 26px;
+        padding: 5px 7px;
+        font-size: 0.65rem;
+    }
+
+    .resume-ranap-preview-modal .btn-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        font-size: 17px;
+    }
+
+}
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .resume-ranap-preview-modal .resume-ranap-preview-header {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .resume-ranap-preview-header-left {
+        gap: 8px;
+    }
+
+    .resume-ranap-preview-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 19px;
+    }
+
+    .resume-ranap-preview-subtitle {
+        display: none;
+    }
+
+    .resume-ranap-preview-actions {
+        gap: 4px;
+    }
+
+    .resume-ranap-preview-status {
+        padding: 4px 6px;
+    }
+
+    .resume-ranap-preview-modal .btn-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+}

@@ -726,6 +726,7 @@ class ResumeRanapController extends Controller
                 ->select(
                     'pk.NOMOR as KUNJUNGAN',
                     'pk.NOPEN',
+                    'pk.RUANGAN',
                     'pp.NORM',
                     'pp.TANGGAL as TANGGAL_PENDAFTARAN',
                     'dr.NIP as NIP_DOKTER'
@@ -781,6 +782,9 @@ class ResumeRanapController extends Controller
                 ], 404);
             }
 
+            // VERIF RADAR / POLI
+            $isRadar = str_starts_with((string) ($kunjunganPoli->RUANGAN ?? ''), '10202');
+
             /*
             * Pengambilan Data Kebutuhan Resume Medis
             */
@@ -825,12 +829,21 @@ class ResumeRanapController extends Controller
                 ->implode(', ');
 
             // RPS
-            $anamnesis = DB::table('medicalrecord.anamnesis')
-                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
-                ->where('STATUS', 1)
-                ->orderByDesc('ID')
-                ->first();
+            if ($isRadar) {
+                $anamnesis = DB::table('medicalrecord.anamnesis')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->value('DESKRIPSI');
+            } else {
+                $anamnesis = DB::table('medicalrecord.cppt')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('JENIS', 1) // KHUSUS CPPT DOKTER
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->value('SUBYEKTIF');
+            }
 
             // RPD
             $rpp = DB::table('medicalrecord.rpp')
@@ -967,14 +980,6 @@ class ResumeRanapController extends Controller
                 ->orderBy('ttv.ID', 'asc')
                 ->first();
 
-            // PEMERIKSAAN FISIK
-            $pemeriksaanFisik = DB::table('medicalrecord.pemeriksaan_fisik')
-                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
-                ->where('STATUS', 1)
-                ->orderByDesc('ID')
-                ->first();
-
             // FORMAT TANDA VITAL
             $ttvText = '';
 
@@ -1098,32 +1103,48 @@ class ResumeRanapController extends Controller
                 $ttvText = implode("\n", $ttvLines);
             }
 
-            // FORMAT PEMERIKSAAN FISIK
+            // PEMERIKSAAN FISIK
             $pemeriksaanFisikText = $ttvText;
+            if ($isRadar) {
+                $pemeriksaanFisik = DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->first();
+                if ($pemeriksaanFisik) {
+                    $fisikText = collect((array) $pemeriksaanFisik)
+                        ->except([
+                            'ID',
+                            'KUNJUNGAN',
+                            'PENDAFTARAN',
+                            'TANGGAL',
+                            'STATUS',
+                        ])
+                        ->filter(function ($value) {
+                            return $value !== null && $value !== '';
+                        })
+                        ->map(function ($value, $key) {
+                            return "{$value}";
+                        })
+                        ->implode("\n");
 
-            if ($pemeriksaanFisik) {
-                $fisikText = collect((array) $pemeriksaanFisik)
-                    ->except([
-                        'ID',
-                        'KUNJUNGAN',
-                        'PENDAFTARAN',
-                        'TANGGAL',
-                        'STATUS',
-                    ])
-                    ->filter(function ($value) {
-                        return $value !== null && $value !== '';
-                    })
-                    ->map(function ($value, $key) {
-                        return "{$value}";
-                    })
-                    ->implode("\n");
-
-                if ($fisikText !== '') {
-                    $pemeriksaanFisikText .= ($pemeriksaanFisikText !== '' ? "\n\n" : '')
-                        . "PEMERIKSAAN FISIK\n"
-                        . $fisikText;
+                    if ($fisikText !== '') {
+                        $pemeriksaanFisikText .= ($pemeriksaanFisikText !== '' ? "\n\n" : '')
+                            . "PEMERIKSAAN FISIK\n"
+                            . $fisikText;
+                    }
                 }
+            } else {
+                $pemeriksaanFisik = DB::table('medicalrecord.cppt')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('JENIS', 1) // KHUSUS CPPT DOKTER
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->value('OBYEKTIF');
+                $pemeriksaanFisikText = $pemeriksaanFisik; // MURNI PEMERIKSAAN FISIK DARI CPPT OBYEKTIF
             }
+
 
             // GET DIAGNOSA DOKTER
             $getDiagnosa = DB::table('medicalrecord.diagnosa as diag')
@@ -1264,36 +1285,45 @@ class ResumeRanapController extends Controller
                 ->implode(", ");
 
             // TERAPI DAN TINDAKAN
-            // TATALAKSANA AWAL
-            // PERENCANAAN TERAPI
-            $pt = DB::table('medicalrecord.rencana_terapi')
-                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                ->where('STATUS', 1)
-                ->orderByDesc('ID')
-                ->first();
-
-            // HASIL LAPOR DPJP
-            $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
-                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                ->where('STATUS', 1)
-                ->orderByDesc('ID')
-                ->first();
-
-            // Ambil isi field (sesuaikan nama kolom dengan tabel)
-            $perencanaanTerapi = trim((string) ($pt->DESKRIPSI ?? ''));
-            $hasilLaporDPJP = trim((string) ($hld->DESKRIPSI ?? ''));
-
-            // SUSUN TEXT TERAPI
-            $terapiText = implode("\n", [
-                // "• TATALAKSANA AWAL",
-                $perencanaanTerapi,
-                "",
-                "",
-                $hasilLaporDPJP,
-                "",
-                // "• TATALAKSANA TAMBAHAN",
-                // "-"
-            ]);
+            if ($isRadar) {
+                // TATALAKSANA AWAL
+                // PERENCANAAN TERAPI
+                $pt = DB::table('medicalrecord.rencana_terapi')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->first();
+    
+                // HASIL LAPOR DPJP
+                $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->first();
+    
+                // Ambil isi field (sesuaikan nama kolom dengan tabel)
+                $perencanaanTerapi = trim((string) ($pt->DESKRIPSI ?? ''));
+                $hasilLaporDPJP = trim((string) ($hld->DESKRIPSI ?? ''));
+    
+                // SUSUN TEXT TERAPI
+                $terapiText = implode("\n", [
+                    // "• TATALAKSANA AWAL",
+                    $perencanaanTerapi,
+                    "",
+                    "",
+                    $hasilLaporDPJP,
+                    "",
+                    // "• TATALAKSANA TAMBAHAN",
+                    // "-"
+                ]);
+            } else {
+                $terapiText = DB::table('medicalrecord.cppt')
+                    ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                    ->where('JENIS', 1) // KHUSUS CPPT DOKTER
+                    ->where('STATUS', 1)
+                    ->orderByDesc('ID')
+                    ->value('PLANNING');
+            }
 
             // KONDISI SAAT KELUAR RS & CARA KELUAR / PASIEN PULANG
             $kondisi_cara_keluar = DB::table('layanan.pasien_pulang')
@@ -1347,8 +1377,7 @@ class ResumeRanapController extends Controller
             */
             // $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
             $old->put('indikasi', $indikasiRawatInap);
-            // $old->put('rps', $anamnesis->DESKRIPSI ?? '');
-            $rpsText = trim((string) ($anamnesis->DESKRIPSI ?? ''));
+            $rpsText = trim((string) ($anamnesis ?? ''));
 
             if ($statusReproduksiText !== '') {
                 $rpsText .= ($rpsText !== '' ? "\n" : '')
@@ -1795,6 +1824,8 @@ class ResumeRanapController extends Controller
      */
     public function printPreview($kunjungan)
     {
+        $temporaryWord = null;
+
         try {
             /*
             |--------------------------------------------------------------------------
@@ -1813,6 +1844,13 @@ class ResumeRanapController extends Controller
                     'success' => false,
                     'message' => 'Data Resume Medis Rawat Inap belum tersedia.',
                 ], 404);
+            }
+
+            if ((int) $record->final !== 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data Resume Medis Rawat Inap belum difinalkan.',
+                ], 422);
             }
 
             /*
@@ -2593,30 +2631,38 @@ class ResumeRanapController extends Controller
             | 17. RETURN PDF
             |--------------------------------------------------------------------------
             */
-
             return response()->file($finalPdf, [
-                'Content-Type' => 'application/pdf',
-
-                'Cache-Control' =>
-                    'no-store, no-cache, must-revalidate, max-age=0',
-
-                'Pragma' => 'no-cache',
-
-                'Expires' => '0',
+                'Content-Type'              => 'application/pdf',
+                'Content-Disposition'       => 'inline; filename="' . $fileName . '.pdf"',
+                'Cache-Control'             => 'private, no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'                   => 'no-cache',
+                'Expires'                  => '0',
+                'X-Content-Type-Options'   => 'nosniff',
             ]);
-
         } catch (\Throwable $e) {
 
             Log::error('Print Preview Resume Ranap Exception', [
                 'kunjungan' => $kunjungan,
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+                'message'   => $e->getMessage(),
+                'file'      => $e->getFile(),
+                'line'      => $e->getLine(),
             ]);
+
+            // Bersihkan DOCX temporary jika terjadi error
+            if ($temporaryWord && File::exists($temporaryWord)) {
+                try {
+                    File::delete($temporaryWord);
+                } catch (\Throwable $cleanupError) {
+                    Log::warning('Gagal menghapus DOCX temporary Resume Ranap', [
+                        'file' => $temporaryWord,
+                        'message' => $cleanupError->getMessage(),
+                    ]);
+                }
+            }
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Gagal menyiapkan Preview Resume Medis Rawat Inap.',
             ], 500);
         }
     }

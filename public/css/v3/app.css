@@ -742,6 +742,19 @@ a {
     margin: 0 auto;
 }
 
+
+/* HEADING FORM PROGRAM TERAPI */
+.cppt-section-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bs-primary);
+    /* min-width: 24px; */
+}
+
+.cppt-section-number + label {
+    font-size: 15px;
+}
+
 /* =========================================================
    CONTENT FOOTER — FIXED BOTTOM
 ========================================================= */

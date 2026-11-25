@@ -58,19 +58,44 @@
                         {{-- INDIKASI RAWAT INAP --}}
                         <div class="col-md-12 mb-3">
                             <div class="form-group">
-                                <h6>Indikasi Rawat Inap</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Indikasi Rawat Inap
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="indikasi"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data"
+                                    >
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="indikasi"
-                                    rows="2"
-                                    placeholder=""></textarea>
+                                    rows="2">
+                                </textarea>
                             </div>
                         </div>
 
                         {{-- RIWAYAT PENYAKIT --}}
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Ringkasan Penyakit Sekarang</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Ringkasan Penyakit Sekarang (RPS)
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="rps"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data">
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="rps"
@@ -80,7 +105,20 @@
 
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Ringkasan Penyakit Dahulu</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Ringkasan Penyakit Dahulu
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="rpd"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data"
+                                    >
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="rpd"
@@ -90,7 +128,20 @@
 
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Riwayat Pengobatan Medis</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Riwayat Pengobatan Medis
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="rpm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data"
+                                    >
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="rpm"
@@ -100,7 +151,19 @@
 
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Riwayat Alergi</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Riwayat Alergi
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="ra"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data">
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="ra"
@@ -111,7 +174,20 @@
                         {{-- PEMERIKSAAN FISIK --}}
                         <div class="col-md-12 mb-3">
                             <div class="form-group">
-                                <h6>Pemeriksaan Fisik</h6>
+                                <div class="resume-field-label mb-2">
+                                    <label class="form-label mb-0 fw-semibold">
+                                        Pemeriksaan Fisik
+                                    </label>
+                                    <button type="button"
+                                        class="resume-info-btn"
+                                        data-info-key="pemeriksaan_fisik"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#resumeInfoModal"
+                                        title="Informasi sumber data"
+                                    >
+                                        <i class="ph-duotone ph-info"></i>
+                                    </button>
+                                </div>
                                 <textarea
                                     class="form-control"
                                     name="pemeriksaan_fisik"
@@ -475,16 +551,12 @@
 
             {{-- FOOTER --}}
             <div class="card-footer d-flex justify-content-left align-items-center flex-wrap gap-2">
-
-                <button
-                    type="button"
-                    class="btn btn-info"
-                    id="btn_print_resume">
-
-                    <i class="ph-duotone ph-printer me-2"></i>
-                    Print Preview
+                <button type="button"
+                        class="btn btn-subtle-primary"
+                        id="btn_preview_resume_ranap">
+                    <i class="ph-duotone ph-file-pdf me-1"></i>
+                    Preview Resume
                 </button>
-
                     {{-- <button
                         type="button"
                         class="btn btn-success"
@@ -516,834 +588,262 @@
 
         </div>
     </div>
+
+    {{-- MODAL INFO INPUT --}}
+    <div class="modal fade resume-info-modal"
+        id="resumeInfoModal"
+        tabindex="-1"
+        aria-labelledby="resumeInfoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                {{-- HEADER --}}
+                <div class="modal-header">
+                    <div class="modal-title-wrapper">
+                        <div class="modal-icon">
+                            <i class="ph-duotone ph-info"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title"
+                                id="resumeInfoModalLabel">
+                                Informasi Isian
+                            </h5>
+                            <div class="modal-subtitle">
+                                Sumber dan penjelasan data Resume Medis
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    </button>
+                </div>
+                {{-- BODY --}}
+                <div class="modal-body">
+                    {{-- SUMBER DATA --}}
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="ph-duotone ph-database"></i>
+                            Sumber Data
+                        </div>
+                        <div id="resumeInfoSource"
+                            class="source-badge">
+                            <i class="ph-duotone ph-database"></i>
+                            <span>Sumber Data</span>
+                        </div>
+                    </div>
+                    {{-- PENJELASAN --}}
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="ph-duotone ph-text-align-left"></i>
+                            Penjelasan
+                        </div>
+                        <p id="resumeInfoDescription"
+                            class="info-description">
+                            Informasi penjelasan akan ditampilkan di sini.
+                        </p>
+                    </div>
+                    {{-- DETAIL --}}
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="ph-duotone ph-list-bullets"></i>
+                            Bagaimana Data Diambil?
+                        </div>
+                        <p id="resumeInfoDetail"
+                            class="info-description">
+                            Detail proses pengambilan data akan ditampilkan di sini.
+                        </p>
+                    </div>
+                    {{-- GAMBAR --}}
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="ph-duotone ph-images"></i>
+                            Lokasi Pengambilan Data
+                        </div>
+                        <div id="resumeInfoImages"
+                            class="info-images-container">
+
+                            {{-- GAMBAR AKAN DI-RENDER DINAMIS DARI JAVASCRIPT --}}
+
+                        </div>
+                    </div>
+                </div>
+                {{-- FOOTER --}}
+                <div class="modal-footer">
+                    <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        <i class="ph ph-x me-1"></i>
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+        RESUME RANAP PRINT PREVIEW MODAL
+    ========================================================= -->
+    <div class="modal fade resume-ranap-preview-modal"
+        id="modal_preview_resume_ranap"
+        tabindex="-1"
+        aria-labelledby="modal_preview_resume_ranap_title"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-scrollable modal-xxl">
+
+            <div class="modal-content">
+
+                <!-- HEADER -->
+                <div class="modal-header resume-ranap-preview-header">
+
+                    <div class="resume-ranap-preview-header-left">
+
+                        <div class="resume-ranap-preview-icon">
+                            <i class="ph-duotone ph-file-pdf"></i>
+                        </div>
+
+                        <div class="resume-ranap-preview-header-info">
+
+                            <h5 class="modal-title mb-0"
+                                id="modal_preview_resume_ranap_title">
+                                Print Preview Resume Medis
+                            </h5>
+
+                            <div class="resume-ranap-preview-subtitle">
+                                Preview dokumen Resume Medis Rawat Inap
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- HEADER ACTIONS -->
+                    <div class="resume-ranap-preview-actions">
+
+                        <span id="resume_ranap_preview_status"
+                            class="resume-ranap-preview-status badge bg-success-subtle text-success">
+
+                            <i class="ph-duotone ph-check-circle me-1"></i>
+                            Final
+
+                        </span>
+
+                        <!-- REFRESH -->
+                        <button type="button"
+                                class="btn btn-icon btn-light"
+                                id="btn_refresh_preview_resume_ranap"
+                                title="Refresh Preview">
+
+                            <i class="ph-duotone ph-arrows-clockwise"></i>
+
+                        </button>
+
+                        <!-- PRINT -->
+                        <button type="button"
+                                class="btn btn-icon btn-light"
+                                id="btn_print_preview_resume_ranap"
+                                title="Print">
+
+                            <i class="ph-duotone ph-printer"></i>
+
+                        </button>
+
+                        <!-- CLOSE -->
+                        <button type="button"
+                                class="btn btn-icon btn-light"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+
+                            <i class="ph-duotone ph-x"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BODY -->
+                <div class="modal-body resume-ranap-preview-body">
+
+                    <!-- LOADING -->
+                    <div id="resume_ranap_preview_loading"
+                        class="resume-ranap-preview-loading">
+
+                        <div class="resume-ranap-preview-loading-content">
+
+                            <div class="spinner-border text-primary"
+                                role="status">
+                            </div>
+
+                            <h6 class="mt-3 mb-1">
+                                Menyiapkan dokumen
+                            </h6>
+
+                            <small class="text-muted">
+                                Mohon tunggu, PDF Resume Medis Rawat Inap sedang dimuat...
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ERROR -->
+                    <div id="resume_ranap_preview_error"
+                        class="resume-ranap-preview-error d-none">
+
+                        <div class="resume-ranap-preview-error-content">
+
+                            <div class="resume-ranap-preview-error-icon">
+                                <i class="ph-duotone ph-warning-circle"></i>
+                            </div>
+
+                            <h5>
+                                Preview tidak dapat dimuat
+                            </h5>
+
+                            <p id="resume_ranap_preview_error_message"
+                                class="text-muted mb-3">
+                                Terjadi kesalahan saat menampilkan dokumen Resume Medis Rawat Inap.
+                            </p>
+
+                            <button type="button"
+                                class="btn btn-primary"
+                                id="btn_retry_preview_resume_ranap">
+
+                                <i class="ph-duotone ph-arrow-clockwise me-1"></i>
+                                Coba Lagi
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PDF VIEWER -->
+                    <iframe id="resume_ranap_preview_iframe"
+                            class="resume-ranap-preview-iframe"
+                            title="Preview Resume Medis Rawat Inap"
+                            src="about:blank">
+
+                    </iframe>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 </div>
 
-<script>
-(() => {
-
-    // ==========================================================
-    // INITIALIZATION
-    // ==========================================================
-
-    const $form = $('#form_resume_medis_ranap');
-
-    if (!$form.length) {
-        return;
-    }
-
-    // Hindari inisialisasi ganda
-    if ($form.data('initialized')) {
-        return;
-    }
-
-    $form.data('initialized', true);
-
-    const $fieldset = $form.find('#resume_fields');
-
-    const $badge = $form.find('#badge_final_resume');
-
-    // TAB RESUME RANAP
-    const $tabResume = $('#tab-resume-ranap');
-    const $tabBadge = $tabResume.find('#badge_tab_final_resume');
-
-    const $infoFinal = $form.find('#info_final_resume');
-    const $infoFinalOleh = $form.find('#info_final_oleh');
-    const $infoFinalTanggal = $form.find('#info_final_tanggal');
-
-    // INFORMASI FINALISASI
-    let finalMeta = {
-        oleh_nama: '',
-        tgl_difinal: ''
-    };
-
-    // const $btnSimpan = $form.find('#btn_simpan_resume');
-    const $btnFinal = $form.find('#btn_final_resume');
-    const $btnBatalFinal = $form.find('#btn_batal_final_resume');
-    const $btnPrint = $form.find('#btn_print_resume');
-
-    const emrData = window.EMRData || {};
-
-    const kunjungan = emrData.kunjungan;
-
-    if (!kunjungan) {
-        console.error('Nomor kunjungan tidak ditemukan pada window.EMRData.');
-        return;
-    }
-
-    const baseUrl =
-        `/api/v2/emr/resume/ranap/${encodeURIComponent(kunjungan)}`;
-
-    const previewUrl =
-        `/api/v2/emr/resume/ranap/preview/${encodeURIComponent(kunjungan)}`;
-
-    const csrfToken =
-        $('meta[name="csrf-token"]').attr('content');
-
-    let isLoading = false;
-    let isSaving = false;
-    let isFinal = false;
-
-    let saveTimer = null;
-
-    // ==========================================================
-    // INFORMASI FINALISASI
-    // ==========================================================
-    function setFinalMeta(response = {}) {
-
-        finalMeta = {
-            oleh_nama: response.oleh_nama ?? '',
-            tgl_difinal: response.tgl_difinal_text ?? response.tgl_difinal ?? ''
-        };
-
-        console.log('Final Meta:', finalMeta);
-    }
-
-    // ==========================================================
-    // UPDATE BADGE TAB RESUME
-    // ==========================================================
-    function updateTabFinalStatus() {
-
-        if (!$tabResume.length) {
-            return;
-        }
-
-        if (isLoading) {
-
-            $tabBadge
-                .removeClass('bg-success bg-danger bg-warning text-dark')
-                .addClass('bg-dark-subtle text-body-secondary')
-                .html('<i class="ri-loader-line ri-spin"></i>');
-
-            $tabResume.attr('title', 'Memuat status Resume Medis...');
-
-            return;
-        }
-
-        if (isFinal) {
-
-            $tabBadge
-                .removeClass('bg-danger bg-warning text-dark bg-dark-subtle text-body-secondary')
-                .addClass('bg-success')
-                .text('Sudah Final');
-
-            const detail = [];
-
-            if (finalMeta.oleh_nama) {
-                detail.push(`Difinalkan oleh ${finalMeta.oleh_nama}`);
-            }
-
-            if (finalMeta.tgl_difinal) {
-                detail.push(finalMeta.tgl_difinal);
-            }
-
-            const informasi = detail.join(' · ');
-
-            $tabResume.attr(
-                'title',
-                informasi || 'Resume Medis sudah difinalisasi'
-            );
-
-        } else {
-
-            $tabBadge
-                .removeClass('bg-success bg-warning text-dark bg-dark-subtle text-body-secondary')
-                .addClass('bg-danger')
-                .text('Belum Final');
-
-            $tabResume.attr(
-                'title',
-                'Resume Medis belum difinalisasi'
-            );
-        }
-    }
-
-    function updateInfoFinalResume() {
-
-        if (isLoading) {
-            $infoFinal.addClass('d-none');
-            return;
-        }
-
-        if (isFinal) {
-
-            $infoFinalOleh.text(
-                finalMeta.oleh_nama || 'Petugas tidak diketahui'
-            );
-
-            $infoFinalTanggal.text(
-                finalMeta.tgl_difinal || '-'
-            );
-
-            $infoFinal.removeClass('d-none');
-
-        } else {
-
-            $infoFinal.addClass('d-none');
-
-            $infoFinalOleh.text('');
-            $infoFinalTanggal.text('');
-        }
-    }
-
-    // ==========================================================
-    // NOTIFICATION
-    // ==========================================================
-
-    function notify(type, title, message) {
-
-        if (typeof iziToast !== 'undefined') {
-
-            iziToast[type]({
-                title: title,
-                message: message,
-                position: 'topRight',
-                timeout: 3000
-            });
-
-            return;
-        }
-
-        console.log(`${title}: ${message}`);
-    }
-
-
-    // ==========================================================
-    // CONFIRMATION
-    // ==========================================================
-
-    async function confirmAction(title, text, confirmText) {
-
-        if (typeof Swal !== 'undefined') {
-
-            const result = await Swal.fire({
-                title: title,
-                text: text,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: confirmText,
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            });
-
-            return result.isConfirmed;
-        }
-
-        return window.confirm(text);
-    }
-
-    // ==========================================================
-    // STATUS FORM
-    // ==========================================================
-    function updateFormStatus() {
-
-        $fieldset.prop(
-            'disabled',
-            isLoading || isSaving || isFinal
-        );
-
-        // BADGE STATUS FINALISASI
-        if (isLoading) {
-
-            $badge
-                .removeClass('bg-success bg-danger bg-warning text-dark')
-                .addClass('bg-dark-subtle text-body-secondary')
-                .html('<i class="ri-loader-line ri-spin"></i>');
-
-        } else if (isFinal) {
-
-            $badge
-                .removeClass('bg-danger bg-warning text-dark bg-dark-subtle text-body-secondary')
-                .addClass('bg-success')
-                .text('Sudah Final');
-
-            $btnFinal.addClass('d-none');
-            $btnBatalFinal.removeClass('d-none');
-
-        } else {
-
-            $badge
-                .removeClass('bg-success bg-warning text-dark bg-dark-subtle text-body-secondary')
-                .addClass('bg-danger')
-                .text('Belum Final');
-
-            $btnFinal.removeClass('d-none');
-            $btnBatalFinal.addClass('d-none');
-        }
-
-        // UPDATE BADGE PADA TAB UTAMA
-        updateTabFinalStatus();
-        updateInfoFinalResume();
-
-        const busy = isLoading || isSaving;
-
-        $btnFinal.prop('disabled', busy);
-        $btnBatalFinal.prop('disabled', busy);
-        $btnPrint.prop('disabled', busy);
-    }
-
-    // ==========================================================
-    // GET FORM DATA
-    // ==========================================================
-
-    function getFormData() {
-
-        const data = {};
-
-        $fieldset.find('[name]').each(function () {
-
-            const field = this;
-
-            const name = field.name;
-            const type = (field.type || '').toLowerCase();
-
-            // RADIO
-            if (type === 'radio') {
-
-                if (!(name in data)) {
-                    data[name] = null;
-                }
-
-                if (field.checked) {
-                    data[name] = field.value;
-                }
-
-                return;
-            }
-
-            // CHECKBOX
-            if (type === 'checkbox') {
-
-                data[name] = field.checked
-                    ? (field.value || 1)
-                    : null;
-
-                return;
-            }
-
-            // INPUT / TEXTAREA / SELECT
-            const value = $(field).val();
-
-            data[name] = value === '' ? null : value;
-        });
-
-        return data;
-    }
-
-
-    // ==========================================================
-    // SET FORM DATA
-    // ==========================================================
-
-    function setFormData(data = {}) {
-
-        $fieldset.find('[name]').each(function () {
-
-            const field = this;
-
-            const name = field.name;
-            const type = (field.type || '').toLowerCase();
-
-            const value = data[name] ?? null;
-
-            if (type === 'radio') {
-
-                field.checked =
-                    value !== null &&
-                    String(field.value) === String(value);
-
-                return;
-            }
-
-            if (type === 'checkbox') {
-
-                field.checked =
-                    value !== null &&
-                    String(field.value) === String(value);
-
-                return;
-            }
-
-            $(field).val(value ?? '');
-        });
-    }
-
-
-    // ==========================================================
-    // GET DATA
-    // ==========================================================
-    function setFieldValue(section, name, value = null) {
-
-        const $fields = section.find(`[name="${name}"]`);
-
-        if (!$fields.length) return;
-
-        const type = ($fields.first().attr('type') || '').toLowerCase();
-
-        // Radio
-        if (type === 'radio') {
-            $fields.each(function () {
-                this.checked =
-                    value !== null &&
-                    String(this.value) === String(value);
-            });
-
-            return;
-        }
-
-        // Checkbox
-        if (type === 'checkbox') {
-            $fields.each(function () {
-                this.checked =
-                    value !== null &&
-                    String(this.value) === String(value);
-            });
-
-            return;
-        }
-
-        // Text, Number, Textarea, Select
-        $fields.val(value ?? '');
-    }
-
-    // ==========================================================
-    // GET DATA
-    // ==========================================================
-    async function getData() {
-
-        if (isLoading) {
-            return;
-        }
-
-        isLoading = true;
-        updateFormStatus();
-
-        try {
-
-            const response = await $.ajax({
-                url: baseUrl,
-                type: 'GET',
-                dataType: 'json'
-            });
-
-            const data = response.data || {};
-            const old = response.old || {};
-            const ref = response.ref || {};
-
-            setFieldValue($form, 'indikasi',
-                data.indikasi || old.indikasi || ''
-            );
-            setFieldValue($form, 'rps',
-                data.rps || old.rps || ''
-            );
-            setFieldValue($form, 'rpd',
-                data.rpd || old.rpd || ''
-            );
-            setFieldValue($form, 'rpm',
-                data.rpm || old.rpm || ''
-            );
-            setFieldValue($form, 'ra',
-                data.ra || old.ra || ''
-            );
-            setFieldValue($form, 'pemeriksaan_fisik',
-                data.pemeriksaan_fisik || old.pemeriksaan_fisik || ''
-            );
-            setFieldValue($form, 'diagnosa_utama',
-                data.diagnosa_utama || old.diagnosa_utama || ''
-            );
-            setFieldValue($form, 'diagnosa_sekunder',
-                data.diagnosa_sekunder || old.diagnosa_sekunder || ''
-            );
-            setFieldValue($form, 'diagnosa_dokter_icd10',
-                data.diagnosa_dokter_icd10 || old.diagnosa_dokter_icd10 || ''
-            );
-            setFieldValue($form, 'diagnosa_perawat',
-                data.diagnosa_perawat || old.diagnosa_perawat || ''
-            );
-            setFieldValue($form, 'diagnosa_dokter_icd9',
-                data.diagnosa_dokter_icd9 || old.diagnosa_dokter_icd9 || ''
-            );
-            setFieldValue($form, 'terapi',
-                data.terapi || old.terapi || ''
-            );
-            setFieldValue($form, 'kondisi_keluar',
-                data.kondisi_keluar || old.kondisi_keluar || ''
-            );
-            setFieldValue($form, 'cara_keluar',
-                data.cara_keluar || old.cara_keluar || ''
-            );
-
-            // TINGKAT KESADARAN
-            let select = $form.find('[name="ku_tk"]');
-            select.empty().append('<option value="">Pilih Tingkat Kesadaran</option>');
-            $.each(ref.tingkat_kesadaran, function (index, item) {
-                select.append(
-                    $('<option>', {
-                        value: item.ID,
-                        text: item.DESKRIPSI
-                    })
-                );
-            });
-            setFieldValue($form, 'ku_tk',
-                data.ku_tk || old.ku_tk || ''
-            );
-
-            setFieldValue($form, 'ku_td_up',
-                data.ku_td_up || old.ku_td_up || ''
-            );
-            setFieldValue($form, 'ku_td_down',
-                data.ku_td_down || old.ku_td_down || ''
-            );
-            setFieldValue($form, 'ku_nafas',
-                data.ku_nafas || old.ku_nafas || ''
-            );
-            setFieldValue($form, 'ku_sn',
-                data.ku_sn || old.ku_sn || ''
-            );
-            setFieldValue($form, 'ku_nadi',
-                data.ku_nadi || old.ku_nadi || ''
-            );
-            setFieldValue($form, 'ku_suhu',
-                data.ku_suhu || old.ku_suhu || ''
-            );
-
-            setFieldValue($form, 'edukasi',
-                data.edukasi || old.edukasi || ''
-            );
-
-            isFinal = Number(data.status_final || 0) === 1;
-
-            // Ambil informasi siapa dan kapan finalisasi
-            setFinalMeta(response);
-
-            updateFormStatus();
-
-        } catch (xhr) {
-
-            console.error(
-                'Gagal mengambil data Resume Medis:',
-                xhr.responseText || xhr
-            );
-
-            // notify(
-            //     'error',
-            //     'Gagal',
-            //     xhr.responseJSON?.message ||
-            //     'Gagal mengambil data Resume Medis.'
-            // );
-
-        } finally {
-
-            isLoading = false;
-            updateFormStatus();
-        }
-    }
-
-
-    // ==========================================================
-    // SIMPAN DATA
-    // ==========================================================
-
-    async function simpanData(finalisasi = false) {
-
-        if (isLoading || isSaving || isFinal) {
-            return false;
-        }
-
-        isSaving = true;
-        updateFormStatus();
-
-        const payload = {
-            ...getFormData(),
-            NOKUNJ: kunjungan,
-            finalisasi: finalisasi ? 1 : 0
-        };
-
-        try {
-
-            const response = await $.ajax({
-
-                url: `${baseUrl}/simpan`,
-
-                type: 'POST',
-
-                data: payload,
-
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-
-                dataType: 'json'
-            });
-
-            isFinal = Number(response.data?.status_final || 0) === 1;
-
-            setFinalMeta(response.data || {});
-
-            if (finalisasi) {
-
-                notify(
-                    'success',
-                    'Finalisasi Berhasil',
-                    'Resume Medis berhasil difinalisasi.'
-                );
-
-            } else if (!isFinal) {
-
-                notify(
-                    'success',
-                    'Berhasil',
-                    'Data Resume Medis berhasil disimpan.'
-                );
-            }
-
-            updateFormStatus();
-
-            return true;
-
-        } catch (xhr) {
-
-            let message =
-                'Data Resume Medis gagal disimpan.';
-
-            if (
-                xhr.status === 422 &&
-                xhr.responseJSON?.errors
-            ) {
-
-                message = Object
-                    .values(xhr.responseJSON.errors)
-                    .flat()
-                    .join('<br>');
-
-            } else if (xhr.responseJSON?.message) {
-
-                message = xhr.responseJSON.message;
-            }
-
-            notify(
-                'error',
-                'Gagal Menyimpan',
-                message
-            );
-
-            console.error(
-                'Error simpan Resume Medis:',
-                xhr.responseText || xhr
-            );
-
-            return false;
-
-        } finally {
-
-            isSaving = false;
-            updateFormStatus();
-        }
-    }
-
-
-    // ==========================================================
-    // BATAL FINAL
-    // ==========================================================
-
-    async function batalFinal() {
-
-        if (isLoading || isSaving || !isFinal) {
-            return;
-        }
-
-        const confirmed = await confirmAction(
-            'Batal Finalisasi?',
-            'Resume Medis akan dibuka kembali dan dapat diedit.',
-            'Ya, Batal Final'
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
-        isSaving = true;
-        updateFormStatus();
-
-        try {
-
-            const response = await $.ajax({
-
-                url: `${baseUrl}/batal`,
-
-                type: 'POST',
-
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-
-                dataType: 'json'
-            });
-
-            isFinal = false;
-
-            finalMeta = {
-                oleh_nama: '',
-                tgl_difinal: ''
-            };
-
-            updateFormStatus();
-
-            notify(
-                'success',
-                'Berhasil',
-                response.message ||
-                'Finalisasi Resume Medis berhasil dibatalkan.'
-            );
-
-        } catch (xhr) {
-
-            notify(
-                'error',
-                'Gagal',
-                xhr.responseJSON?.message ||
-                'Gagal membatalkan finalisasi Resume Medis.'
-            );
-
-            console.error(
-                'Error batal final:',
-                xhr.responseText || xhr
-            );
-
-        } finally {
-
-            isSaving = false;
-            updateFormStatus();
-        }
-    }
-
-
-    // ==========================================================
-    // PRINT PREVIEW
-    // ==========================================================
-
-    async function printPreview() {
-
-        if (isLoading || isSaving) {
-            return;
-        }
-
-        // Buka tab terlebih dahulu agar tidak diblokir popup blocker.
-        const previewWindow = window.open('about:blank', '_blank');
-
-        if (!previewWindow) {
-
-            notify(
-                'warning',
-                'Popup Diblokir',
-                'Izinkan popup browser untuk membuka Print Preview.'
-            );
-
-            return;
-        }
-
-        // Pastikan data terakhir tersimpan sebelum preview.
-        if (!isFinal) {
-
-            const saved = await simpanData(false);
-
-            if (!saved) {
-                previewWindow.close();
-                return;
-            }
-        }
-
-        previewWindow.location.href = previewUrl;
-    }
-
-
-    // ==========================================================
-    // AUTO SAVE
-    // ==========================================================
-
-    function scheduleAutoSave() {
-
-        if (
-            isLoading ||
-            isSaving ||
-            isFinal
-        ) {
-            return;
-        }
-
-        clearTimeout(saveTimer);
-
-        saveTimer = setTimeout(() => {
-            simpanData(false);
-        }, 800);
-    }
-
-
-    // ==========================================================
-    // EVENT HANDLERS
-    // ==========================================================
-
-    // Auto-save ketika mengetik.
-    $form.on(
-        'input',
-        '#resume_fields textarea, #resume_fields input:not([type="radio"]):not([type="checkbox"])',
-        function () {
-            scheduleAutoSave();
-        }
-    );
-
-    // Auto-save ketika radio/select/checkbox berubah.
-    $form.on(
-        'change',
-        '#resume_fields select, #resume_fields input[type="radio"], #resume_fields input[type="checkbox"]',
-        function () {
-            scheduleAutoSave();
-        }
-    );
-
-    // Tombol simpan.
-    // $btnSimpan.on('click', function () {
-
-    //     clearTimeout(saveTimer);
-
-    //     simpanData(false);
-    // });
-
-    // Tombol finalisasi.
-    $btnFinal.on('click', async function () {
-
-        clearTimeout(saveTimer);
-
-        const confirmed = await confirmAction(
-            'Finalisasi Resume Medis?',
-            'Setelah difinalisasi, seluruh isian Resume Medis akan dikunci dan tidak dapat diubah sampai dilakukan Batal Final.',
-            'Ya, Finalisasi'
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
-        await simpanData(true);
-    });
-
-    // Tombol batal final.
-    $btnBatalFinal.on('click', function () {
-
-        batalFinal();
-    });
-
-    // Tombol print preview.
-    $btnPrint.on('click', function () {
-
-        printPreview();
-    });
-
-
-    // ==========================================================
-    // LOAD AWAL
-    // ==========================================================
-
-    getData();
-
-})();
-</script>
+@once
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('css/v3/components/resume-ranap.css') }}">
+    @endpush    
+    @push('scripts')
+        <script src="{{ asset('js/v3/components/resume-ranap.js') }}"></script>
+    @endpush
+@endonce
