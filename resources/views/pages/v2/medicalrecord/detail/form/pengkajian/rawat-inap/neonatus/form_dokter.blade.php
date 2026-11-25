@@ -8,6 +8,11 @@
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.status_obstetri_neonatus')
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="col-md-12 mb-1">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.penilaian_awal_bbl')
+                </div>
+            </div>
             <div class="col-md-12 mb-3">
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',

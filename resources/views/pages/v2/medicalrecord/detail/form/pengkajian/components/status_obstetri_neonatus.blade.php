@@ -352,12 +352,30 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="col-md-12 mb-1">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.penilaian_awal_bbl')
+
+            {{-- Resusitasi --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Resusitasi Intubasi</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm" name="sn_resusitasi_intubasi">
+                        <option value="0" selected>Tidak</option>
+                        <option value="1">Ya</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Resusitasi Pompa</label>
+                </div>
+                <div class="col-md-8">
+                    <select class="form-select form-select-sm" name="sn_resusitasi_pompa">
+                        <option value="0" selected>Tidak</option>
+                        <option value="1">Ya</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -549,19 +567,11 @@
 
 
                     // Resusitasi
-                    $form
-                        .find('[name="sn_resusitasi_intubasi"]')
-                        .prop(
-                            'checked',
-                            neonatus.sn_resusitasi_intubasi == 1
-                        );
+                    $form.find('[name="sn_resusitasi_intubasi"]')
+                        .val(neonatus.sn_resusitasi_intubasi ?? 0);
 
-                    $form
-                        .find('[name="sn_resusitasi_pompa"]')
-                        .prop(
-                            'checked',
-                            neonatus.sn_resusitasi_pompa == 1
-                        );
+                    $form.find('[name="sn_resusitasi_pompa"]')
+                        .val(neonatus.sn_resusitasi_pompa ?? 0);
 
 
                     // Berulang

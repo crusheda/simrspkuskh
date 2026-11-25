@@ -8197,32 +8197,32 @@ class AddOnPengkajianController extends Controller
             // JIKA TIDAK BUGAR -> HAPUS SEMUA APGAR
             // ======================================================
 
-            if ($statusBayi === 'tidak_bugar') {
+            // if ($statusBayi === 'tidak_bugar') {
 
-                $data['APGAR_1_MENIT_DENYUT'] = null;
-                $data['APGAR_1_MENIT_PERNAFASAN'] = null;
-                $data['APGAR_1_MENIT_TONUS'] = null;
-                $data['APGAR_1_MENIT_RANGSANG'] = null;
-                $data['APGAR_1_MENIT_WARNA'] = null;
-                $data['APGAR_TOTAL_1_MENIT'] = null;
-
-
-                $data['APGAR_5_MENIT_DENYUT'] = null;
-                $data['APGAR_5_MENIT_PERNAFASAN'] = null;
-                $data['APGAR_5_MENIT_TONUS'] = null;
-                $data['APGAR_5_MENIT_RANGSANG'] = null;
-                $data['APGAR_5_MENIT_WARNA'] = null;
-                $data['APGAR_TOTAL_5_MENIT'] = null;
+            //     $data['APGAR_1_MENIT_DENYUT'] = null;
+            //     $data['APGAR_1_MENIT_PERNAFASAN'] = null;
+            //     $data['APGAR_1_MENIT_TONUS'] = null;
+            //     $data['APGAR_1_MENIT_RANGSANG'] = null;
+            //     $data['APGAR_1_MENIT_WARNA'] = null;
+            //     $data['APGAR_TOTAL_1_MENIT'] = null;
 
 
-                $data['APGAR_10_MENIT_DENYUT'] = null;
-                $data['APGAR_10_MENIT_PERNAFASAN'] = null;
-                $data['APGAR_10_MENIT_TONUS'] = null;
-                $data['APGAR_10_MENIT_RANGSANG'] = null;
-                $data['APGAR_10_MENIT_WARNA'] = null;
-                $data['APGAR_TOTAL_10_MENIT'] = null;
+            //     $data['APGAR_5_MENIT_DENYUT'] = null;
+            //     $data['APGAR_5_MENIT_PERNAFASAN'] = null;
+            //     $data['APGAR_5_MENIT_TONUS'] = null;
+            //     $data['APGAR_5_MENIT_RANGSANG'] = null;
+            //     $data['APGAR_5_MENIT_WARNA'] = null;
+            //     $data['APGAR_TOTAL_5_MENIT'] = null;
 
-            }
+
+            //     $data['APGAR_10_MENIT_DENYUT'] = null;
+            //     $data['APGAR_10_MENIT_PERNAFASAN'] = null;
+            //     $data['APGAR_10_MENIT_TONUS'] = null;
+            //     $data['APGAR_10_MENIT_RANGSANG'] = null;
+            //     $data['APGAR_10_MENIT_WARNA'] = null;
+            //     $data['APGAR_TOTAL_10_MENIT'] = null;
+
+            // }
 
 
             // ======================================================
