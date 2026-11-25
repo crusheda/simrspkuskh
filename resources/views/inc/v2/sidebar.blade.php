@@ -13,22 +13,19 @@
                 </a>
             </li>
             <li class="nav-item-hr"></li>
-            <li class="nav-item mb-auto" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Digital">
+            <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Digital">
                 <a class="menu-link" href="#digitalTab" role="tab" aria-controls="digitalTab"
                     aria-selected="false" data-bs-toggle="tab">
                     <i class="ri-health-book-line fs-24"></i>
                 </a>
             </li>
-            {{-- <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboard">
-                <a class="menu-link position-relative" href="{{ route('v2.dashboard') }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
-                        fill="none">
-                        <path
-                            d="m21,23c0,.553-.448,1-1,1s-1-.447-1-1c0-2.206-1.794-4-4-4h-6c-2.206,0-4,1.794-4,4,0,.553-.448,1-1,1s-1-.447-1-1c0-3.309,2.691-6,6-6h6c3.309,0,6,2.691,6,6Zm1-15.5v2c0,.827-.673,1.5-1.5,1.5h-.5c0,2.206-1.794,4-4,4h-8c-2.206,0-4-1.794-4-4h-.5c-.827,0-1.5-.673-1.5-1.5v-2c0-.827.673-1.5,1.5-1.5h.5c0-2.206,1.794-4,4-4h3v-1c0-.553.448-1,1-1s1,.447,1,1v1h3c2.206,0,4,1.794,4,4h.5c.827,0,1.5.673,1.5,1.5Zm-4-1.5c0-1.103-.897-2-2-2h-8c-1.103,0-2,.897-2,2v5c0,1.103.897,2,2,2h8c1.103,0,2-.897,2-2v-5Zm-8.5,1c-.828,0-1.5.672-1.5,1.5s.672,1.5,1.5,1.5,1.5-.672,1.5-1.5-.672-1.5-1.5-1.5Zm5,0c-.828,0-1.5.672-1.5,1.5s.672,1.5,1.5,1.5,1.5-.672,1.5-1.5-.672-1.5-1.5-1.5Z"
-                            fill="var(--bs-heading-color)"></path>
-                    </svg>
+            <li class="nav-item-hr"></li>
+            <li class="nav-item mb-auto" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Sirmed V3">
+                <a class="menu-link border border-primary text-primary-emphasis border-dashed" href="{{ route('v3.dashboard') }}">
+                    <i class="ri-rocket-line fs-24"></i>
                 </a>
-            </li> --}}
+            </li>
+            
             {{-- <li class="nav-item-hr"></li>
             <li class="nav-item mb-auto" data-bs-toggle="tooltip" data-bs-placement="right"
                 data-bs-title="Add Customer">
@@ -44,14 +41,14 @@
                     </svg>
                 </a>
             </li> --}}
-            <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Ujicoba Sirmed v3">
+            {{-- <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Ujicoba Sirmed v3">
                 <a class="menu-link" href="{{ route('v3.dashboard') }}">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21.609 13.5616L21.8382 11.1263C22.0182 9.2137 22.1082 8.25739 21.781 7.86207C21.604 7.64823 21.3633 7.5172 21.106 7.4946C20.6303 7.45282 20.0329 8.1329 18.8381 9.49307C18.2202 10.1965 17.9113 10.5482 17.5666 10.6027C17.3757 10.6328 17.1811 10.6018 17.0047 10.5131C16.6865 10.3529 16.4743 9.91812 16.0499 9.04851L13.8131 4.46485C13.0112 2.82162 12.6102 2 12 2C11.3898 2 10.9888 2.82162 10.1869 4.46486L7.95007 9.04852C7.5257 9.91812 7.31351 10.3529 6.99526 10.5131C6.81892 10.6018 6.62434 10.6328 6.43337 10.6027C6.08872 10.5482 5.77977 10.1965 5.16187 9.49307C3.96708 8.1329 3.36968 7.45282 2.89399 7.4946C2.63666 7.5172 2.39598 7.64823 2.21899 7.86207C1.8918 8.25739 1.9818 9.2137 2.16181 11.1263L2.391 13.5616C2.76865 17.5742 2.95748 19.5805 4.14009 20.7902C5.32271 22 7.09517 22 10.6401 22H13.3599C16.9048 22 18.6773 22 19.8599 20.7902C21.0425 19.5805 21.2313 17.5742 21.609 13.5616Z" stroke="var(--bs-heading-color)" stroke-width="2"></path>
                         <path opacity="0.5" d="M9 18H15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
                     </svg>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
     <div class="app-tab-content">
@@ -158,16 +155,14 @@
                 </div>
                 @endcanany
             </div>
-            {{-- <div class="card card-gradient mx-3 d-none d-xl-block">
+            <div class="card card-gradient mx-3 d-none d-xl-block">
                 <div class="card-body">
-                    <h5>Upgrade to Pro</h5>
-                    <p class="text-1xs">Get unlimited leads, advanced analytics, and 24/7 priority support.
+                    <h5>SIRMED V3 Terbaru</h5>
+                    <p class="text-1xs">Versi 3 telah diluncurkan, kunjungi segera!
                     </p>
-                    <a target="_blank"
-                        href="https://themeforest.net/item/nexlink-crm-admin-dashboard-bootstrap-template/60903033"
-                        class="btn btn-primary waves-effect">Upgrade Now</a>
+                    <a target="_blank" href="{{ route('v3.dashboard') }}" class="btn btn-primary waves-effect"><i class="fas fa-dashboard me-1"></i> Buka Sekarang</a>
                 </div>
-            </div> --}}
+            </div>
         </div>
     </div>
 </aside>

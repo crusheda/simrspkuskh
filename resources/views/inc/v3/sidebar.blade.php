@@ -77,6 +77,45 @@
         @endcan
     </nav>
 
+    @canany(['display_tt', 'display_rating', 'display_antrian_poli'])
+    <div class="nav-caption mt-4">DISPLAY</div>
+    @endcanany
+
+    @canany(['display_tt', 'display_rating', 'display_antrian_poli'])
+    <nav class="app-nav">
+        @can('display_antrian_poli')
+        <a
+            type="button"
+            class="app-nav-link app-nav-button"
+            href="{{ route('v2.display.antrian.poli') }}"
+        >
+            <i class="bi bi-display"></i>
+            <span>Antrian Poliklinik</span>
+        </a>
+        @endcan
+        @can('display_antrian_poli')
+        <a
+            type="button"
+            class="app-nav-link app-nav-button"
+            href="{{ route('v2.display.bed') }}"
+        >
+            <i class="bi bi-tv"></i>
+            <span>Tempat Tidur</span>
+        </a>
+        @endcan
+        @can('display_antrian_poli')
+        <a
+            type="button"
+            class="app-nav-link app-nav-button"
+            href="{{ route('v2.display.rating') }}"
+        >
+            <i class="bi bi-emoji-smile"></i>
+            <span>Rating</span>
+        </a>
+        @endcan
+    </nav>
+    @endcanany
+
     <div class="nav-caption mt-4">PREFERENSI</div>
 
     <nav class="app-nav">

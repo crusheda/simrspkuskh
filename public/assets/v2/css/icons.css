@@ -9433,11 +9433,11 @@
 }
 
 /* src/assets/icon-fonts/bootstrap-icons/icons/font/bootstrap-icons.css */
-@font-face {
+/* @font-face {
   font-display: block;
   font-family: "bootstrap-icons";
   src: url(bootstrap-icons-6QOYJHKEafdf.woff2?2820a3852bdb9a5832199cc61cec4e65) format("woff2"), url(bootstrap-icons-JHE3QUSNafdf.woff?2820a3852bdb9a5832199cc61cec4e65) format("woff");
-}
+} */
 .bi::before,
 [class^=bi-]::before,
 [class*=" bi-"]::before {

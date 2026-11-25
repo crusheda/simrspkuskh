@@ -309,6 +309,16 @@
                                 Lihat Berkas Klaim Farmasi Pasien
                             </a>
                         @endcan
+                        
+                        {{-- Selesaikan Notifikasi --}}
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-subtle-success d-none"
+                            id="btn-selesaikan-notifikasi"
+                        >
+                            <i class="ri-check-double-line me-1"></i>
+                            Terselesaikan?
+                        </button>
 
                     </div>
 
@@ -327,6 +337,78 @@
 
         </div>
 
+    </div>
+
+    {{-- ==========================================================
+        MODAL SELESAIKAN NOTIFIKASI
+    ========================================================== --}}
+    <div
+        class="modal fade"
+        id="modalSelesaikanNotifikasi"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="ri-check-double-line text-success me-2"></i>
+                        Selesaikan Notifikasi
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="alert alert-success mb-3">
+                        <i class="ri-information-line me-1"></i>
+                        Notifikasi ini akan ditandai sebagai selesai.
+                    </div>
+
+                    <label for="deskripsi_solved_notifikasi" class="form-label">
+                        Catatan Penyelesaian
+                        <small class="text-muted">(Opsional)</small>
+                    </label>
+
+                    <textarea
+                        id="deskripsi_solved_notifikasi"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Tuliskan keterangan penyelesaian catatan jika diperlukan..."
+                    ></textarea>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                        class="btn btn-subtle-secondary"
+                        id="btn-batal-selesaikan-notifikasi">
+                        <i class="ri-close-line me-1"></i>
+                        Batal
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        id="btn-submit-solved-notifikasi"
+                    >
+                        <i class="ri-check-double-line me-1"></i>
+                        Selesaikan Catatan
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
     </div>
 
 </div>
@@ -405,8 +487,17 @@
 
                 const item = res.data;
                 const pasien = item.pasien || {};
-
                 const nomor = item.nomor || '';
+
+                // Set ID notifikasi yang sedang dibuka
+                window.NotifikasiSolved?.setId(item.id);
+
+                // Tampilkan tombol hanya jika masih pending
+                if (parseInt(item.solved || 0) === 0) {
+                    $('#btn-selesaikan-notifikasi').removeClass('d-none');
+                } else {
+                    $('#btn-selesaikan-notifikasi').addClass('d-none');
+                }
 
                 const escapeHtml = function (value) {
                     return $('<div>')
@@ -1007,15 +1098,273 @@
 
         });
 
+        // ==========================================================
+        // SOLVED NOTIFIKASI
+        // ==========================================================
+        (function () {
+            'use strict';
+
+            const btnSelesaikan = $('#btn-selesaikan-notifikasi');
+
+            if (!btnSelesaikan.length) {
+                return;
+            }
+
+            const modalDetailElement = document.getElementById('modalDetailNotifikasi');
+            const modalDetailNotifikasi = bootstrap.Modal.getOrCreateInstance(modalDetailElement);
+
+            const modalElement = document.getElementById('modalSelesaikanNotifikasi');
+            const modalSelesaikan = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+            let currentNotifikasiId = null;
+            let kembaliKeDetail = false;
+
+            // ======================================================
+            // BUKA MODAL INPUT DESKRIPSI SOLVED
+            // ======================================================
+            btnSelesaikan
+                .off('click.solved')
+                .on('click', function () {
+                    if (!currentNotifikasiId) {
+                        iziToast.warning({
+                            title: 'Peringatan',
+                            message: 'ID notifikasi tidak ditemukan.'
+                        });
+                        return;
+                    }
+
+                    // Tutup modal detail sementara
+                    modalDetailNotifikasi.hide();
+
+                    // Reset textarea
+                    $('#deskripsi_solved_notifikasi').val('');
+
+                    // Buka modal penyelesaian setelah modal detail tertutup
+                    $('#modalDetailNotifikasi').one('hidden.bs.modal', function () {
+                        modalSelesaikan.show();
+                    });
+                });
+
+            // ======================================================
+            // TUTUP MODAL DESKRIPSI SOLVED
+            // ======================================================
+            $('#btn-batal-selesaikan-notifikasi').on('click', function () {
+                modalSelesaikan.hide();
+
+                // Kembali ke modal detail setelah modal penyelesaian tertutup
+                $('#modalSelesaikanNotifikasi').one('hidden.bs.modal', function () {
+                    modalDetailNotifikasi.show();
+                });
+            });
+
+            // Ketika modal penyelesaian ditutup
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                if (kembaliKeDetail) {
+                    kembaliKeDetail = false;
+                    modalDetailNotifikasi.show();
+                } else {
+                    // Close langsung: pastikan modal detail ikut tertutup
+                    modalDetailNotifikasi.hide();
+                }
+            });
+
+            // ======================================================
+            // SUBMIT SOLVED NOTIFIKASI
+            // ======================================================
+            $('#btn-submit-solved-notifikasi')
+                .off('click.solved')
+                .on('click.solved', function () {
+
+                    const $button = $(this);
+
+                    if (!currentNotifikasiId) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'ID notifikasi tidak ditemukan.',
+                            position: 'topRight'
+                        });
+
+                        return;
+                    }
+
+                    const deskripsiSolved = $('#deskripsi_solved_notifikasi')
+                        .val()
+                        .trim();
+
+                    // ==================================================
+                    // KONFIRMASI
+                    // ==================================================
+                    Swal.fire({
+                        title: 'Selesaikan Notifikasi?',
+                        text: 'Notifikasi ini akan ditandai sebagai selesai.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Selesaikan',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#198754',
+                        reverseButtons: true
+                    }).then(function (result) {
+
+                        if (!result.isConfirmed) {
+                            return;
+                        }
+
+                        // ==================================================
+                        // LOADING BUTTON
+                        // ==================================================
+                        const originalButton = $button.html();
+
+                        $button
+                            .prop('disabled', true)
+                            .html(`
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                                Menyimpan...
+                            `);
+
+                        // ==================================================
+                        // AJAX
+                        // ==================================================
+                        $.ajax({
+                            url: `/api/v2/notifikasi/data/${encodeURIComponent(currentNotifikasiId)}/solved`,
+                            type: 'POST',
+                            dataType: 'json',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                deskripsi_solved: deskripsiSolved
+                            },
+
+                            success: function (res) {
+
+                                if (!res.status) {
+                                    iziToast.error({
+                                        title: 'Gagal',
+                                        message: res.message || 'Notifikasi gagal diselesaikan.',
+                                        position: 'topRight'
+                                    });
+
+                                    return;
+                                }
+
+                                // Tutup kedua modal
+                                modalSelesaikan.hide();
+
+                                bootstrap.Modal
+                                    .getOrCreateInstance(
+                                        document.getElementById('modalDetailNotifikasi')
+                                    )
+                                    .hide();
+
+                                // ==================================================
+                                // UPDATE STATUS ROW DATATABLE
+                                // ==================================================
+                                const rowButton = $(`#btn-detail-${currentNotifikasiId}`);
+                                const row = rowButton.closest('tr');
+
+                                const statusCell = row.find('td').eq(5);
+
+                                statusCell
+                                    .attr('data-search', 'Selesai')
+                                    .attr('data-order', 1)
+                                    .html(`
+                                        <span class="badge badge-sm bg-success">
+                                            Selesai
+                                        </span>
+                                    `);
+
+                                // ==================================================
+                                // UPDATE COUNTER
+                                // ==================================================
+                                const pendingElement = $('#total-notifikasi-pending');
+                                const selesaiElement = $('#total-notifikasi-selesai');
+
+                                const pendingText = pendingElement.text();
+                                const selesaiText = selesaiElement.text();
+
+                                const pendingCount = parseInt(
+                                    pendingText.replace(/[^\d]/g, '')
+                                ) || 0;
+
+                                const selesaiCount = parseInt(
+                                    selesaiText.replace(/[^\d]/g, '')
+                                ) || 0;
+
+                                pendingElement.text(
+                                    `Pending : ${Math.max(0, pendingCount - 1).toLocaleString('id-ID')}`
+                                );
+
+                                selesaiElement.text(
+                                    `Selesai : ${(selesaiCount + 1).toLocaleString('id-ID')}`
+                                );
+
+                                // ==================================================
+                                // REFRESH DATATABLE
+                                // ==================================================
+                                if (window.notifikasiDataTable) {
+                                    window.notifikasiDataTable
+                                        .row(row)
+                                        .invalidate('dom')
+                                        .draw(false);
+                                }
+
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: res.message || 'Notifikasi berhasil diselesaikan.',
+                                    position: 'topRight'
+                                });
+
+                            },
+
+                            error: function (xhr) {
+
+                                const message =
+                                    xhr.responseJSON?.message ||
+                                    'Terjadi kesalahan saat menyelesaikan notifikasi.';
+
+                                iziToast.error({
+                                    title: 'Gagal',
+                                    message: message,
+                                    position: 'topRight'
+                                });
+
+                            },
+
+                            complete: function () {
+
+                                $button
+                                    .prop('disabled', false)
+                                    .html(originalButton);
+
+                            }
+                        });
+
+                    });
+                });
+
+
+            // ======================================================
+            // SET ID NOTIFIKASI SAAT DETAIL DIBUKA
+            // ======================================================
+            window.NotifikasiSolved = {
+                setId: function (id) {
+                    currentNotifikasiId = id;
+                },
+
+                reset: function () {
+                    currentNotifikasiId = null;
+                }
+            };
+
+        })();
+
     };
 </script>
 <script>
-
 /* =========================================================
    DATATABLES NOTIFIKASI
    SSR DATA + CLIENT SIDE FILTER
 ========================================================= */
-
 (function ($) {
     'use strict';
 
@@ -1027,9 +1376,9 @@
 
         // Pastikan jQuery dan DataTables sudah tersedia.
         if (!$ || !$.fn || !$.fn.dataTable) {
-            console.error(
-                '[Notifikasi] DataTables belum tersedia. Periksa urutan pemuatan datatables.js.'
-            );
+            // console.error(
+            //     '[Notifikasi] DataTables belum tersedia. Periksa urutan pemuatan datatables.js.'
+            // );
             return;
         }
 
