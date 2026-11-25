@@ -435,4 +435,92 @@ class NotifikasiController extends Controller
             ],
         ]);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SOLVED NOTIFIKASI / CATATAN KLAIM
+    |--------------------------------------------------------------------------
+    | Mengubah status catatan klaim menjadi selesai.
+    |
+    | solved          = 1
+    | deskripsi_solved = Catatan penyelesaian (optional)
+    | user_solved     = ID pengguna yang menyelesaikan
+    | status          = Tetap 1
+    |--------------------------------------------------------------------------
+    */
+    public function solvingNotifikasi(Request $request, $id)
+    {
+        $request->validate([
+            'deskripsi_solved' => ['nullable', 'string'],
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Sesi pengguna tidak ditemukan. Silakan login kembali.',
+            ], 401);
+        }
+
+        try {
+            return DB::transaction(function () use ($request, $id, $user) {
+
+                $catatan = klaim_verifikasi_catatan::query()
+                    ->where('id', $id)
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$catatan) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Notifikasi atau catatan klaim tidak ditemukan.',
+                    ], 404);
+                }
+
+                // Jika sudah solved
+                if ((int) $catatan->solved === 1) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Catatan ini sudah diselesaikan sebelumnya.',
+                    ], 422);
+                }
+
+                // Update penyelesaian catatan
+                $catatan->solved = 1;
+                $catatan->deskripsi_solved = $request->input('deskripsi_solved');
+                $catatan->user_solved = $user->ID;
+                $catatan->updated_at = now();
+
+                // Status tetap aktif (1)
+                $catatan->status = 1;
+
+                $catatan->save();
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Notifikasi berhasil diselesaikan.',
+                    'data'    => [
+                        'id'              => $catatan->id,
+                        'nomor'            => $catatan->nomor,
+                        'solved'           => $catatan->solved,
+                        'deskripsi_solved' => $catatan->deskripsi_solved,
+                        'user_solved'      => $catatan->user_solved,
+                        'updated_at'       => $catatan->updated_at,
+                    ],
+                ]);
+            });
+
+        } catch (\Throwable $e) {
+
+            report($e);
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan saat menyelesaikan notifikasi.',
+            ], 500);
+        }
+    }
 }

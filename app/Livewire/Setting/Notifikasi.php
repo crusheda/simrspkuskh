@@ -5,6 +5,7 @@ namespace app\Livewire\Setting;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 use App\Models\simrspku_klaim\klaim_verifikasi_catatan;
 
 class Notifikasi extends Component
