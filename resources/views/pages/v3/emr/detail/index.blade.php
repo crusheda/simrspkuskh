@@ -733,38 +733,38 @@
             aktifkanTabsDariHash();
 
             // console.log("{{ $list['tte_pegawai'] }}");
-            if ("{{ $list['tte_pegawai'] }}" != true) {
-                // kalau ada tanda tangan pegawai
-                Swal.fire({
-                    title: `Tanda Tangan tidak ditemukan!`,
-                    text: 'Silakan menambahkan tanda tangan pada halaman Profil sebelum melakukan pengisian Elektronik Medical Record.',
-                    icon: `warning`,
-                    theme: 'bootstrap-5',
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    focusConfirm: false,
-                    confirmButtonText: `
-                        <i class="fa fa-thumbs-up me-1"></i> Enrollment Sekarang
-                    `,
-                    confirmButtonAriaLabel: "Tanda Tangan",
-                    cancelButtonText: `
-                        <i class="fa fa-thumbs-down me-1"></i> Nanti
-                    `,
-                    cancelButtonAriaLabel: "Tutup",
-                    // backdrop: `
-                    //     rgba(0,0,0,0.6)
-                    //     left top
-                    //     no-repeat
-                    // `,
-                    allowOutsideClick: false, // supaya user fokus ke alert
-                    allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // buka halaman profil
-                        window.location.href = "{{ route('v3.profil') }}";
-                    }
-                });
-            }
+            // if ("{{ $list['tte_pegawai'] }}" != true) {
+            //     // kalau ada tanda tangan pegawai
+            //     Swal.fire({
+            //         title: `Tanda Tangan tidak ditemukan!`,
+            //         text: 'Silakan menambahkan tanda tangan pada halaman Profil sebelum melakukan pengisian Elektronik Medical Record.',
+            //         icon: `warning`,
+            //         theme: 'bootstrap-5',
+            //         showCloseButton: true,
+            //         showCancelButton: true,
+            //         focusConfirm: false,
+            //         confirmButtonText: `
+            //             <i class="fa fa-thumbs-up me-1"></i> Enrollment Sekarang
+            //         `,
+            //         confirmButtonAriaLabel: "Tanda Tangan",
+            //         cancelButtonText: `
+            //             <i class="fa fa-thumbs-down me-1"></i> Nanti
+            //         `,
+            //         cancelButtonAriaLabel: "Tutup",
+            //         // backdrop: `
+            //         //     rgba(0,0,0,0.6)
+            //         //     left top
+            //         //     no-repeat
+            //         // `,
+            //         allowOutsideClick: false, // supaya user fokus ke alert
+            //         allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // buka halaman profil
+            //             window.location.href = "{{ route('v3.profil') }}";
+            //         }
+            //     });
+            // }
 
             // TOMBOL KEMBALI
             // =====================================================

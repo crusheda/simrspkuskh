@@ -933,7 +933,7 @@ class ResumeRanapController extends Controller
                     'HAMIL_ABORTUS',
                 ]);
 
-            $statusReproduksiText = 'Tidak';
+            $statusReproduksiText = '';
 
             if (
                 $statusReproduksiRow &&
@@ -959,8 +959,7 @@ class ResumeRanapController extends Controller
                     default => '',
                 };
 
-                $statusReproduksiText = 'Kasus Obstetri Ginekologi'
-                    . ($detail !== '' ? '; ' . $detail : '');
+                $statusReproduksiText = 'Kasus Obstetri Ginekologi' . ($detail !== '' ? '; ' . $detail : '');
             }
 
             // TANDA VITAL
@@ -1119,6 +1118,7 @@ class ResumeRanapController extends Controller
                             'KUNJUNGAN',
                             'PENDAFTARAN',
                             'TANGGAL',
+                            'OLEH',
                             'STATUS',
                         ])
                         ->filter(function ($value) {
@@ -1293,18 +1293,18 @@ class ResumeRanapController extends Controller
                     ->where('STATUS', 1)
                     ->orderByDesc('ID')
                     ->first();
-    
+
                 // HASIL LAPOR DPJP
                 $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
                     ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
                     ->where('STATUS', 1)
                     ->orderByDesc('ID')
                     ->first();
-    
+
                 // Ambil isi field (sesuaikan nama kolom dengan tabel)
                 $perencanaanTerapi = trim((string) ($pt->DESKRIPSI ?? ''));
                 $hasilLaporDPJP = trim((string) ($hld->DESKRIPSI ?? ''));
-    
+
                 // SUSUN TEXT TERAPI
                 $terapiText = implode("\n", [
                     // "• TATALAKSANA AWAL",
@@ -1380,8 +1380,8 @@ class ResumeRanapController extends Controller
             $rpsText = trim((string) ($anamnesis ?? ''));
 
             if ($statusReproduksiText !== '') {
-                $rpsText .= ($rpsText !== '' ? "\n" : '')
-                    . 'Status Reproduksi: '
+                $rpsText .= ($rpsText !== '' ? "\n\n" : '')
+                    . 'STATUS REPRODUKSI ' . "\n"
                     . $statusReproduksiText;
             }
 
@@ -2327,18 +2327,18 @@ class ResumeRanapController extends Controller
                     $kunjunganUtama->NAMATT ? trim($kunjunganUtama->NAMARUANGAN . ' (' . $kunjunganUtama->NAMATT . ' - ' . $kunjunganUtama->NAMAKAMAR . ')') : '',
 
                 // INFORMASI RAWAT INAP
-                'INDIKASI_RANAP' => $record->indikasi ?? '',
+                'INDIKASI_RANAP' => $record->indikasi ?? 'Tidak Ada',
 
                 // RIWAYAT PENYAKIT
-                'RPS' => $record->rps ?? '',
+                'RPS' => $record->rps ?? 'Tidak Ada',
 
-                'RPD' => $record->rpd ?? '',
+                'RPD' => $record->rpd ?? 'Tidak Ada',
 
-                'RA' => $record->ra ?? '',
+                'RA' => $record->ra ?? 'Tidak Ada',
 
-                'RPM' => $record->rpm ?? '',
+                'RPM' => $record->rpm ?? 'Tidak Ada',
 
-                'PEMERIKSAAN_FISIK' => $record->pemeriksaan_fisik ?? '',
+                'PEMERIKSAAN_FISIK' => $record->pemeriksaan_fisik ?? 'Tidak Ada',
 
                 // RIWAYAT LAB DAN RADIOLOGI FUNCTION ADA DIBAWAH
                 'PENUNJANG_LAIN' => $penunjangText,
@@ -2350,7 +2350,7 @@ class ResumeRanapController extends Controller
                 'DIAGNOSA_PERAWAT' => $record->diagnosa_perawat ?? '',
                 'DIAGNOSA_DOKTER_ICD9' => $record->diagnosa_dokter_icd9 ?? '',
 
-                'TERAPI' => $record->terapi ?? '',
+                'TERAPI' => $record->terapi ?? 'Tidak Ada',
 
                 // KONDISI KELUAR
                 'KK_1' => $record->kondisi_keluar == 1 ? '☑' : '☐',
