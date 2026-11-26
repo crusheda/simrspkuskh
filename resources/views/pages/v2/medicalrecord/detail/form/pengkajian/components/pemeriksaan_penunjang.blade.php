@@ -6,7 +6,10 @@
 
         {{-- LABORATORIUM --}}
         <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header d-flex justify-content-start align-items-center">
+                <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshLab" onclick="getRiwayatLab()">
+                    <i class="ri-refresh-line"></i>
+                </button>
                 <button
                     class="accordion-button"
                     type="button"
@@ -31,7 +34,10 @@
 
         {{-- RADIOLOGI --}}
         <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header d-flex justify-content-start align-items-center">
+                <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshRad" onclick="getRiwayatRad()">
+                    <i class="ri-refresh-line"></i>
+                </button>
                 <button
                     class="accordion-button"
                     type="button"

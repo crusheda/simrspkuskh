@@ -842,7 +842,7 @@
 @once
     @push('styles')
         <link rel="stylesheet" href="{{ asset('css/v3/components/resume-ranap.css') }}">
-    @endpush    
+    @endpush
     @push('scripts')
         <script src="{{ asset('js/v3/components/resume-ranap.js') }}"></script>
     @endpush

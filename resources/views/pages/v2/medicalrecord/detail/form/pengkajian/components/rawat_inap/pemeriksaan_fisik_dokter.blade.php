@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Kepala / Leher</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Mata</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>THT</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Leher</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Mulut</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Jantung dan Pembuluh Darah</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -99,7 +99,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Thorax, Paru, dan Payudara</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Abdomen</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -131,7 +131,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Kulit dan Sistem Limpatik</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -147,7 +147,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Tulang Belakang dan Anggota Gerak</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -163,7 +163,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Sistem Saraf</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -179,7 +179,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Genitalia, Anus, Rektum</strong>
                     </h6>
                     <div class="d-flex align-items-center">
@@ -195,7 +195,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2 text-primary">
+                    <h6 class="mb-2">
                         <strong>Keterangan Lainnya</strong>
                     </h6>
                     <textarea class="form-control" name="keterangan" rows="3"></textarea>

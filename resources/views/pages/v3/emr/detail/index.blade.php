@@ -168,9 +168,16 @@
             @can('emr_pengkajian')
             {{-- @hasanyrole(['admin','dokterumum','dokterspesialis']) --}}
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
-                    aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
-                    <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
+                <button
+                    class="nav-link active"
+                    data-bs-toggle="tab"
+                    data-bs-target="#fpengkajian"
+                    role="tab"
+                    aria-selected="true"
+                    tabindex="0"
+                    id="tab-fpengkajian">
+                    <i class="ph-duotone ph-user-list me-2"></i>
+                    Form Pengkajian
                 </button>
             </li>
             {{-- @endhasanyrole --}}
@@ -228,15 +235,15 @@
                 </li>
             @endif
             @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
-                <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
+                {{-- <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
                         aria-selected="false" tabindex="-1" id="tab-frehab" disabled>
                         <i class="ph-duotone ph-archive-tray me-2"></i> Program Rehab Medik
                     </button>
-                </li>
+                </li> --}}
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fmrehab" role="tab"
-                        aria-selected="false" tabindex="-1" id="tab-fmrehab" disabled>
+                        aria-selected="false" tabindex="-1" id="tab-fmrehab">
                         <i class="ph-duotone ph-archive-box me-2"></i> Program Rehab Medik
                     </button>
                 </li>
@@ -387,20 +394,18 @@
                 </div>
             </div>
         </div>
-        <div class="tab-content">
+        {{-- <div class="tab-content">
             <div class="tab-pane active show" id="fpengkajian" role="tabpanel">
                 @include('pages.v3.emr.detail.form.tab')
             </div>
         </div>
         <div class="tab-content">
-            {{-- RESUME RAWAT INAP --}}
             <div
                 class="tab-pane"
                 id="fresumeranap"
                 role="tabpanel">
                 @include('pages.v3.emr.detail.form.resume.ranap')
             </div>
-            {{-- RESUME RAWAT JALAN --}}
             <div
                 class="tab-pane"
                 id="fresumerajal"
@@ -432,6 +437,49 @@
             <div class="tab-pane" id="fmatriks" role="tabpanel">
                 @include('pages.v2.medicalrecord.detail.matriks')
             </div>
+        </div> --}}
+        <div class="tab-content">
+
+            {{-- FORM PENGKAJIAN --}}
+            <div class="tab-pane active show" id="fpengkajian" role="tabpanel">
+                @include('pages.v3.emr.detail.form.tab')
+            </div>
+
+            {{-- RESUME RAWAT INAP --}}
+            <div class="tab-pane" id="fresumeranap" role="tabpanel">
+                @include('pages.v3.emr.detail.form.resume.ranap')
+            </div>
+
+            {{-- RESUME RAWAT JALAN --}}
+            <div class="tab-pane" id="fresumerajal" role="tabpanel">
+                @include('pages.v3.emr.detail.form.resume.rajal')
+            </div>
+
+            {{-- PROGRAM REHAB MEDIK --}}
+            <div class="tab-pane" id="fmrehab" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.rehabmedik.tab_rehab')
+            </div>
+
+            {{-- ORDER PENUNJANG --}}
+            <div class="tab-pane" id="forder" role="tabpanel">
+                @include('pages.v3.emr.detail.order.tab')
+            </div>
+
+            {{-- FORM KONSUL --}}
+            <div class="tab-pane" id="konsul" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.konsul.form')
+            </div>
+
+            {{-- UPLOAD --}}
+            <div class="tab-pane" id="fuploads" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.upload')
+            </div>
+
+            {{-- MATRIKS --}}
+            <div class="tab-pane" id="fmatriks" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.matriks')
+            </div>
+
         </div>
     </div>
 
@@ -653,8 +701,8 @@
 
         $(document).ready(function() {
 
-            $('button[data-bs-toggle="tab"]').on('click', function () {
-                const tabId = $(this).attr('id');
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const tabId = e.target.id;
 
                 if (tabId === 'tab-frjkfr') {
                     loadFormKfr();

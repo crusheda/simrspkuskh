@@ -75,9 +75,312 @@
     let requestSequence = 0;
 
     /* =====================================================
-       UTILITIES
+    EMR SEARCH — OPEN FORM PENGKAJIAN
+    Meniru mekanisme click .emr-patient-row
+
+    Mendukung:
+    - Workspace pasien baru
+    - Workspace pasien sudah ada
+    - Iframe sedang loading
+    - Navigasi Livewire kembali ke Medical Record
     ===================================================== */
 
+    const AUTO_OPEN_PENGKAJIAN_KEY =
+        '__SIRMED_EMR_AUTO_PENGKAJIAN_NOMOR__';
+
+
+    /* =====================================================
+    OPEN PENGKAJIAN DALAM IFRAME
+    ===================================================== */
+
+    function openPengkajianInFrame(frame, attempt = 0) {
+
+        const maxAttempt = 30;
+
+        if (!frame) {
+            if (attempt < maxAttempt) {
+                setTimeout(() => {
+                    openPengkajianInFrame(frame, attempt + 1);
+                }, 100);
+            }
+
+            return false;
+        }
+
+        const frameWindow = frame.contentWindow;
+        const frameDocument = frame.contentDocument;
+
+        if (!frameWindow || !frameDocument) {
+            if (attempt < maxAttempt) {
+                setTimeout(() => {
+                    openPengkajianInFrame(frame, attempt + 1);
+                }, 100);
+            }
+
+            return false;
+        }
+
+        const tabButton = frameDocument.getElementById(
+            'tab-fpengkajian'
+        );
+
+        if (!tabButton) {
+            if (attempt < maxAttempt) {
+                setTimeout(() => {
+                    openPengkajianInFrame(frame, attempt + 1);
+                }, 100);
+            }
+
+            return false;
+        }
+
+        /* =================================================
+        AKTIFKAN TAB FORM PENGKAJIAN
+        ================================================= */
+
+        tabButton.disabled = false;
+
+        if (frameWindow.bootstrap?.Tab) {
+            frameWindow.bootstrap.Tab
+                .getOrCreateInstance(tabButton)
+                .show();
+        } else {
+            tabButton.click();
+        }
+
+        /* =================================================
+        OPEN FORM PERTAMA SESUAI CONTROLLER detailV3()
+        ================================================= */
+
+        function openFirstAllowedForm(formAttempt = 0) {
+
+            const shortcutApi =
+                frameWindow.EMRPengkajianShortcut;
+
+            if (
+                shortcutApi &&
+                typeof shortcutApi.openFirstAllowedForm === 'function'
+            ) {
+                const success =
+                    shortcutApi.openFirstAllowedForm();
+
+                if (!success) {
+                    console.warn(
+                        '[EMRSearch] Form Pengkajian gagal dibuka.'
+                    );
+                }
+
+                return success;
+            }
+
+            if (formAttempt < maxAttempt) {
+                setTimeout(() => {
+                    openFirstAllowedForm(formAttempt + 1);
+                }, 100);
+
+                return false;
+            }
+
+            console.error(
+                '[EMRSearch] EMRPengkajianShortcut tidak tersedia di iframe.'
+            );
+
+            return false;
+        }
+
+        // Tunggu Bootstrap mengaktifkan tab Pengkajian
+        setTimeout(() => {
+            openFirstAllowedForm();
+        }, 150);
+
+        return true;
+    }
+
+
+    /* =====================================================
+    OPEN WORKSPACE PASIEN + FORM PENGKAJIAN
+    ===================================================== */
+
+    function openPatientToPengkajian(patient) {
+
+        const nomor = String(patient?.nomor ?? '').trim();
+
+        if (!nomor) {
+            console.error(
+                '[EMRSearch] Nomor kunjungan tidak valid.',
+                patient
+            );
+
+            return false;
+        }
+
+        if (
+            !window.EMRWorkspace ||
+            typeof window.EMRWorkspace.openPatient !== 'function'
+        ) {
+            console.error(
+                '[EMRSearch] EMRWorkspace belum tersedia.'
+            );
+
+            return false;
+        }
+
+        // Tandai pasien yang pengkajiannya harus dibuka otomatis.
+        // Tetap hidup selama navigasi Livewire pada dokumen browser ini.
+        window[AUTO_OPEN_PENGKAJIAN_KEY] = nomor;
+
+        // Buka / aktifkan workspace pasien.
+        const success = window.EMRWorkspace.openPatient(patient);
+
+        if (success === false) {
+            return false;
+        }
+
+        /* =================================================
+        CEK TAB PASIEN
+        ================================================= */
+
+        const tabs = window.EMRWorkspace.getTabs?.() || [];
+
+        const existingTab = tabs.find(tab =>
+            String(tab.nomor) === nomor
+        );
+
+        /* =================================================
+        TAB SUDAH LOADED
+        LANGSUNG BUKA FORM PENGKAJIAN
+        ================================================= */
+
+        if (existingTab && existingTab.loaded) {
+
+            const panel = document.getElementById(
+                `emrPanel-${existingTab.tabId}`
+            );
+
+            const frame = panel?.querySelector(
+                'iframe.emr-patient-frame'
+            );
+
+            if (frame) {
+                requestAnimationFrame(() => {
+                    openPengkajianInFrame(frame);
+                });
+
+                return true;
+            }
+        }
+
+        // Jika tab belum loaded atau sedang loading,
+        // event global emr:workspace:content-loaded
+        // akan menangani iframe saat selesai dimuat.
+
+        return true;
+    }
+
+
+    /* =====================================================
+    AUTO OPEN SAAT IFRAME PASIEN SELESAI DIMUAT
+    ===================================================== */
+
+    document.addEventListener(
+        'emr:workspace:content-loaded',
+        function (event) {
+
+            const detail = event.detail || {};
+
+            const targetNomor =
+                window[AUTO_OPEN_PENGKAJIAN_KEY];
+
+            if (!targetNomor) {
+                return;
+            }
+
+            // Hanya iframe untuk pasien yang ditandai.
+            if (
+                String(detail.nomor) !==
+                String(targetNomor)
+            ) {
+                return;
+            }
+
+            // Pastikan pasien tersebut memang tab aktif.
+            const activeTab =
+                window.EMRWorkspace?.getActiveTab?.();
+
+            if (
+                activeTab &&
+                activeTab.tabId !== 'home' &&
+                String(activeTab.nomor) !==
+                    String(targetNomor)
+            ) {
+                return;
+            }
+
+            openPengkajianInFrame(detail.frame);
+        }
+    );
+
+
+    /* =====================================================
+    AUTO OPEN SAAT KEMBALI KE HALAMAN MEDICAL RECORD
+    MELALUI LIVEWIRE NAVIGATION
+    ===================================================== */
+
+    document.addEventListener(
+        'livewire:navigated',
+        function () {
+
+            // Berikan waktu bagi EMRWorkspace untuk membangun ulang
+            // tab/panel dan memulihkan activeNomor.
+            setTimeout(() => {
+
+                const workspaceRoot =
+                    document.getElementById('emrWorkspace');
+
+                if (!workspaceRoot) {
+                    return;
+                }
+
+                const activeTab =
+                    window.EMRWorkspace?.getActiveTab?.();
+
+                // Home bukan tab pasien.
+                if (
+                    !activeTab ||
+                    !activeTab.nomor ||
+                    activeTab.tabId === 'home'
+                ) {
+                    return;
+                }
+
+                // Ketika kembali ke halaman Medical Record,
+                // otomatis gunakan pasien yang terakhir aktif.
+                window[AUTO_OPEN_PENGKAJIAN_KEY] =
+                    String(activeTab.nomor);
+
+                const panel = document.getElementById(
+                    `emrPanel-${activeTab.tabId}`
+                );
+
+                const frame = panel?.querySelector(
+                    'iframe.emr-patient-frame'
+                );
+
+                // Jika iframe sudah tersedia/loaded,
+                // langsung buka Pengkajian.
+                if (frame) {
+                    openPengkajianInFrame(frame);
+                }
+
+                // Jika iframe belum loaded, helper akan dipanggil
+                // melalui event emr:workspace:content-loaded.
+            }, 300);
+        }
+    );
+
+    /* =====================================================
+       UTILITIES
+    ===================================================== */
     function escapeHTML(value) {
         return String(value ?? '')
             .replaceAll('&', '&amp;')
@@ -86,7 +389,6 @@
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#039;');
     }
-
 
     function formatDate(value) {
         if (!value) return '-';
@@ -103,7 +405,6 @@
             year: 'numeric'
         }).format(date);
     }
-
 
     function formatDateTime(value) {
         if (!value) return '-';
@@ -122,7 +423,6 @@
             minute: '2-digit'
         }).format(date);
     }
-
 
     function getStatusKunjungan(status) {
         const value = String(status ?? '');
@@ -158,7 +458,6 @@
         };
     }
 
-
     /* =====================================================
        INFO
     ===================================================== */
@@ -188,7 +487,6 @@
     function clearInfo() {
         infoContainer.innerHTML = '';
     }
-
 
     /* =====================================================
        EMPTY STATE
@@ -766,11 +1064,14 @@
 
 
     /* =====================================================
-       OPEN SELECTED VISIT
+    OPEN SELECTED VISIT
+    Cari EMR Header → Workspace → Form Pengkajian
     ===================================================== */
-
     function openSelectedVisit(visit) {
-        const nomor = String(visit.NOKUNJUNGAN ?? '').trim();
+
+        const nomor = String(
+            visit.NOKUNJUNGAN ?? ''
+        ).trim();
 
         if (!nomor) {
             showInfo(
@@ -782,7 +1083,7 @@
         }
 
         const patient = {
-            nomor: nomor,
+            nomor,
 
             norm: String(visit.NORM ?? ''),
             nama: String(visit.NAMAPASIEN ?? 'Pasien'),
@@ -800,14 +1101,19 @@
             tglMasuk: String(visit.TGLMASUK ?? ''),
             tglKeluar: String(visit.TGLKELUAR ?? ''),
 
-            statusKunjungan: String(visit.STATUSKUNJUNGAN ?? ''),
+            statusKunjungan: String(
+                visit.STATUSKUNJUNGAN ?? ''
+            ),
 
-            url: `/v3/emr/${encodeURIComponent(nomor)}`
+            url: `/v3/emr/${encodeURIComponent(nomor)}`,
+
+            // Penanda untuk redirect ke halaman EMR
+            openPengkajian: true
         };
 
 
         /* =================================================
-           CURRENT EMR PAGE
+        SUDAH BERADA DI HALAMAN EMR
         ================================================= */
 
         if (
@@ -815,7 +1121,7 @@
             typeof window.EMRWorkspace.openPatient === 'function'
         ) {
             hideModalThen(() => {
-                window.EMRWorkspace.openPatient(patient);
+                openPatientToPengkajian(patient);
             });
 
             return;
@@ -823,8 +1129,8 @@
 
 
         /* =================================================
-           NOT IN EMR PAGE
-           STORE PATIENT TEMPORARILY AND REDIRECT
+        BELUM BERADA DI HALAMAN EMR
+        SIMPAN DATA → REDIRECT
         ================================================= */
 
         try {
@@ -844,42 +1150,58 @@
         window.location.href = EMR_PAGE_URL;
     }
 
-
     /* =====================================================
-       AUTO OPEN PATIENT AFTER REDIRECT
+    AUTO OPEN PATIENT AFTER REDIRECT
     ===================================================== */
-
     function openPendingPatient() {
+
         let patient = null;
 
         try {
-            const raw = sessionStorage.getItem(PENDING_PATIENT_KEY);
+            const raw = sessionStorage.getItem(
+                PENDING_PATIENT_KEY
+            );
 
-            if (!raw) return;
+            if (!raw) {
+                return;
+            }
 
             patient = JSON.parse(raw);
 
-            sessionStorage.removeItem(PENDING_PATIENT_KEY);
+            // Hapus terlebih dahulu supaya tidak dibuka berulang
+            sessionStorage.removeItem(
+                PENDING_PATIENT_KEY
+            );
 
         } catch (error) {
+
             console.error(
                 '[EMRSearch] Data pasien pending tidak valid:',
                 error
             );
 
-            sessionStorage.removeItem(PENDING_PATIENT_KEY);
+            sessionStorage.removeItem(
+                PENDING_PATIENT_KEY
+            );
 
             return;
         }
 
-        if (!patient) return;
+        if (!patient || !patient.nomor || !patient.url) {
+            console.warn(
+                '[EMRSearch] Data pending pasien tidak lengkap.',
+                patient
+            );
 
-        // Tunggu EMRWorkspace tersedia
+            return;
+        }
+
         let attempt = 0;
 
         const maxAttempt = 40;
 
         const openInterval = setInterval(() => {
+
             attempt++;
 
             if (
@@ -888,12 +1210,21 @@
             ) {
                 clearInterval(openInterval);
 
-                window.EMRWorkspace.openPatient(patient);
+                // =============================================
+                // SEARCH EMR → LANGSUNG FORM PENGKAJIAN
+                // =============================================
+
+                if (patient.openPengkajian === true) {
+                    openPatientToPengkajian(patient);
+                } else {
+                    window.EMRWorkspace.openPatient(patient);
+                }
 
                 return;
             }
 
             if (attempt >= maxAttempt) {
+
                 clearInterval(openInterval);
 
                 console.error(
@@ -903,7 +1234,6 @@
 
         }, 250);
     }
-
 
     /* =====================================================
        RESET WHEN MODAL CLOSED

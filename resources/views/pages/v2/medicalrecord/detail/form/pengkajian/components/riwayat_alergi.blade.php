@@ -37,11 +37,11 @@
 
         <div class="row g-2 mb-2 align-items-center">
 
-            <div class="col-md-3">
+            <div class="col-3">
                 <select class="form-select" name="ra_jenis" id="riwy_alergi_jenis"></select>
             </div>
 
-            <div class="col-md-7">
+            <div class="col">
                 <textarea
                     class="form-control"
                     name="ra_deskripsi"
@@ -51,11 +51,11 @@
                 ></textarea>
             </div>
 
-            <div class="col-md-2">
-                <div class="btn-group w-100">
+            <div class="col-auto">
+                <div class="btn-group">
                     <button
                         type="button"
-                        class="btn btn-info btn-sm btn-save-sub-pengkajian"
+                        class="btn btn-info btn-save-sub-pengkajian"
                         id="btnTambahAlergi"
                         onclick="tambahRiwayatAlergi()"
                     >
@@ -64,7 +64,7 @@
 
                     <button
                         type="button"
-                        class="btn btn-subtle-warning btn-sm"
+                        class="btn btn-subtle-warning"
                         id="btnRefreshAlergi"
                         onclick="getRiwayatAlergi()"
                     >

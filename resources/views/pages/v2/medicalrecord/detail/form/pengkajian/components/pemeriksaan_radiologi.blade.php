@@ -1,9 +1,6 @@
 <div class="form-group">
     <div class="d-flex align-items-center justify-content-between mb-2">
-        <h6 class="mb-0">Tabel Ringkasan</h6>
-        <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshRad" onclick="getRiwayatRad()">
-            <i class="ri-refresh-line"></i>
-        </button>
+        {{-- <h6 class="mb-0">Tabel Ringkasan</h6> --}}
     </div>
     <div class="table-responsive table-penunjang-scroll">
         <table class="table table-bordered table-sm table-display table-penunjang-compact mb-0">

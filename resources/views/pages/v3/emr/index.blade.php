@@ -261,7 +261,7 @@
                         }
 
                         // ==========================================
-                        // OPEN TAB CONTENT DALAM IFRAME PASIEN
+                        // OPEN TARGET CONTENT DALAM IFRAME PASIEN
                         // ==========================================
                         function openTargetContent(frame) {
                             if (!frame) {
@@ -270,27 +270,85 @@
                             }
 
                             try {
+                                const frameWindow = frame.contentWindow;
                                 const frameDocument = frame.contentDocument;
 
-                                if (!frameDocument) return;
+                                if (!frameWindow || !frameDocument) {
+                                    console.warn('Dokumen iframe pasien belum tersedia.');
+                                    return;
+                                }
 
                                 const targetButton =
                                     frameDocument.getElementById(targetTabId);
 
                                 if (!targetButton) {
-                                    console.warn(
-                                        `Tab EMR tidak ditemukan: ${targetTabId}`
-                                    );
+                                    console.warn(`Tab EMR tidak ditemukan: ${targetTabId}`);
                                     return;
                                 }
 
-                                // Bootstrap Tab API
-                                if (frame.contentWindow.bootstrap?.Tab) {
-                                    frame.contentWindow.bootstrap.Tab
+                                // Jangan biarkan target tab disabled
+                                targetButton.disabled = false;
+
+                                // Aktifkan tab target
+                                if (frameWindow.bootstrap?.Tab) {
+                                    frameWindow.bootstrap.Tab
                                         .getOrCreateInstance(targetButton)
                                         .show();
                                 } else {
                                     targetButton.click();
+                                }
+
+                                // ==========================================
+                                // KHUSUS SHORTCUT FORM PENGKAJIAN
+                                // ==========================================
+                                if (targetTabId === 'tab-fpengkajian') {
+                                    // Hanya shortcut Pengkajian Awal
+                                    // yang boleh otomatis membuka submenu dan form
+                                    function openPengkajianShortcut(attempt = 0) {
+
+                                        const shortcutApi =
+                                            frameWindow.EMRPengkajianShortcut;
+
+                                        // ----------------------------------
+                                        // API SUDAH SIAP
+                                        // ----------------------------------
+                                        if (
+                                            shortcutApi &&
+                                            typeof shortcutApi.openFirstAllowedForm === 'function'
+                                        ) {
+                                            const success =
+                                                shortcutApi.openFirstAllowedForm();
+
+                                            if (!success) {
+                                                console.warn(
+                                                    '[EMR Shortcut] Gagal membuka form pengkajian otomatis.'
+                                                );
+                                            }
+
+                                            return;
+                                        }
+
+                                        // ----------------------------------
+                                        // TUNGGU SCRIPT FORM SELESAI DI-LOAD
+                                        // Maksimal 20 percobaan
+                                        // ----------------------------------
+                                        if (attempt < 20) {
+                                            setTimeout(function () {
+                                                openPengkajianShortcut(attempt + 1);
+                                            }, 100);
+
+                                            return;
+                                        }
+
+                                        console.error(
+                                            '[EMR Shortcut] API pengkajian tidak tersedia pada iframe.'
+                                        );
+                                    }
+
+                                    // Berikan waktu Bootstrap mengaktifkan tab
+                                    setTimeout(function () {
+                                        openPengkajianShortcut();
+                                    }, 100);
                                 }
 
                                 console.info(
@@ -378,140 +436,751 @@
                 );
 
             // =====================================================
-            // EMR WORKSPACE — OPEN PATIENT TAB
+            // OPEN EMR VISIT DIRECTLY TO TAB PENGKAJIAN
+            // TANPA AUTO OPEN MENU / FORM PENGKAJIAN
             // =====================================================
-            $(document)
-                .off(
-                    'click.emrWorkspace',
-                    '#vantable tbody tr.emr-patient-row'
-                )
-                .on(
-                    'click.emrWorkspace',
-                    '#vantable tbody tr.emr-patient-row',
+            // $('#vantable')
+            //     .off('click.emrVisitDirect', '[data-open-kunjungan]')
+            //     .on(
+            //         'click.emrVisitDirect',
+            //         '[data-open-kunjungan]',
+            //         function (event) {
+            //             event.preventDefault();
+            //             event.stopPropagation();
+
+            //             let patient = {};
+
+            //             try {
+            //                 patient = JSON.parse(
+            //                     decodeURIComponent(
+            //                         this.dataset.kunjunganPatient || '{}'
+            //                     )
+            //                 );
+            //             } catch (error) {
+            //                 console.error(
+            //                     'Gagal membaca data kunjungan pasien:',
+            //                     error
+            //                 );
+            //                 return;
+            //             }
+
+            //             if (!patient.nomor || !patient.url) {
+            //                 console.error('Data kunjungan tidak lengkap:', patient);
+            //                 return;
+            //             }
+
+            //             if (
+            //                 !window.EMRWorkspace ||
+            //                 typeof window.EMRWorkspace.openPatient !== 'function'
+            //             ) {
+            //                 console.error('EMRWorkspace belum terinisialisasi.');
+            //                 return;
+            //             }
+
+            //             const targetTabId = 'tab-fpengkajian';
+
+            //             // ==========================================
+            //             // BUKA / AKTIFKAN WORKSPACE PASIEN
+            //             // ==========================================
+            //             window.EMRWorkspace.openPatient(patient);
+
+            //             // ==========================================
+            //             // AKTIFKAN TAB PENGKAJIAN SAJA
+            //             // TIDAK MEMANGGIL MENU / loadForm()
+            //             // ==========================================
+            //             function activatePengkajian(frame, attempt = 0) {
+            //                 if (!frame) return;
+
+            //                 const frameDocument = frame.contentDocument;
+            //                 const frameWindow = frame.contentWindow;
+
+            //                 if (!frameDocument || !frameWindow) {
+            //                     if (attempt < 30) {
+            //                         setTimeout(() => {
+            //                             activatePengkajian(frame, attempt + 1);
+            //                         }, 100);
+            //                     }
+            //                     return;
+            //                 }
+
+            //                 const targetButton =
+            //                     frameDocument.getElementById(targetTabId);
+
+            //                 if (!targetButton) {
+            //                     if (attempt < 30) {
+            //                         setTimeout(() => {
+            //                             activatePengkajian(frame, attempt + 1);
+            //                         }, 100);
+            //                     }
+            //                     return;
+            //                 }
+
+            //                 if (targetButton.disabled) {
+            //                     targetButton.disabled = false;
+            //                 }
+
+            //                 if (frameWindow.bootstrap?.Tab) {
+            //                     frameWindow.bootstrap.Tab
+            //                         .getOrCreateInstance(targetButton)
+            //                         .show();
+            //                 } else {
+            //                     targetButton.click();
+            //                 }
+
+            //                 console.info(
+            //                     '[EMR Visit] Form Pengkajian dibuka tanpa membuka menu pengkajian:',
+            //                     patient.nomor
+            //                 );
+            //             }
+
+            //             // ==========================================
+            //             // CEK WORKSPACE YANG SUDAH TERBUKA
+            //             // ==========================================
+            //             const existingTab = window.EMRWorkspace
+            //                 .getTabs?.()
+            //                 .find(tab =>
+            //                     String(tab.nomor) === String(patient.nomor)
+            //                 );
+
+            //             if (existingTab && existingTab.loaded) {
+            //                 const panel = document.getElementById(
+            //                     `emrPanel-${existingTab.tabId}`
+            //                 );
+
+            //                 const frame = panel?.querySelector(
+            //                     'iframe.emr-patient-frame'
+            //                 );
+
+            //                 if (frame) {
+            //                     requestAnimationFrame(() => {
+            //                         activatePengkajian(frame);
+            //                     });
+            //                 }
+            //             } else {
+            //                 // ======================================
+            //                 // WORKSPACE BARU / SEDANG LOAD
+            //                 // ======================================
+            //                 const onContentLoaded = function (event) {
+            //                     const detail = event.detail || {};
+
+            //                     if (
+            //                         String(detail.nomor) !==
+            //                         String(patient.nomor)
+            //                     ) {
+            //                         return;
+            //                     }
+
+            //                     document.removeEventListener(
+            //                         'emr:workspace:content-loaded',
+            //                         onContentLoaded
+            //                     );
+
+            //                     activatePengkajian(detail.frame);
+            //                 };
+
+            //                 document.addEventListener(
+            //                     'emr:workspace:content-loaded',
+            //                     onContentLoaded
+            //                 );
+            //             }
+            //         }
+            //     );
+
+            /* =========================================================
+            EMR ROW — AUTO OPEN PENGKAJIAN SAAT RESTORE
+
+            State kunjungan dipertahankan di window selama navigasi
+            Livewire, bukan sessionStorage.
+
+            Pasien yang dibuka melalui emr-patient-row akan selalu
+            diarahkan kembali ke Form Pengkajian ketika halaman
+            Medical Record dikunjungi kembali.
+            ========================================================= */
+
+            (() => {
+                if (window.__SIRMED_EMR_ROW_PENGKAJIAN_INIT__) {
+                    return;
+                }
+
+                window.__SIRMED_EMR_ROW_PENGKAJIAN_INIT__ = true;
+
+                // Daftar nomor kunjungan yang harus kembali ke Pengkajian
+                window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__ =
+                    window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__ ||
+                    new Set();
+
+
+                /* =====================================================
+                OPEN PENGKAJIAN DI IFRAME PASIEN
+                ===================================================== */
+                // window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__ =
+                //     function (frame, attempt = 0) {
+
+                //         const maxAttempt = 30;
+
+                //         if (!frame) return false;
+
+                //         const frameWindow = frame.contentWindow;
+                //         const frameDocument = frame.contentDocument;
+
+                //         if (!frameWindow || !frameDocument) {
+                //             if (attempt < maxAttempt) {
+                //                 setTimeout(() => {
+                //                     window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                //                         frame,
+                //                         attempt + 1
+                //                     );
+                //                 }, 100);
+                //             }
+
+                //             return false;
+                //         }
+
+                //         const tabButton = frameDocument.getElementById(
+                //             'tab-fpengkajian'
+                //         );
+
+                //         if (!tabButton) {
+                //             if (attempt < maxAttempt) {
+                //                 setTimeout(() => {
+                //                     window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                //                         frame,
+                //                         attempt + 1
+                //                     );
+                //                 }, 100);
+                //             }
+
+                //             return false;
+                //         }
+
+                //         // Aktifkan tab Pengkajian
+                //         tabButton.disabled = false;
+
+                //         if (frameWindow.bootstrap?.Tab) {
+                //             frameWindow.bootstrap.Tab
+                //                 .getOrCreateInstance(tabButton)
+                //                 .show();
+                //         } else {
+                //             tabButton.click();
+                //         }
+
+                //         // Buka form sesuai izin controller detailV3
+                //         function openFirstAllowedForm(formAttempt = 0) {
+
+                //             const shortcutApi =
+                //                 frameWindow.EMRPengkajianShortcut;
+
+                //             if (
+                //                 shortcutApi &&
+                //                 typeof shortcutApi.openFirstAllowedForm === 'function'
+                //             ) {
+                //                 shortcutApi.openFirstAllowedForm();
+                //                 return;
+                //             }
+
+                //             if (formAttempt < maxAttempt) {
+                //                 setTimeout(() => {
+                //                     openFirstAllowedForm(formAttempt + 1);
+                //                 }, 100);
+                //             } else {
+                //                 console.error(
+                //                     '[EMR Row Restore] EMRPengkajianShortcut tidak tersedia.'
+                //                 );
+                //             }
+                //         }
+
+                //         setTimeout(() => {
+                //             openFirstAllowedForm();
+                //         }, 150);
+
+                //         return true;
+                //     };
+                window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__ = function (frame, attempt = 0) {
+                    if (!frame || attempt >= 30) return;
+
+                    const frameWindow = frame.contentWindow;
+                    const frameDocument = frameWindow?.document;
+
+                    if (!frameWindow || !frameDocument) {
+                        setTimeout(() => {
+                            window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(frame, attempt + 1);
+                        }, 100);
+                        return;
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KHUSUS WORKSPACE RUANGAN PROGRAM REHAB MEDIK
+                    |--------------------------------------------------------------------------
+                    | Syarat: tab-fmrehab tersedia di workspace EMR pasien.
+                    |
+                    | Alur:
+                    | 1. Buka tab utama Program Rehab Medik (tab-fmrehab)
+                    | 2. Buka tab internal Formulir Rawat Jalan (tab-frjkfr)
+                    | 3. Tidak menjalankan Form Pengkajian Awal
+                    |--------------------------------------------------------------------------
+                    */
+
+                    const tabRehab = frameDocument.getElementById('tab-fmrehab');
+
+                    if (tabRehab) {
+                        const bootstrap = frameWindow.bootstrap;
+
+                        // Aktifkan tab utama Program Rehab Medik
+                        if (bootstrap?.Tab) {
+                            bootstrap.Tab.getOrCreateInstance(tabRehab).show();
+                        } else {
+                            tabRehab.click();
+                        }
+
+                        // Tunggu tab Program Rehab Medik tampil
+                        setTimeout(() => {
+                            const tabKfr = frameDocument.getElementById('tab-frjkfr');
+
+                            if (!tabKfr) return;
+
+                            // Simpan status disabled sebelumnya
+                            const sebelumnyaDisabled = tabKfr.disabled;
+
+                            // Aktifkan sementara agar Bootstrap bisa membuka tab
+                            tabKfr.disabled = false;
+                            tabKfr.removeAttribute('disabled');
+
+                            if (bootstrap?.Tab) {
+                                bootstrap.Tab.getOrCreateInstance(tabKfr).show();
+                            } else {
+                                tabKfr.click();
+                            }
+
+                            // Kembalikan status disabled setelah tab berhasil dipilih
+                            setTimeout(() => {
+                                tabKfr.disabled = sebelumnyaDisabled;
+
+                                if (sebelumnyaDisabled) {
+                                    tabKfr.setAttribute('disabled', '');
+                                }
+                            }, 100);
+
+                        }, 150);
+
+                        // STOP — jangan jalankan Form Pengkajian Awal
+                        return;
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DEFAULT RUANGAN LAIN
+                    |--------------------------------------------------------------------------
+                    | Jika tab-fmrehab tidak ditemukan, tetap jalankan mekanisme
+                    | Form Pengkajian Awal seperti sebelumnya.
+                    |--------------------------------------------------------------------------
+                    */
+
+                    const tabPengkajian = frameDocument.getElementById('tab-fpengkajian');
+
+                    if (!tabPengkajian) {
+                        setTimeout(() => {
+                            window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(frame, attempt + 1);
+                        }, 100);
+                        return;
+                    }
+
+                    if (frameWindow.bootstrap?.Tab) {
+                        frameWindow.bootstrap.Tab
+                            .getOrCreateInstance(tabPengkajian)
+                            .show();
+                    } else {
+                        tabPengkajian.click();
+                    }
+
+                    const openForm = () => {
+                        const shortcut = frameWindow.EMRPengkajianShortcut;
+
+                        if (shortcut?.openFirstAllowedForm) {
+                            shortcut.openFirstAllowedForm();
+                            return;
+                        }
+
+                        if (attempt < 30) {
+                            setTimeout(() => {
+                                window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                                    frame,
+                            attempt + 1
+                            );
+                        }, 100);
+                        }
+                    };
+
+                    setTimeout(openForm, 150);
+                };
+
+                /* =====================================================
+                CONTENT LOADED — UNTUK PASIEN YANG DITANDAI
+                ===================================================== */
+
+                document.addEventListener(
+                    'emr:workspace:content-loaded',
                     function (event) {
 
-                        // Jangan membuka tab ketika tombol atau kontrol
-                        // interaktif pada baris sedang diklik.
+                        const detail = event.detail || {};
+                        const nomor = String(detail.nomor ?? '');
+
+                        if (!nomor) return;
+
+                        const visits =
+                            window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__;
+
+                        if (!visits.has(nomor)) {
+                            return;
+                        }
+
+                        // Pastikan hanya tab pasien aktif yang dibuka
+                        const activeTab =
+                            window.EMRWorkspace?.getActiveTab?.();
+
                         if (
-                            $(event.target).closest(
-                                'button, input, select, textarea, form, a'
+                            activeTab &&
+                            activeTab.nomor &&
+                            String(activeTab.nomor) !== nomor
+                        ) {
+                            return;
+                        }
+
+                        window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                            detail.frame
+                        );
+                    }
+                );
+
+
+                /* =====================================================
+                LIVEWIRE NAVIGATION — KEMBALI KE MEDICAL RECORD
+                ===================================================== */
+
+                document.addEventListener(
+                    'livewire:navigated',
+                    function () {
+
+                        let attempt = 0;
+                        const maxAttempt = 30;
+
+                        function restorePengkajian() {
+
+                            attempt++;
+
+                            const workspace =
+                                document.getElementById('emrWorkspace');
+
+                            const emrApi = window.EMRWorkspace;
+
+                            if (!workspace || !emrApi) {
+                                if (attempt < maxAttempt) {
+                                    setTimeout(restorePengkajian, 100);
+                                }
+
+                                return;
+                            }
+
+                            const activeTab = emrApi.getActiveTab?.();
+
+                            if (
+                                !activeTab ||
+                                !activeTab.nomor ||
+                                activeTab.tabId === 'home'
+                            ) {
+                                return;
+                            }
+
+                            const nomor = String(activeTab.nomor);
+
+                            // Hanya auto-open pasien yang berasal dari row EMR
+                            const visits =
+                                window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__;
+
+                            if (!visits.has(nomor)) {
+                                return;
+                            }
+
+                            const panel = document.getElementById(
+                                `emrPanel-${activeTab.tabId}`
+                            );
+
+                            const frame = panel?.querySelector(
+                                'iframe.emr-patient-frame'
+                            );
+
+                            if (frame) {
+                                window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                                    frame
+                                );
+                            }
+
+                            // Jika iframe belum tersedia, nantinya event
+                            // emr:workspace:content-loaded akan menangani.
+                        }
+
+                        setTimeout(restorePengkajian, 200);
+                    }
+                );
+
+            })();
+
+            // =====================================================
+            // EMR WORKSPACE — OPEN PATIENT TAB
+            // BUKA WORKSPACE + FORM PENGKAJIAN + AUTO PILIH FORM CONTROLLER
+            // =====================================================
+            $(document)
+                .off('click.emrPatientPengkajian', '.emr-patient-row')
+                .on(
+                    'click.emrPatientPengkajian',
+                    '.emr-patient-row',
+                    function (e) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Abaikan klik elemen interaktif dalam row
+                        if (
+                            $(e.target).closest(
+                                'button, a, input, select, textarea, .dropdown, .dropdown-menu'
                             ).length
                         ) {
                             return;
                         }
 
-                        event.preventDefault();
-                        event.stopPropagation();
+                        const row = this;
 
-                        const nomor = this.dataset.nomor;
-                        const norm = this.dataset.norm;
-                        const tglLahir = this.dataset.tgllahir;
-                        const idAsuransi = this.dataset.idAsuransi;
-                        const refIdAsuransi = this.dataset.refIdAsuransi;
-                        const namaAsuransi = this.dataset.namaAsuransi;
-                        const noAsuransi = this.dataset.noAsuransi;
-                        const namaRuangan = this.dataset.namaRuangan;
-                        const namaDokter = this.dataset.namaDokter;
-                        const umur = this.dataset.umur;
-                        const tglMasuk = this.dataset.tglMasuk;
-                        const tglKeluar = this.dataset.tglKeluar;
-                        const statusKunjungan = this.dataset.statusKunjungan;
-                        const url = this.dataset.href;
+                        const patient = {
+                            nomor: row.dataset.nomor,
+                            norm: row.dataset.norm,
+                            nama: decodeURIComponent(row.dataset.nama || ''),
+                            tglLahir: row.dataset.tgllahir,
+                            umur: row.dataset.umur,
+                            namaRuangan: row.dataset.namaRuangan,
+                            namaDokter: decodeURIComponent(row.dataset.namaDokter || ''),
+                            tglMasuk: decodeURIComponent(row.dataset.tglMasuk || ''),
+                            tglKeluar: decodeURIComponent(row.dataset.tglKeluar || ''),
+                            idAsuransi: row.dataset.refIdAsuransi,
+                            namaAsuransi: row.dataset.namaAsuransi,
+                            noAsuransi: decodeURIComponent(row.dataset.noAsuransi || ''),
+                            statusKunjungan: row.dataset.statusKunjungan,
+                            url: row.dataset.href
+                        };
 
-                        let push_nama = '';
-                        let push_noAsuransi = '';
-                        let push_namaDokter = '';
-                        let push_tglMasuk = '';
-                        let push_tglKeluar = '';
-
-                        try {
-                            push_nama = decodeURIComponent(
-                                this.dataset.nama || ''
-                            );
-                        } catch (error) {
-                            push_nama = this.dataset.nama || '';
-                        }
-
-                        try {
-                            push_noAsuransi = decodeURIComponent(
-                                this.dataset.noAsuransi || ''
-                            );
-                        } catch (error) {
-                            push_noAsuransi = this.dataset.noAsuransi || '';
-                        }
-
-                        try {
-                            push_namaDokter = decodeURIComponent(
-                                this.dataset.namaDokter || ''
-                            );
-                        } catch (error) {
-                            push_namaDokter = this.dataset.namaDokter || '';
-                        }
-
-                        try {
-                            push_tglMasuk = decodeURIComponent(
-                                this.dataset.tglMasuk || ''
-                            );
-                        } catch (error) {
-                            push_tglMasuk = this.dataset.tglMasuk || '';
-                        }
-
-                        try {
-                            push_tglKeluar = decodeURIComponent(
-                                this.dataset.tglKeluar || ''
-                            );
-                        } catch (error) {
-                            push_tglKeluar = this.dataset.tglKeluar || '';
-                        }
-
-                        if (!nomor || !url) {
+                        if (!patient.nomor) {
                             console.error(
-                                'Nomor kunjungan atau URL detail tidak tersedia.'
+                                '[EMR] Nomor kunjungan tidak ditemukan.'
                             );
                             return;
                         }
 
-                        // Jangan diam-diam melakukan navigasi biasa apabila
-                        // workspace belum aktif.
                         if (
                             !window.EMRWorkspace ||
                             typeof window.EMRWorkspace.openPatient !== 'function'
                         ) {
                             console.error(
-                                'EMRWorkspace belum terinisialisasi. ' +
-                                'Periksa pemuatan emr-workspace.js dan layout.'
+                                '[EMR] EMRWorkspace belum terinisialisasi.'
                             );
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Workspace belum tersedia',
+                                text: 'EMR Workspace belum terinisialisasi.'
+                            });
 
                             return;
                         }
 
-                        // Buka tab pasien. Halaman induk tidak berpindah URL.
-                        window.EMRWorkspace.openPatient({
-                            nomor: nomor,
+                        /* ==========================================
+                        TANDAI PASIEN UNTUK AUTO-OPEN PENGKAJIAN
+                        SAAT KEMBALI KE HALAMAN MEDICAL RECORD
+                        ========================================== */
 
-                            norm: norm,
-                            nama: push_nama,
+                        window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__
+                            ?.add(String(patient.nomor));
 
-                            tglLahir: tglLahir,
-                            umur: umur,
+                        /* ==========================================
+                        BUKA / AKTIFKAN WORKSPACE PASIEN
+                        ========================================== */
 
-                            namaRuangan: namaRuangan,
-                            namaDokter: push_namaDokter,
+                        const opened =
+                            window.EMRWorkspace.openPatient(patient);
 
-                            refIdAsuransi: refIdAsuransi,
-                            namaAsuransi: namaAsuransi,
-                            noAsuransi: push_noAsuransi,
+                        if (opened === false) {
+                            return;
+                        }
 
-                            tglMasuk: push_tglMasuk,
-                            tglKeluar: push_tglKeluar,
+                        /* ==========================================
+                        JIKA IFRAME SUDAH LOADED
+                        LANGSUNG BUKA PENGKAJIAN
+                        ========================================== */
 
-                            statusKunjungan: statusKunjungan,
+                        const tabs =
+                            window.EMRWorkspace.getTabs?.() || [];
 
-                            url: url
-                        });
+                        const existingTab = tabs.find(tab =>
+                            String(tab.nomor) === String(patient.nomor)
+                        );
 
+                        if (existingTab && existingTab.loaded) {
+
+                            const panel = document.getElementById(
+                                `emrPanel-${existingTab.tabId}`
+                            );
+
+                            const frame = panel?.querySelector(
+                                'iframe.emr-patient-frame'
+                            );
+
+                            if (frame) {
+                                requestAnimationFrame(() => {
+                                    window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                                        frame
+                                    );
+                                });
+                            }
+
+                        }
+
+                        // Jika iframe belum selesai dimuat, tidak perlu
+                        // membuat listener tambahan di sini.
+                        // Listener global emr:workspace:content-loaded
+                        // di atas akan menangani pasien yang sudah ditandai.
                     }
                 );
+
+            // $(document)
+            //     .off(
+            //         'click.emrWorkspace',
+            //         '#vantable tbody tr.emr-patient-row'
+            //     )
+            //     .on(
+            //         'click.emrWorkspace',
+            //         '#vantable tbody tr.emr-patient-row',
+            //         function (event) {
+
+            //             // Jangan membuka tab ketika tombol atau kontrol
+            //             // interaktif pada baris sedang diklik.
+            //             if (
+            //                 $(event.target).closest(
+            //                     'button, input, select, textarea, form, a'
+            //                 ).length
+            //             ) {
+            //                 return;
+            //             }
+
+            //             event.preventDefault();
+            //             event.stopPropagation();
+
+            //             const nomor = this.dataset.nomor;
+            //             const norm = this.dataset.norm;
+            //             const tglLahir = this.dataset.tgllahir;
+            //             const idAsuransi = this.dataset.idAsuransi;
+            //             const refIdAsuransi = this.dataset.refIdAsuransi;
+            //             const namaAsuransi = this.dataset.namaAsuransi;
+            //             const noAsuransi = this.dataset.noAsuransi;
+            //             const namaRuangan = this.dataset.namaRuangan;
+            //             const namaDokter = this.dataset.namaDokter;
+            //             const umur = this.dataset.umur;
+            //             const tglMasuk = this.dataset.tglMasuk;
+            //             const tglKeluar = this.dataset.tglKeluar;
+            //             const statusKunjungan = this.dataset.statusKunjungan;
+            //             const url = this.dataset.href;
+
+            //             let push_nama = '';
+            //             let push_noAsuransi = '';
+            //             let push_namaDokter = '';
+            //             let push_tglMasuk = '';
+            //             let push_tglKeluar = '';
+
+            //             try {
+            //                 push_nama = decodeURIComponent(
+            //                     this.dataset.nama || ''
+            //                 );
+            //             } catch (error) {
+            //                 push_nama = this.dataset.nama || '';
+            //             }
+
+            //             try {
+            //                 push_noAsuransi = decodeURIComponent(
+            //                     this.dataset.noAsuransi || ''
+            //                 );
+            //             } catch (error) {
+            //                 push_noAsuransi = this.dataset.noAsuransi || '';
+            //             }
+
+            //             try {
+            //                 push_namaDokter = decodeURIComponent(
+            //                     this.dataset.namaDokter || ''
+            //                 );
+            //             } catch (error) {
+            //                 push_namaDokter = this.dataset.namaDokter || '';
+            //             }
+
+            //             try {
+            //                 push_tglMasuk = decodeURIComponent(
+            //                     this.dataset.tglMasuk || ''
+            //                 );
+            //             } catch (error) {
+            //                 push_tglMasuk = this.dataset.tglMasuk || '';
+            //             }
+
+            //             try {
+            //                 push_tglKeluar = decodeURIComponent(
+            //                     this.dataset.tglKeluar || ''
+            //                 );
+            //             } catch (error) {
+            //                 push_tglKeluar = this.dataset.tglKeluar || '';
+            //             }
+
+            //             if (!nomor || !url) {
+            //                 console.error(
+            //                     'Nomor kunjungan atau URL detail tidak tersedia.'
+            //                 );
+            //                 return;
+            //             }
+
+            //             // Jangan diam-diam melakukan navigasi biasa apabila
+            //             // workspace belum aktif.
+            //             if (
+            //                 !window.EMRWorkspace ||
+            //                 typeof window.EMRWorkspace.openPatient !== 'function'
+            //             ) {
+            //                 console.error(
+            //                     'EMRWorkspace belum terinisialisasi. ' +
+            //                     'Periksa pemuatan emr-workspace.js dan layout.'
+            //                 );
+
+            //                 return;
+            //             }
+
+            //             // Buka tab pasien. Halaman induk tidak berpindah URL.
+            //             window.EMRWorkspace.openPatient({
+            //                 nomor: nomor,
+
+            //                 norm: norm,
+            //                 nama: push_nama,
+
+            //                 tglLahir: tglLahir,
+            //                 umur: umur,
+
+            //                 namaRuangan: namaRuangan,
+            //                 namaDokter: push_namaDokter,
+
+            //                 refIdAsuransi: refIdAsuransi,
+            //                 namaAsuransi: namaAsuransi,
+            //                 noAsuransi: push_noAsuransi,
+
+            //                 tglMasuk: push_tglMasuk,
+            //                 tglKeluar: push_tglKeluar,
+
+            //                 statusKunjungan: statusKunjungan,
+
+            //                 url: url
+            //             });
+
+            //         }
+            //     );
 
             // =========================================================
             // ACTIVE FILTER - UPDATE CHIP
@@ -1062,10 +1731,9 @@
                                                         <button
                                                             type="button"
                                                             class="dropdown-item emr-shortcut-item"
-                                                            data-emr-tab="tab-fpengkajian">
-
-                                                            <i class="ph-duotone ph-user-list me-2"></i>
-                                                            Pengkajian Awal
+                                                            data-emr-tab="tab-forder" disabled>
+                                                            <i class="ph-duotone ph-clipboard-text me-2"></i>
+                                                            <s>Order Penunjang</s>
                                                         </button>
                                                         ${
                                                             item.RUANGAN?.startsWith('10203')

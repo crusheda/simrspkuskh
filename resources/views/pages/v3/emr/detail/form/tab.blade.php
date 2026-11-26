@@ -157,15 +157,6 @@
                             </div>
 
                             <div class="menu-wrapper js-filter-ruangan" data-pengkajian-ruangan="ranap">
-                                <!-- Rawat Inap -->
-                                {{-- <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
-                                    data-bs-toggle="collapse"
-                                    href="#submenuRanap"
-                                    role="button"
-                                    data-group="awal">
-                                    <span>Form Pengkajian Rawat Inap</span>
-                                    <i class="ti ti-chevron-down submenu-icon"></i>
-                                </a> --}}
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                     data-bs-toggle="collapse"
                                     href="#submenuRanap"
@@ -1365,6 +1356,96 @@
             }
         });
     }
+
+    // ==========================================================
+    // EMR SHORTCUT — OPEN FORM PENGKAJIAN DARI WORKSPACE
+    // ==========================================================
+    window.EMRPengkajianShortcut = {
+        openFirstAllowedForm: function () {
+
+            // ==================================================
+            // FORM YANG SUDAH DITENTUKAN CONTROLLER detailV3()
+            // ==================================================
+            const allowedForms = Array.isArray(formPengkajianAllowed)
+                ? formPengkajianAllowed
+                : [];
+
+            if (!allowedForms.length) {
+                console.warn(
+                    '[EMR Shortcut] Tidak ada form pengkajian yang tersedia.'
+                );
+
+                return false;
+            }
+
+            // ==================================================
+            // AMBIL FORM PERTAMA SESUAI URUTAN CONTROLLER
+            // ==================================================
+            const targetForm = allowedForms[0];
+
+            // ==================================================
+            // CARI MENU FORM YANG SESUAI
+            // ==================================================
+            const targetMenu = Array.from(
+                document.querySelectorAll(
+                    '#pengkajianMenu [data-form]'
+                )
+            ).find(function (element) {
+                return String(element.dataset.form) ===
+                    String(targetForm);
+            });
+
+            if (!targetMenu) {
+                console.warn(
+                    '[EMR Shortcut] Menu form tidak ditemukan:',
+                    targetForm
+                );
+
+                return false;
+            }
+
+            // ==================================================
+            // PASTIKAN FORM TIDAK DISEMBUNYIKAN FILTER
+            // ==================================================
+            if (
+                targetMenu.dataset.formHidden === 'true' ||
+                targetMenu.dataset.ruanganHidden === 'true'
+            ) {
+                console.warn(
+                    '[EMR Shortcut] Form terkena filter:',
+                    targetForm
+                );
+
+                return false;
+            }
+
+            // ==========================================
+            // BUKA SUBMENU JIKA FORM BERADA DI DALAM COLLAPSE
+            // ==========================================
+            const submenu = targetMenu.closest('.submenu');
+
+            if (submenu && !submenu.classList.contains('show')) {
+                const collapseInstance = bootstrap.Collapse.getOrCreateInstance(
+                    submenu,
+                    { toggle: false }
+                );
+
+                collapseInstance.show();
+            }
+
+            // ==========================================
+            // AKTIFKAN MENU DAN LOAD FORM
+            // ==========================================
+            targetMenu.click();
+
+            console.info(
+                '[EMR Shortcut] Form berhasil dibuka:',
+                targetForm
+            );
+
+            return true;
+        }
+    };
 
     // ==========================
     // GET VALUE FORM BY NAME

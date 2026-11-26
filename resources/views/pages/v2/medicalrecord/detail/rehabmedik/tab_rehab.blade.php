@@ -2,13 +2,13 @@
     @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
         <li class="nav-item" role="presentation">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frjkfr" role="tab"
-                aria-selected="false" tabindex="-1" id="tab-frjkfr" disabled>
+                aria-selected="false" tabindex="-1" id="tab-frjkfr">
                 <i class="ph-duotone ph-files me-2"></i> Formulir Rawat Jalan
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pterapi" role="tab"
-                aria-selected="false" tabindex="-1" id="tab-pterapi" disabled>
+                aria-selected="false" tabindex="-1" id="tab-pterapi">
                 <i class="ph-duotone ph-files me-2"></i> Program Terapi
             </button>
         </li>
