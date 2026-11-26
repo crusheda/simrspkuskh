@@ -126,18 +126,18 @@
                 // kalau tidak ada tanda tangan pegawai
                 Swal.fire({
                     title: `Tanda Tangan tidak ditemukan!`,
-                    text: 'Silakan menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
+                    text: 'Silakan menambahkan tanda tangan pada halaman Profil sebelum melakukan pengisian Elektronik Medical Record.',
                     icon: `warning`,
                     theme: 'bootstrap-5',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,
                     confirmButtonText: `
-                        <i class="fa fa-thumbs-up"></i> Tanda Tangan
+                        <i class="fa fa-thumbs-up me-1"></i> Enrollment Sekarang
                     `,
                     confirmButtonAriaLabel: "Tanda Tangan",
                     cancelButtonText: `
-                        <i class="fa fa-thumbs-down"></i> Tutup
+                        <i class="fa fa-thumbs-down me-1"></i> Nanti
                     `,
                     cancelButtonAriaLabel: "Tutup",
                     // backdrop: `
@@ -150,7 +150,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // buka halaman profil
-                        window.location.href = "{{ route('v2.profil') }}";
+                        window.location.href = "{{ route('v3.profil') }}";
                     }
                 });
             }
