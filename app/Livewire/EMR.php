@@ -46,7 +46,7 @@ class EMR extends Component
         if ($user->hasRole('admin')) {
             $jenisPerawatan = [
                 1 => 'Rawat Jalan',
-                2 => 'Rawat Darurat (Tanpa Inap)',
+                2 => 'Rawat Darurat',
                 3 => 'Rawat Inap & Intensif',
                 4 => 'Operatif (OK)',
                 5 => 'Semua Perawatan',
@@ -69,6 +69,12 @@ class EMR extends Component
 
                 foreach ($aksesRuangan as $ruangan) {
                     foreach ($prefixes as $prefix) {
+                        // Kode Poli Umum ini masuk Rawat Darurat,
+                        // jadi jangan dihitung sebagai Rawat Jalan.
+                        if ($kategori === 1 && $ruangan === '102010101') {
+                            continue;
+                        }
+                        // Akses ke ruangan induk maupun turunannya
                         if (
                             str_starts_with($ruangan, $prefix) ||
                             str_starts_with($prefix, $ruangan)
@@ -84,7 +90,7 @@ class EMR extends Component
 
             $namaKategori = [
                 1 => 'Rawat Jalan',
-                2 => 'Rawat Darurat (Tanpa Inap)',
+                2 => 'Rawat Darurat',
                 3 => 'Rawat Inap & Intensif',
                 4 => 'Operatif (OK)',
             ];
@@ -98,13 +104,16 @@ class EMR extends Component
             // Opsi Semua Perawatan
             $aksesRuanganInduk = in_array('102', $aksesRuangan, true);
 
-            $aksesSemuaKategori = !in_array(
-                false,
-                $punyaAksesKategori,
-                true
+            // $aksesSemuaKategori = !in_array(
+            //     false,
+            //     $punyaAksesKategori,
+            //     true
+            // );
+            $jumlahKategoriDiakses = count(
+                array_filter($punyaAksesKategori)
             );
 
-            if ($aksesRuanganInduk || $aksesSemuaKategori) {
+            if ($aksesRuanganInduk || $jumlahKategoriDiakses) {
                 $jenisPerawatan[5] = 'Semua Perawatan';
             }
 
