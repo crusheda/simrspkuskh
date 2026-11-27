@@ -60,37 +60,47 @@ Route::prefix('v3')->group(function () { // PUBLIC
     // Proses autentikasi tetap melalui LoginV3Controller
     Route::post('/login', [LoginV3Controller::class, 'login'])->middleware('guest')->name('v3.login.process');
 });
-Route::middleware(['auth']) // AUTHENTICATED
+Route::middleware(['auth'])
     ->prefix('v3')
     ->group(function () {
+
         Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
-        // Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
-        Route::get('/emr', EMR::class)->name('v3.emr');
-
-        Route::get('/emr/{KUNJUNGAN}', [
-            EMR::class,
-            'detailV3',
-        ])
-            ->where('KUNJUNGAN', '[^/]+')
-            ->name('v3.emr.detail');
-
-        Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
-        Route::get('/smartclaim/{KUNJUNGAN}', SmartClaim::class)->name('v3.smartclaim.detail');
-        Route::get('/smartclaim/{KUNJUNGAN}/farmasi', SmartClaim::class)->name('v3.smartclaim.detail.farmasi');
-        Route::get('/smartclaim/metadata-kunjungan/{kunjungan}',[SmartClaimMetadataController::class, 'metadataKunjungan'])->name('v3.smartclaim.metadata-kunjungan');
 
         Route::get('/profil', Profil::class)->name('v3.profil');
         Route::get('/capaian', Capaian::class)->name('v3.capaian');
         Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');
         Route::get('/notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3'])->name('v3.notifikasi.klaim');
         Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
-        Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData'])->name('v3.notifikasi.data');
+        Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData',])->name('v3.notifikasi.data');
         Route::get('/setting/notifikasi/data/{id}', [NotifikasiController::class, 'showDetail'])->name('v3.notifikasi.detail');
         Route::get('/setting/roles', SettingRoles::class)->name('v3.setting.roles');
         Route::get('/setting/permissions', SettingPermissions::class)->name('v3.setting.permissions');
 
-        // Helper
-        Route::get('/system/simgos-status', [SystemHealthController::class, 'simgos'])->name('system.simgos-status');
+        // EMR (MEDICAL RECORD)
+        Route::get('/emr', EMR::class)->name('v3.emr');
+        Route::get('/emr/{KUNJUNGAN}', [EMR::class, 'detailV3'])->where('KUNJUNGAN', '[^/]+')->name('v3.emr.detail');
+
+        // SMART CLAIM
+        Route::middleware(['permission:smart_claim|smart_claim_farmasi'])
+            ->group(function () {
+                // Index Smart Claim
+                Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
+                // Metadata Kunjungan
+                Route::get('/smartclaim/metadata-kunjungan/{kunjungan}', [SmartClaimMetadataController::class, 'metadataKunjungan'])->name('v3.smartclaim.metadata-kunjungan');
+            });
+        Route::middleware(['permission:smart_claim'])->group(function () {
+            Route::get('/smartclaim/{KUNJUNGAN}', SmartClaim::class)->name('v3.smartclaim.detail');
+        });
+        Route::middleware(['permission:smart_claim_farmasi'])->group(function () {
+            Route::get('/smartclaim/{KUNJUNGAN}/farmasi', SmartClaim::class)->name('v3.smartclaim.detail.farmasi');
+        });
+
+        // SYSTEM HELPER
+        Route::get('/system/simgos-status', [
+            SystemHealthController::class,
+            'simgos',
+        ])
+            ->name('system.simgos-status');
     });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------

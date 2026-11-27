@@ -1216,7 +1216,6 @@
         // ======================================================
         // AUTO SAVE
         // ======================================================
-
         function scheduleAutoSave() {
 
             if (isLoading || isSaving || isFinal) {
@@ -1225,9 +1224,9 @@
 
             clearTimeout(saveTimer);
 
-            saveTimer = setTimeout(function () {
+            saveTimer = setTimeout(function () { // Waktu Otomatis Menyimpan Form
                 simpanData(false);
-            }, 800);
+            }, 4000); // 1 detik = 1000
         }
 
         // ======================================================

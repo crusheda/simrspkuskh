@@ -3993,7 +3993,7 @@ class ApiNewRehabMedikController extends Controller
                 ->select('kfr.*', 'cppt.ASSESMENT AS diag_medis','cppt.PLANNING')
                 ->where('kfr.nomor', $kunjungan)
                 ->where('kfr.status', 1)
-                ->whereNull('deleted_at')
+                ->whereNull('kfr.deleted_at')
                 ->first();
 
             if (!$formKfr) {
@@ -4432,7 +4432,7 @@ class ApiNewRehabMedikController extends Controller
                     ->select('kfr.*', 'cppt.ASSESMENT AS diag_medis','cppt.PLANNING')
                     ->where('kfr.nomor', $request->kunjungan)
                     ->where('kfr.status', 1)
-                    ->whereNull('deleted_at')
+                    ->whereNull('kfr.deleted_at')
                     ->first();
 
             if (!$formKfr) {

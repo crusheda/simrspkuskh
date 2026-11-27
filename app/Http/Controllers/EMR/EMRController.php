@@ -2812,33 +2812,23 @@ class EMRController extends Controller
             'TENAGA_MEDIS'  => $getPPA->ID,
 
             'RENCANA_PULANG' => 0,
-
             'TANGGAL_RENCANA_PULANG' => date('Y-m-d'),
-
             'SUB_DEVISI' => 0,
 
             /*
             | User yang membuat CPPT
             */
             'OLEH' => auth()->id(),
-
             'VERIFIKASI' => $idVerifikasi,
-
             'STATUS' => 1,
-
             'TULIS' => '',
-
             'STATUS_TBAK' => 0,
-
             'STATUS_SBAR' => 0,
-
             'BACA' => 0,
-
             'KONFIRMASI' => 0,
-
             'ADIME' => 0,
-
             'DOKTER_TBAK_OR_SBAR' => 0,
+            'ISSIRMED' => 1,
         ];
 
 
@@ -2847,7 +2837,6 @@ class EMRController extends Controller
         | CPPT BIASA
         |--------------------------------------------------------------------------
         */
-
         if ($request->mode === 'BIASA') {
 
             $data['SUBYEKTIF'] = $request->s ?? '';
@@ -2867,7 +2856,6 @@ class EMRController extends Controller
         | CPPT SBAR
         |--------------------------------------------------------------------------
         */
-
         elseif ($request->mode === 'SBAR') {
 
             /*
@@ -2901,7 +2889,6 @@ class EMRController extends Controller
         | CPPT TBAK
         |--------------------------------------------------------------------------
         */
-
         elseif ($request->mode === 'TBAK') {
 
             $data['SUBYEKTIF'] = '';
@@ -2935,11 +2922,9 @@ class EMRController extends Controller
         | SIMPAN
         |--------------------------------------------------------------------------
         */
-
         try {
 
-            DB::table('medicalrecord.cppt')
-                ->insert($data);
+            DB::table('medicalrecord.cppt')->insert($data);
 
             return response()->json([
                 'status' => true,
@@ -3188,6 +3173,9 @@ class EMRController extends Controller
                 'KONFIRMASI' => 0,
                 'ADIME' => $cppt->ADIME ?? 0,
                 'DOKTER_TBAK_OR_SBAR' => 0,
+
+                'ISSIRMED' => 1,
+                'COPIED_AT' => now(),
             ];
 
             /*
@@ -3398,6 +3386,10 @@ class EMRController extends Controller
             'INSTRUKSI' => $this->cpptTextKeHtml(
                 $validated['instruksi'] ?? ''
             ),
+
+            'ISSIRMED'  => 1,
+            'UPDATED_OLEH'  => auth()->id(),
+            'UPDATED_AT'  => now(),
         ];
 
         /*
@@ -3507,7 +3499,9 @@ class EMRController extends Controller
             DB::table('medicalrecord.cppt')
                 ->where('ID', $id)
                 ->update([
-                    'STATUS' => 0
+                    'STATUS' => 0,
+                    'DELETED_OLEH' => auth()->id(),
+                    'DELETED_AT' => now()
                 ]);
             DB::table('medicalrecord.verifikasi_cppt')
                 ->where('KUNJUNGAN', $kunjungan)

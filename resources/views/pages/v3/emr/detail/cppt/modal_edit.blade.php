@@ -41,7 +41,7 @@
                 <button type="button"
                         class="btn-close"
                         aria-label="Tutup"
-                        onclick="EMRCPPTPage.batalEditCPPT()">
+                        onclick="EMRCPPTPage.closeAllModalCPPT()">
                 </button>
             </div>
 
@@ -381,6 +381,7 @@
 
         window.EMRCPPTPage = {
             batalEditCPPT,
+            closeAllModalCPPT,
             simpanEditCPPT,
             editCPPT,
             copyCPPT,
@@ -411,6 +412,13 @@
             editCPPTPerluRefresh = false;
 
             $('#modalEditCPPT').modal('hide');
+        }
+
+        function closeAllModalCPPT() {
+            // Tutup modal Edit CPPT
+            $('#modalEditCPPT').modal('hide');
+            // Tutup modal utama CPPT
+            $('#modalCPPT').modal('hide');
         }
 
         function initModalEditCPPT() {
@@ -1072,6 +1080,14 @@
 
                     // Isi modal dengan data CPPT lama
                     isiFormEditCPPT(data);
+
+                    // =====================================================
+                    // MODE COPY:
+                    // Tanggal dan jam menggunakan waktu kunjungan saat ini,
+                    // bukan waktu CPPT sumber yang sedang disalin.
+                    // =====================================================
+                    $('#edit_cppt_tanggal').val(formatTanggalInputCPPT(tgl_masuk));
+                    $('#edit_cppt_jam').val(formatJamInputCPPT(tgl_masuk));
 
                     /*
                     |--------------------------------------------------------------------------
