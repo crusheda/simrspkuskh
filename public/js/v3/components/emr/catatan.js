@@ -161,36 +161,44 @@
 
         const isSolved = Number(item.STATUS) === 2;
 
-        const actionButtons = item.CAN_EDIT
-            ? `
-                <div class="catatan-card-actions">
+        const canEdit = Boolean(item.CAN_EDIT);
+        const canSolve = Boolean(item.CAN_SOLVE) && !isSolved;
 
-                    ${!isSolved ? `
-                        <button type="button"
-                                class="btn btn-sm btn-subtle-success btn-solve-internal-catatan"
-                                data-id="${item.ID}">
-                            <i class="ph-duotone ph-check-circle"></i>
-                            Selesaikan
-                        </button>
-                    ` : ''}
+        const actionButtons = `
+            <div class="catatan-card-actions">
 
-                    <button type="button"
-                            class="btn btn-sm btn-subtle-warning btn-edit-catatan"
-                            data-id="${item.ID}">
-                        <i class="ph-duotone ph-pencil-simple"></i>
-                        Edit
-                    </button>
+                <!-- SELESAIKAN -->
+                <button type="button"
+                        class="btn btn-sm btn-subtle-success btn-solve-internal-catatan"
+                        data-id="${item.ID}"
+                        ${canSolve ? '' : 'disabled'}
+                        ${!canSolve ? 'title="Anda tidak memiliki hak untuk menyelesaikan catatan ini"' : ''}>
+                    <i class="ph-duotone ph-check-circle"></i>
+                    Selesaikan
+                </button>
 
-                    <button type="button"
-                            class="btn btn-sm btn-subtle-danger btn-delete-catatan"
-                            data-id="${item.ID}">
-                        <i class="ph-duotone ph-trash"></i>
-                        Hapus
-                    </button>
+                <!-- EDIT -->
+                <button type="button"
+                        class="btn btn-sm btn-subtle-warning btn-edit-catatan"
+                        data-id="${item.ID}"
+                        ${canEdit ? '' : 'disabled'}
+                        ${!canEdit ? 'title="Anda tidak memiliki hak untuk mengedit catatan ini"' : ''}>
+                    <i class="ph-duotone ph-pencil-simple"></i>
+                    Edit
+                </button>
 
-                </div>
-            `
-            : '';
+                <!-- HAPUS -->
+                <button type="button"
+                        class="btn btn-sm btn-subtle-danger btn-delete-catatan"
+                        data-id="${item.ID}"
+                        ${canEdit ? '' : 'disabled'}
+                        ${!canEdit ? 'title="Anda tidak memiliki hak untuk menghapus catatan ini"' : ''}>
+                    <i class="ph-duotone ph-trash"></i>
+                    Hapus
+                </button>
+
+            </div>
+        `;
 
         return `
             <article class="catatan-card catatan-card-internal ${item.IS_SOLVED ? 'is-solved' : ''}">
@@ -692,6 +700,14 @@
         const solveInternalButton = event.target.closest('.btn-solve-internal-catatan');
 
         if (solveInternalButton) {
+
+            const id = Number(solveInternalButton.dataset.id);
+            const item = currentData?.internal?.find(note => Number(note.ID) === id);
+
+            if (!item || !item.CAN_SOLVE || Number(item.STATUS) !== 1) {
+                return;
+            }
+
             currentSolveId = solveInternalButton.dataset.id;
             currentSolveType = 'internal';
 
@@ -735,7 +751,14 @@
         const deleteButton = event.target.closest('.btn-delete-catatan');
 
         if (deleteButton) {
-            const id = deleteButton.dataset.id;
+
+            const id = Number(deleteButton.dataset.id);
+            const item = currentData?.internal?.find(note => Number(note.ID) === id);
+
+            // Hanya pemilik catatan atau Admin yang boleh menghapus.
+            if (!item || !item.CAN_EDIT) {
+                return;
+            }
 
             const showDeleteConfirmation = () => {
                 Swal.fire({

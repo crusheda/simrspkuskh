@@ -75,6 +75,23 @@ class CatatanController
         return array_unique($roles);
     }
 
+    /**
+     * Cek apakah user memiliki role Admin.
+     */
+    private function currentCatatanIsAdmin(): bool
+    {
+        $user = auth()->user();
+
+        if (!$user || !method_exists($user, 'getRoleNames')) {
+            return false;
+        }
+
+        return $user->getRoleNames()
+            ->map(fn ($role) => strtolower(trim($role)))
+            ->intersect(['admin', 'administrator'])
+            ->isNotEmpty();
+    }
+
     public function getCatatanEMR(Request $request, string $kunjungan)
     {
         $visit = $this->resolveCatatanVisit($kunjungan);
@@ -88,6 +105,7 @@ class CatatanController
 
         $userId = $this->currentCatatanUserId();
         $roles = $this->currentCatatanRoles();
+        $isAdmin = $this->currentCatatanIsAdmin();
 
         /*
         |--------------------------------------------------------------------------
@@ -125,11 +143,19 @@ class CatatanController
             ->orderByRaw('CASE WHEN c.STATUS = 1 THEN 0 ELSE 1 END')
             ->orderByDesc('c.CREATED_AT')
             ->get()
-            ->map(function ($item) use ($userId) {
-                $item->SOURCE = 'internal';
-                $item->CAN_EDIT = (int) $item->USER === $userId
-                    && (int) $item->STATUS === 1;
+            ->map(function ($item) use ($userId, $isAdmin) {
+
+                $isOwner = (int) $item->USER === $userId;
+                $isActive = (int) $item->STATUS === 1;
+
+                // Pemilik catatan atau Admin dapat mengelola catatan aktif.
+                $item->CAN_EDIT = ($isOwner || $isAdmin) && $isActive;
+
+                // Pemilik catatan atau Admin dapat menyelesaikan catatan aktif.
+                $item->CAN_SOLVE = ($isOwner || $isAdmin) && $isActive;
+
                 $item->IS_SOLVED = (int) $item->STATUS === 2;
+                $item->SOURCE = 'internal';
 
                 return $item;
             });
@@ -261,10 +287,10 @@ class CatatanController
         ]);
 
         $userId = $this->currentCatatanUserId();
+        $isAdmin = $this->currentCatatanIsAdmin();
 
         $catatan = DB::table('simrspku_pengkajian.catatan')
             ->where('ID', $id)
-            ->where('USER', $userId)
             ->where('STATUS', 1)
             ->whereNull('DELETED_AT')
             ->first();
@@ -272,13 +298,23 @@ class CatatanController
         if (!$catatan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Catatan tidak ditemukan atau bukan milik Anda.',
+                'message' => 'Catatan tidak ditemukan atau sudah tidak aktif.',
+            ], 404);
+        }
+
+        // Hanya pemilik catatan atau Admin yang boleh mengedit.
+        if ((int) $catatan->USER !== $userId && !$isAdmin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki hak untuk mengedit catatan ini.',
             ], 403);
         }
 
         DB::table('simrspku_pengkajian.catatan')
             ->where('ID', $id)
-            ->where('USER', $userId)
+            // ->where('USER', $userId)
+            ->where('STATUS', 1)
+            ->whereNull('DELETED_AT')
             ->update([
                 'DESKRIPSI' => $request->deskripsi,
                 'RUANGAN' => $request->ruangan ?: null,
@@ -294,10 +330,31 @@ class CatatanController
     public function deleteCatatanInternal(int $id)
     {
         $userId = $this->currentCatatanUserId();
+        $isAdmin = $this->currentCatatanIsAdmin();
+
+        $catatan = DB::table('simrspku_pengkajian.catatan')
+            ->where('ID', $id)
+            ->where('STATUS', 1)
+            ->whereNull('DELETED_AT')
+            ->first();
+
+        if (!$catatan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Catatan tidak ditemukan atau sudah tidak aktif.',
+            ], 404);
+        }
+
+        // Hanya pemilik catatan atau Admin yang boleh menghapus.
+        if ((int) $catatan->USER !== $userId && !$isAdmin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki hak untuk menghapus catatan ini.',
+            ], 403);
+        }
 
         $updated = DB::table('simrspku_pengkajian.catatan')
             ->where('ID', $id)
-            ->where('USER', $userId)
             ->where('STATUS', 1)
             ->whereNull('DELETED_AT')
             ->update([
@@ -309,8 +366,8 @@ class CatatanController
         if (!$updated) {
             return response()->json([
                 'success' => false,
-                'message' => 'Catatan tidak ditemukan atau bukan milik Anda.',
-            ], 403);
+                'message' => 'Catatan gagal dihapus.',
+            ], 500);
         }
 
         return response()->json([
@@ -332,6 +389,19 @@ class CatatanController
                     'success' => false,
                     'message' => 'Catatan tidak ditemukan.',
                 ], 404);
+            }
+
+            // ========================================================
+            // HAK AKSES: PEMILIK CATATAN ATAU ADMIN
+            // ========================================================
+            $userId = $this->currentCatatanUserId();
+            $isAdmin = $this->currentCatatanIsAdmin();
+
+            if ((int) $catatan->USER !== $userId && !$isAdmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki hak untuk menyelesaikan catatan ini.',
+                ], 403);
             }
 
             if ((int) $catatan->STATUS === 2) {
