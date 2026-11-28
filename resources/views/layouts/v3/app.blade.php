@@ -8,24 +8,28 @@
     <title>@yield('title', 'BOT') · Sirmed v3</title>
     <link rel="icon" href="{{ asset('images/logo/logo.png') }}">
 
-    {{-- Inisialisasi tema sebelum CSS --}}
+   {{-- ==================================================
+        INISIALISASI THEME
+        Default pengguna baru: LIGHT MODE
+        Tema pilihan pengguna tetap tersimpan
+    ================================================== --}}
     <script>
         (() => {
+            const THEME_KEY = 'sirmed-theme';
             let theme = 'light';
 
             try {
-                const saved = localStorage.getItem('sirmed-theme');
+                const saved = localStorage.getItem(THEME_KEY);
 
-                theme = saved === 'dark' || saved === 'light'
-                    ? saved
-                    : (
-                        window.matchMedia('(prefers-color-scheme: dark)').matches
-                            ? 'dark'
-                            : 'light'
-                    );
-            } catch (e) {}
+                if (saved === 'dark' || saved === 'light') {
+                    theme = saved;
+                }
+            } catch (e) {
+                theme = 'light';
+            }
 
             document.documentElement.setAttribute('data-bs-theme', theme);
+            document.documentElement.style.colorScheme = theme;
         })();
     </script>
 

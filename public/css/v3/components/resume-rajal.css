@@ -304,3 +304,18 @@ RESUME MEDIS RAWAT JALAN SIGNATURE
         min-height: 190px;
     }
 }
+
+/* =========================================================
+   RESUME RJ - SIGNATURE PREVIEW
+========================================================= */
+#resume_rj_signature_preview {
+    display: block;
+
+    width: auto !important;
+    height: auto !important;
+
+    max-width: 100%;
+    max-height: 180px;
+
+    object-fit: contain;
+}

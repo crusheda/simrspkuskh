@@ -108,6 +108,36 @@
     /**
      * Ambil tema tersimpan atau gunakan preferensi sistem.
      */
+    // function syncSavedTheme() {
+    //     let theme = 'light';
+
+    //     try {
+    //         const savedTheme = localStorage.getItem(THEME_KEY);
+
+    //         if (savedTheme === 'dark' || savedTheme === 'light') {
+    //             theme = savedTheme;
+    //         } else {
+    //             theme = window.matchMedia(
+    //                 '(prefers-color-scheme: dark)'
+    //             ).matches
+    //                 ? 'dark'
+    //                 : 'light';
+    //         }
+    //     } catch (error) {
+    //         theme = window.matchMedia(
+    //             '(prefers-color-scheme: dark)'
+    //         ).matches
+    //             ? 'dark'
+    //             : 'light';
+    //     }
+
+    //     applyTheme(theme);
+    // }
+
+    /**
+     * Ambil tema tersimpan.
+     * Jika belum pernah memilih tema, default ke LIGHT.
+     */
     function syncSavedTheme() {
         let theme = 'light';
 
@@ -116,19 +146,11 @@
 
             if (savedTheme === 'dark' || savedTheme === 'light') {
                 theme = savedTheme;
-            } else {
-                theme = window.matchMedia(
-                    '(prefers-color-scheme: dark)'
-                ).matches
-                    ? 'dark'
-                    : 'light';
             }
         } catch (error) {
-            theme = window.matchMedia(
-                '(prefers-color-scheme: dark)'
-            ).matches
-                ? 'dark'
-                : 'light';
+            // Jika localStorage tidak tersedia,
+            // tetap gunakan Light Mode.
+            theme = 'light';
         }
 
         applyTheme(theme);
@@ -284,6 +306,9 @@
     /* =========================================================
        INITIALIZATION
     ========================================================= */
+    // Terapkan tema tersimpan.
+    // Pengguna baru otomatis menggunakan Light Mode.
+    syncSavedTheme();
 
     refreshThemeControls();
     bindIframeThemeSync();
