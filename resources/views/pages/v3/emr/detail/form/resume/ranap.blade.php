@@ -32,8 +32,6 @@
                 {{-- HEADER KANAN: INFO FINALISASI --}}
                 <div id="info_final_resume" class="d-none text-end">
                     <div class="d-flex align-items-center justify-content-end gap-2">
-                        <i class="ri-shield-check-line text-success fs-5"></i>
-
                         <div>
                             <div class="fw-semibold text-success" id="info_final_oleh">
                                 -
@@ -43,6 +41,7 @@
                                 -
                             </small>
                         </div>
+                        <i class="ri-shield-check-line text-success fs-5"></i>
                     </div>
                 </div>
 

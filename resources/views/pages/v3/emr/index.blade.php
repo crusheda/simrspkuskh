@@ -243,6 +243,23 @@
                         };
 
                         // ==========================================
+                        // HENTIK AUTO-OPEN PENGKAJIAN
+                        // JIKA PASIEN DIBUKA MELALUI SHORTCUT FORM
+                        // ==========================================
+                        window.__SIRMED_EMR_ROW_PENGKAJIAN_VISITS__
+                            ?.delete(String(patient.nomor));
+
+                        // ==========================================
+                        // VALIDASI NOMOR KUNJUNGAN
+                        // ==========================================
+                        if (!patient.nomor) {
+                            console.error(
+                                '[EMR] Nomor kunjungan tidak ditemukan.'
+                            );
+                            return;
+                        }
+
+                        // ==========================================
                         // VALIDASI EMR WORKSPACE
                         // ==========================================
                         if (
@@ -775,16 +792,20 @@
                     | Form Pengkajian Awal seperti sebelumnya.
                     |--------------------------------------------------------------------------
                     */
-
                     const tabPengkajian = frameDocument.getElementById('tab-fpengkajian');
 
                     if (!tabPengkajian) {
-                        setTimeout(() => {
-                            window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(frame, attempt + 1);
-                        }, 100);
+                        window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
+                            frame,
+                            attempt + 1
+                        );
                         return;
                     }
 
+                    // Cek status tab sebelum dibuka
+                    const pengkajianSudahAktif = tabPengkajian.classList.contains('active');
+
+                    // Buka tab Pengkajian
                     if (frameWindow.bootstrap?.Tab) {
                         frameWindow.bootstrap.Tab
                             .getOrCreateInstance(tabPengkajian)
@@ -793,26 +814,52 @@
                         tabPengkajian.click();
                     }
 
-                    const openForm = () => {
-                        const shortcut = frameWindow.EMRPengkajianShortcut;
+                    // Buka form pengkajian
+                    const shortcut = frameWindow.EMRPengkajianShortcut;
 
-                        if (shortcut?.openFirstAllowedForm) {
-                            shortcut.openFirstAllowedForm();
-                            return;
-                        }
+                    if (shortcut?.openFirstAllowedForm) {
+                        shortcut.openFirstAllowedForm();
+                    }
 
-                        if (attempt < 30) {
-                            setTimeout(() => {
-                                window.__SIRMED_EMR_ROW_OPEN_PENGKAJIAN__(
-                                    frame,
-                            attempt + 1
-                            );
-                        }, 100);
-                        }
-                    };
-
-                    setTimeout(openForm, 150);
+                    // Jika tab sudah aktif sebelumnya, .show() tidak menghasilkan event shown.bs.tab.
+                    // Trigger event secara manual hanya untuk kondisi tersebut.
+                    if (pengkajianSudahAktif) {
+                        triggerCekKunjunganRowEMR(frame);
+                    }
                 };
+
+                function triggerCekKunjunganRowEMR(frame, attempt = 0) {
+                    const maxAttempt = 30;
+
+                    if (!frame?.contentWindow || !frame.contentDocument) {
+                        if (attempt < maxAttempt) {
+                            setTimeout(() => {
+                                triggerCekKunjunganRowEMR(frame, attempt + 1);
+                            }, 100);
+                        }
+
+                        return;
+                    }
+
+                    const frameWindow = frame.contentWindow;
+                    const frameDocument = frame.contentDocument;
+
+                    // Pastikan halaman EMR detail sudah siap
+                    if (!frameDocument.getElementById('tab-fpengkajian')) {
+                        if (attempt < maxAttempt) {
+                            setTimeout(() => {
+                                triggerCekKunjunganRowEMR(frame, attempt + 1);
+                            }, 100);
+                        }
+
+                        return;
+                    }
+
+                    // Trigger khusus dari klik row Index EMR
+                    frameWindow.dispatchEvent(
+                        new CustomEvent('emr:cek-kunjungan-row')
+                    );
+                }
 
                 /* =====================================================
                 CONTENT LOADED — UNTUK PASIEN YANG DITANDAI
@@ -1554,12 +1601,6 @@
         function filter() {
             // Update visual filter aktif
             renderActiveFilters();
-            // Remove init Table EMR if exist
-            if (tableEMR) {
-                tableEMR.destroy();
-            }
-            $('#show_table').prop('hidden',false);
-            $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
             // Initialize
             var rawat = $("#filter_rawat").val();
             var ruang = $("#filter_ruang").val();
@@ -1567,6 +1608,15 @@
             var tgl = $("#filter_tgl").val();
             var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
             var penjamin = $("#filter_penjamin").val();
+
+            if (tgl == '') {
+                Swal.fire(
+                    'Data Filter Tidak Valid!',
+                    'Pastikan Pilihan Rentang Tgl Kunjungan pada Filter Data terisi dengan benar',
+                    'error'
+                );
+                return;
+            }
             var exTgl = tgl.split(' to ');
             if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
                 tgls = exTgl[0];
@@ -1575,6 +1625,14 @@
                 tgls = exTgl[0];
                 tgle = exTgl[0];
             }
+
+            // Remove init Table EMR if exist
+            if (tableEMR) {
+                tableEMR.destroy();
+            }
+            $('#show_table').prop('hidden',false);
+            $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+
             // Process
             $.ajax({
                 url: '/api/v2/emr',

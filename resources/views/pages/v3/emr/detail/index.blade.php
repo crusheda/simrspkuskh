@@ -1795,7 +1795,7 @@
                             : '<i class="ri-thumb-up-line me-1"></i> OK',
 
                         customClass: {
-                            confirmButton: `btn btn-subtle-${res.btn_style ?? 'info'}`
+                            confirmButton: `btn btn-${res.btn_style ?? 'info'}`
                         },
 
                         timer: isiCppt ? undefined : 5000,
@@ -1827,6 +1827,13 @@
                 }
             });
         }
+
+        // =====================================================
+        // CEK KUNJUNGAN KHUSUS AUTO-OPEN DARI INDEX EMR
+        // =====================================================
+        window.addEventListener('emr:cek-kunjungan-row', function () {
+            cekKunjungan();
+        });
 
     })();
 </script>

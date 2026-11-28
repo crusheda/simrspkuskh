@@ -137,8 +137,10 @@
         /* =================================================
         AKTIFKAN TAB FORM PENGKAJIAN
         ================================================= */
-
         tabButton.disabled = false;
+
+        const pengkajianSudahAktif =
+            tabButton.classList.contains('active');
 
         if (frameWindow.bootstrap?.Tab) {
             frameWindow.bootstrap.Tab
@@ -146,6 +148,14 @@
                 .show();
         } else {
             tabButton.click();
+        }
+
+        // Jika tab Pengkajian sebelumnya sudah aktif,
+        // event shown.bs.tab tidak akan terpicu kembali.
+        if (pengkajianSudahAktif) {
+            frameWindow.dispatchEvent(
+                new CustomEvent('emr:cek-kunjungan-row')
+            );
         }
 
         /* =================================================
