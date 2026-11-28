@@ -906,6 +906,121 @@
             }
         }
 
+        /**
+         * =========================================================
+         * CROP TANDA TANGAN OTOMATIS
+         * =========================================================
+         *
+         * Menghilangkan ruang transparan di sekitar tinta tanda tangan.
+         * Mempertahankan proporsi asli tanda tangan.
+         *
+         * @param {HTMLCanvasElement} sourceCanvas
+         * @param {number} paddingCss Ruang kosong tambahan dalam CSS pixel.
+         * @returns {string|null} Base64 PNG hasil crop.
+         */
+        function cropSignatureCanvas(sourceCanvas, paddingCss = 18) {
+
+            if (!sourceCanvas) return null;
+
+            const sourceCtx = sourceCanvas.getContext('2d');
+
+            if (!sourceCtx) return null;
+
+            const width = sourceCanvas.width;
+            const height = sourceCanvas.height;
+
+            if (!width || !height) return null;
+
+            const imageData = sourceCtx.getImageData(
+                0,
+                0,
+                width,
+                height
+            );
+
+            const pixels = imageData.data;
+
+            let minX = width;
+            let minY = height;
+            let maxX = -1;
+            let maxY = -1;
+
+            // Deteksi area tinta berdasarkan alpha channel.
+            for (let y = 0; y < height; y++) {
+
+                for (let x = 0; x < width; x++) {
+
+                    const index = (y * width + x) * 4;
+                    const alpha = pixels[index + 3];
+
+                    // Abaikan piksel transparan.
+                    if (alpha > 8) {
+
+                        minX = Math.min(minX, x);
+                        minY = Math.min(minY, y);
+
+                        maxX = Math.max(maxX, x);
+                        maxY = Math.max(maxY, y);
+                    }
+                }
+            }
+
+            // Tidak ditemukan tinta.
+            if (maxX < minX || maxY < minY) {
+                return null;
+            }
+
+            // Padding mengikuti device pixel ratio.
+            const ratio = Math.max(
+                window.devicePixelRatio || 1,
+                1
+            );
+
+            const padding = Math.round(paddingCss * ratio);
+
+            // Tambahkan ruang kosong di sekeliling tanda tangan.
+            const cropX = Math.max(0, minX - padding);
+            const cropY = Math.max(0, minY - padding);
+
+            const cropRight = Math.min(
+                width,
+                maxX + padding + 1
+            );
+
+            const cropBottom = Math.min(
+                height,
+                maxY + padding + 1
+            );
+
+            const cropWidth = cropRight - cropX;
+            const cropHeight = cropBottom - cropY;
+
+            // Buat canvas baru sesuai ukuran tanda tangan.
+            const croppedCanvas = document.createElement('canvas');
+
+            croppedCanvas.width = cropWidth;
+            croppedCanvas.height = cropHeight;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+
+            if (!croppedCtx) return null;
+
+            // Salin area tanda tangan tanpa mengubah proporsi.
+            croppedCtx.drawImage(
+                sourceCanvas,
+                cropX,
+                cropY,
+                cropWidth,
+                cropHeight,
+                0,
+                0,
+                cropWidth,
+                cropHeight
+            );
+
+            return croppedCanvas.toDataURL('image/png');
+        }
+
         /* =========================================================
         * SAVE SIGNATURE
         * ========================================================= */
@@ -933,7 +1048,19 @@
             updateStatus();
 
             try {
-                const payload = canvas.toDataURL('image/png');
+                // Crop tanda tangan sebelum dikirim ke server.
+                const payload = cropSignatureCanvas(canvas);
+
+                if (!payload) {
+
+                    notify(
+                        'warning',
+                        'Tanda tangan kosong',
+                        'Area tanda tangan tidak ditemukan. Silakan ulangi tanda tangan.'
+                    );
+
+                    return;
+                }
 
                 const response = await $.ajax({
                     url: `${baseUrl}/ttd`,

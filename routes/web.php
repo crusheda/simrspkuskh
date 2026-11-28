@@ -125,7 +125,7 @@ Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.
 Route::get('/', function () { return redirect()->route('v3.emr'); });
 Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
     // Route::get('/', function () { return redirect()->route('v2.dashboard'); });
-    Route::get('/', function () { return redirect()->route('v2.emr'); });
+    Route::get('/', function () { return redirect()->route('v3.emr'); });
 
     // Route::get('login', function () { return view('pages.v2.auth.login'); })->name('v2.login');
     Route::get('/login', function () { return redirect()->route('v3.login'); });
@@ -139,7 +139,8 @@ Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
 
 Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
     // PUBLIK
-        Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
+        // Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
+        Route::get('dashboard', function () { return redirect()->route('v3.emr'); })->name('v2.dashboard');
 
     // DISPLAY
         // TT - BED
