@@ -506,7 +506,7 @@
                                         $layananLanjutan = [
                                             1 => 'Poliklinik RS',
                                             2 => 'RS Lain',
-                                            3 => 'Puskesmas',
+                                            3 => 'Faskes Pertama',
                                             4 => 'Dokter Luar',
                                             5 => 'Komunitas',
                                         ];
@@ -543,6 +543,204 @@
                                     name="edukasi"
                                     rows="3"></textarea>
                             </div>
+                        </div>
+
+                        {{-- =========================================================
+                            ENROLLMENT TANDA TANGAN PASIEN / KELUARGA
+                        ========================================================= --}}
+                        <div class="col-md-12 mt-3">
+
+                            <div class="card resume-ranap-patient-signature-card">
+
+                                {{-- HEADER --}}
+                                <div class="card-header d-flex align-items-center gap-2">
+
+                                    <div class="resume-ranap-patient-signature-icon">
+                                        <i class="ph-duotone ph-signature"></i>
+                                    </div>
+
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">
+                                            Tanda Tangan Pasien / Keluarga
+                                        </h6>
+
+                                        <small class="text-body-secondary">
+                                            Enrollment tanda tangan
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                {{-- BODY --}}
+                                <div class="card-body">
+
+                                    {{-- STATUS --}}
+                                    <div
+                                        id="resume_ranap_patient_signature_status"
+                                        class="resume-ranap-patient-signature-status d-none">
+
+                                    </div>
+
+                                    {{-- NAMA PIHAK --}}
+                                    <div class="form-group mb-3">
+
+                                        <label
+                                            for="resume_ranap_nama_pihak"
+                                            class="form-label fw-semibold">
+
+                                            Nama Pasien / Keluarga
+
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="resume_ranap_nama_pihak"
+                                            maxlength="255"
+                                            autocomplete="off"
+                                            placeholder="Masukkan nama pasien atau keluarga yang menandatangani">
+
+                                        {{-- <small class="text-body-secondary mt-2">
+                                            Nama orang yang menerima edukasi dan membubuhkan tanda tangan.
+                                        </small> --}}
+
+                                    </div>
+
+                                    {{-- EXISTING SIGNATURE --}}
+                                    <div
+                                        id="resume_ranap_patient_signature_saved"
+                                        class="resume-ranap-patient-signature-saved d-none">
+
+                                        <div class="resume-ranap-patient-signature-saved-header">
+
+                                            <div>
+                                                <div class="fw-semibold">
+                                                    Tanda Tangan Tersimpan
+                                                </div>
+
+                                                <small
+                                                    class="text-body-secondary"
+                                                    id="resume_ranap_patient_signature_saved_at">
+                                                    -
+                                                </small>
+                                            </div>
+
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="ph-duotone ph-check-circle me-1"></i>
+                                                Terdaftar
+                                            </span>
+
+                                        </div>
+
+                                        {{-- IMAGE --}}
+                                        <div class="resume-ranap-patient-signature-image-wrap">
+
+                                            <img
+                                                id="resume_ranap_patient_signature_image"
+                                                src=""
+                                                alt="Tanda tangan pasien atau keluarga"
+                                                class="resume-ranap-patient-signature-image">
+
+                                        </div>
+
+                                        {{-- SIGNER NAME --}}
+                                        <div class="resume-ranap-patient-signature-signer">
+
+                                            <span class="text-body-secondary">
+                                                Ditandatangani oleh
+                                            </span>
+
+                                            <strong id="resume_ranap_patient_signature_name">
+                                                -
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                    {{-- SIGNATURE PAD --}}
+                                    <div
+                                        id="resume_ranap_patient_signature_editor"
+                                        class="resume-ranap-patient-signature-editor">
+
+                                        <div class="resume-ranap-patient-signature-editor-header">
+
+                                            <div>
+                                                <label class="form-label fw-semibold mb-1">
+                                                    Bubuhkan Tanda Tangan
+                                                </label>
+
+                                                <small class="text-body-secondary ms-2">
+                                                    (Gunakan mouse, touchpad, atau layar sentuh)
+                                                </small>
+                                            </div>
+
+                                        </div>
+
+                                        {{-- CANVAS --}}
+                                        <div class="resume-ranap-patient-signature-pad-wrap">
+
+                                            <canvas
+                                                id="canvas_signature_resume_ranap_patient"
+                                                class="resume-ranap-patient-signature-canvas">
+
+                                            </canvas>
+
+                                            <div class="resume-ranap-patient-signature-hint">
+                                                <i class="ph ph-signature"></i>
+                                                Tanda tangan di area ini
+                                            </div>
+
+                                        </div>
+
+                                        {{-- ACTIONS --}}
+                                        <div class="resume-ranap-patient-signature-actions">
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-subtle-secondary"
+                                                    id="btn_clear_signature_resume_ranap_patient">
+
+                                                    <i class="ph-duotone ph-eraser me-1"></i>
+                                                    Hapus Tanda Tangan
+
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-success ms-2"
+                                                    id="btn_save_signature_resume_ranap_patient">
+
+                                                    <i class="ph-duotone ph-floppy-disk me-1"></i>
+                                                    <span>Simpan Tanda Tangan</span>
+
+                                                </button>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    {{-- UPDATE SIGNATURE --}}
+                                    <div
+                                        id="resume_ranap_patient_signature_update_action"
+                                        class="resume-ranap-patient-signature-update-action d-none">
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-subtle-warning"
+                                            id="btn_update_signature_resume_ranap_patient">
+
+                                            <i class="ph-duotone ph-pencil-simple me-1"></i>
+                                            Perbarui Tanda Tangan
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
                     </div>

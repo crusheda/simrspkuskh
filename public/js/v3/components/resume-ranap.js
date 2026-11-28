@@ -602,14 +602,966 @@
 
         const encodedVisit = encodeURIComponent(visitNumber);
 
-        const baseUrl =
-            `/api/v2/emr/resume/ranap/${encodedVisit}`;
+        const baseUrl = `/api/v2/emr/resume/ranap/${encodedVisit}`;
+        const previewUrl = `/api/v2/emr/resume/ranap/preview/${encodedVisit}`;
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-        const previewUrl =
-            `/api/v2/emr/resume/ranap/preview/${encodedVisit}`;
+        // ======================================================
+        // PATIENT / FAMILY SIGNATURE
+        // ======================================================
 
-        const csrfToken =
-            $('meta[name="csrf-token"]').attr('content');
+        const patientSignatureUrl =
+            `${baseUrl}/ttd-pasien`;
+
+        const patientSignatureCanvas = document.getElementById(
+            'canvas_signature_resume_ranap_patient'
+        );
+
+        const patientSignatureCtx = patientSignatureCanvas
+            ? patientSignatureCanvas.getContext('2d')
+            : null;
+
+        const patientSignatureName = document.getElementById(
+            'resume_ranap_nama_pihak'
+        );
+
+        const patientSignatureSaved = document.getElementById(
+            'resume_ranap_patient_signature_saved'
+        );
+
+        const patientSignatureEditor = document.getElementById(
+            'resume_ranap_patient_signature_editor'
+        );
+
+        const patientSignatureImage = document.getElementById(
+            'resume_ranap_patient_signature_image'
+        );
+
+        const patientSignatureSavedNameElement = document.getElementById(
+            'resume_ranap_patient_signature_name'
+        );
+
+        const patientSignatureSavedAt = document.getElementById(
+            'resume_ranap_patient_signature_saved_at'
+        );
+
+        const patientSignatureUpdateAction = document.getElementById(
+            'resume_ranap_patient_signature_update_action'
+        );
+
+        const patientSignatureStatus = document.getElementById(
+            'resume_ranap_patient_signature_status'
+        );
+
+        const btnClearPatientSignature = document.getElementById(
+            'btn_clear_signature_resume_ranap_patient'
+        );
+
+        const btnSavePatientSignature = document.getElementById(
+            'btn_save_signature_resume_ranap_patient'
+        );
+
+        const btnUpdatePatientSignature = document.getElementById(
+            'btn_update_signature_resume_ranap_patient'
+        );
+
+        let patientSignatureDrawing = false;
+        let patientSignatureHasInk = false;
+        let patientSignatureExists = false;
+        let patientSignatureSaving = false;
+
+        let patientSignatureLastPoint = null;
+        let patientSignatureSavedUrl = null;
+        let patientSignatureSavedName = '';
+
+        // ======================================================
+        // PREPARE PATIENT SIGNATURE CANVAS
+        // ======================================================
+
+        let patientSignatureResizeObserver = null;
+
+        function configurePatientSignatureContext() {
+
+            if (!patientSignatureCtx) {
+                return;
+            }
+
+            patientSignatureCtx.lineWidth = 2.5;
+            patientSignatureCtx.lineCap = 'round';
+            patientSignatureCtx.lineJoin = 'round';
+            patientSignatureCtx.strokeStyle = '#111827';
+        }
+
+        function resizePatientSignatureCanvas() {
+
+            if (!patientSignatureCanvas || !patientSignatureCtx) {
+                return;
+            }
+
+            const rect = patientSignatureCanvas.getBoundingClientRect();
+
+            if (!rect.width || !rect.height) {
+                return;
+            }
+
+            const ratio = Math.max(
+                window.devicePixelRatio || 1,
+                1
+            );
+
+            const newWidth = Math.round(rect.width * ratio);
+            const newHeight = Math.round(rect.height * ratio);
+
+            // ==================================================
+            // UKURAN CANVAS TIDAK BERUBAH
+            // JANGAN RESET CANVAS
+            // ==================================================
+
+            if (
+                patientSignatureCanvas.width === newWidth &&
+                patientSignatureCanvas.height === newHeight
+            ) {
+
+                configurePatientSignatureContext();
+
+                return;
+            }
+
+            // ==================================================
+            // SIMPAN GAMBAR LAMA SEBELUM RESIZE
+            // ==================================================
+
+            let previousCanvas = null;
+
+            if (
+                patientSignatureCanvas.width > 0 &&
+                patientSignatureCanvas.height > 0
+            ) {
+
+                previousCanvas = document.createElement('canvas');
+
+                previousCanvas.width = patientSignatureCanvas.width;
+                previousCanvas.height = patientSignatureCanvas.height;
+
+                const previousCtx = previousCanvas.getContext('2d');
+
+                previousCtx.drawImage(
+                    patientSignatureCanvas,
+                    0,
+                    0
+                );
+            }
+
+            const previousWidth = patientSignatureCanvas.width;
+            const previousHeight = patientSignatureCanvas.height;
+
+            // ==================================================
+            // RESIZE CANVAS
+            // ==================================================
+
+            patientSignatureCanvas.width = newWidth;
+            patientSignatureCanvas.height = newHeight;
+
+            patientSignatureCtx.setTransform(
+                ratio,
+                0,
+                0,
+                ratio,
+                0,
+                0
+            );
+
+            configurePatientSignatureContext();
+
+            // ==================================================
+            // RESTORE DRAWING LAMA JIKA ADA
+            // ==================================================
+
+            if (previousCanvas) {
+
+                patientSignatureCtx.drawImage(
+                    previousCanvas,
+                    0,
+                    0,
+                    previousWidth,
+                    previousHeight,
+                    0,
+                    0,
+                    rect.width,
+                    rect.height
+                );
+            }
+
+            console.log(
+                '[Resume Ranap TTE] Canvas initialized:',
+                {
+                    cssWidth: rect.width,
+                    cssHeight: rect.height,
+                    canvasWidth: newWidth,
+                    canvasHeight: newHeight,
+                    ratio: ratio
+                }
+            );
+        }
+
+
+        // ======================================================
+        // CLEAR PATIENT SIGNATURE CANVAS
+        // ======================================================
+
+        function clearPatientSignatureCanvas() {
+
+            if (!patientSignatureCanvas || !patientSignatureCtx) {
+                return;
+            }
+
+            const rect = patientSignatureCanvas.getBoundingClientRect();
+
+            patientSignatureCtx.clearRect(
+                0,
+                0,
+                rect.width,
+                rect.height
+            );
+
+            patientSignatureHasInk = false;
+            patientSignatureLastPoint = null;
+            patientSignatureDrawing = false;
+        }
+
+
+        // ======================================================
+        // INITIALIZE CANVAS
+        // ======================================================
+
+        function initializePatientSignatureCanvas() {
+
+            if (!patientSignatureCanvas || !patientSignatureCtx) {
+                return;
+            }
+
+            // Mencegah browser menginterpretasikan gesture canvas
+            // sebagai scroll / zoom pada area tanda tangan.
+            patientSignatureCanvas.style.touchAction = 'none';
+
+            patientSignatureCanvas.style.userSelect = 'none';
+            patientSignatureCanvas.style.webkitUserSelect = 'none';
+
+            requestAnimationFrame(() => {
+
+                requestAnimationFrame(() => {
+
+                    resizePatientSignatureCanvas();
+
+                });
+
+            });
+
+            // ==================================================
+            // OBSERVE PERUBAHAN UKURAN CANVAS
+            // ==================================================
+
+            if (typeof ResizeObserver !== 'undefined') {
+
+                patientSignatureResizeObserver =
+                    new ResizeObserver(() => {
+
+                        requestAnimationFrame(() => {
+
+                            resizePatientSignatureCanvas();
+
+                        });
+
+                    });
+
+                patientSignatureResizeObserver.observe(
+                    patientSignatureCanvas
+                );
+            }
+
+            // Fallback resize window
+            window.addEventListener(
+                'resize',
+                function () {
+
+                    requestAnimationFrame(() => {
+
+                        resizePatientSignatureCanvas();
+
+                    });
+
+                }
+            );
+        }
+
+        initializePatientSignatureCanvas();
+
+
+        // ======================================================
+        // DRAWING PATIENT SIGNATURE
+        // ======================================================
+
+        function getPatientSignaturePoint(event) {
+
+            const rect = patientSignatureCanvas.getBoundingClientRect();
+
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+        }
+
+
+        // ======================================================
+        // START DRAWING
+        // ======================================================
+
+        function startPatientSignatureDrawing(event) {
+
+            if (isFinal || patientSignatureSaving) {
+                return;
+            }
+
+            if (event.pointerType === 'mouse' && event.button !== 0) {
+                return;
+            }
+
+            event.preventDefault();
+
+            patientSignatureDrawing = true;
+            patientSignatureHasInk = true;
+
+            patientSignatureLastPoint =
+                getPatientSignaturePoint(event);
+
+            // Pointer capture agar pointer tetap diterima
+            // meskipun bergerak sedikit keluar area canvas.
+            try {
+
+                patientSignatureCanvas.setPointerCapture(
+                    event.pointerId
+                );
+
+            } catch (error) {
+
+                console.debug(
+                    '[Resume Ranap TTE] Pointer capture tidak tersedia:',
+                    error
+                );
+            }
+
+            // Buat titik awal terlihat apabila user hanya tap
+            patientSignatureCtx.beginPath();
+
+            patientSignatureCtx.arc(
+                patientSignatureLastPoint.x,
+                patientSignatureLastPoint.y,
+                1.25,
+                0,
+                Math.PI * 2
+            );
+
+            patientSignatureCtx.fillStyle = '#111827';
+            patientSignatureCtx.fill();
+        }
+
+
+        // ======================================================
+        // DRAW
+        // ======================================================
+
+        function drawPatientSignature(event) {
+
+            if (
+                !patientSignatureDrawing ||
+                !patientSignatureLastPoint
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const point = getPatientSignaturePoint(event);
+
+            patientSignatureCtx.beginPath();
+
+            patientSignatureCtx.moveTo(
+                patientSignatureLastPoint.x,
+                patientSignatureLastPoint.y
+            );
+
+            patientSignatureCtx.lineTo(
+                point.x,
+                point.y
+            );
+
+            patientSignatureCtx.stroke();
+
+            patientSignatureLastPoint = point;
+        }
+
+
+        // ======================================================
+        // STOP DRAWING
+        // ======================================================
+
+        function stopPatientSignatureDrawing(event) {
+
+            if (!patientSignatureDrawing) {
+                return;
+            }
+
+            patientSignatureDrawing = false;
+            patientSignatureLastPoint = null;
+
+            if (
+                event &&
+                patientSignatureCanvas.hasPointerCapture?.(event.pointerId)
+            ) {
+
+                try {
+
+                    patientSignatureCanvas.releasePointerCapture(
+                        event.pointerId
+                    );
+
+                } catch (error) {
+
+                    // Pointer sudah dilepas browser.
+                }
+            }
+        }
+
+
+        // ======================================================
+        // PATIENT SIGNATURE EVENTS
+        // ======================================================
+
+        if (patientSignatureCanvas && patientSignatureCtx) {
+
+            patientSignatureCanvas.addEventListener(
+                'pointerdown',
+                startPatientSignatureDrawing
+            );
+
+            patientSignatureCanvas.addEventListener(
+                'pointermove',
+                drawPatientSignature
+            );
+
+            patientSignatureCanvas.addEventListener(
+                'pointerup',
+                stopPatientSignatureDrawing
+            );
+
+            patientSignatureCanvas.addEventListener(
+                'pointercancel',
+                stopPatientSignatureDrawing
+            );
+
+            patientSignatureCanvas.addEventListener(
+                'lostpointercapture',
+                stopPatientSignatureDrawing
+            );
+
+        }
+
+        // ======================================================
+        // CROP PATIENT SIGNATURE
+        // ======================================================
+        function cropPatientSignatureCanvas(
+            sourceCanvas,
+            padding = 24
+        ) {
+
+            if (!sourceCanvas) {
+                return null;
+            }
+
+            const ctx = sourceCanvas.getContext('2d');
+
+            if (!ctx) {
+                return null;
+            }
+
+            const width = sourceCanvas.width;
+            const height = sourceCanvas.height;
+
+            const imageData = ctx.getImageData(
+                0,
+                0,
+                width,
+                height
+            );
+
+            const pixels = imageData.data;
+
+            let minX = width;
+            let minY = height;
+            let maxX = -1;
+            let maxY = -1;
+
+            /*
+            * Canvas menggunakan background transparan.
+            * Deteksi tinta berdasarkan alpha.
+            */
+            for (let y = 0; y < height; y++) {
+
+                for (let x = 0; x < width; x++) {
+
+                    const index = (y * width + x) * 4;
+
+                    const alpha = pixels[index + 3];
+
+                    if (alpha > 10) {
+
+                        minX = Math.min(minX, x);
+                        minY = Math.min(minY, y);
+
+                        maxX = Math.max(maxX, x);
+                        maxY = Math.max(maxY, y);
+                    }
+                }
+            }
+
+            if (maxX < minX || maxY < minY) {
+                return null;
+            }
+
+            /*
+            * Padding dalam pixel canvas,
+            * bukan CSS pixel.
+            */
+            const ratio = Math.max(
+                window.devicePixelRatio || 1,
+                1
+            );
+
+            const extraPadding = Math.round(padding * ratio);
+
+            const cropX = Math.max(
+                0,
+                minX - extraPadding
+            );
+
+            const cropY = Math.max(
+                0,
+                minY - extraPadding
+            );
+
+            const cropRight = Math.min(
+                width,
+                maxX + extraPadding + 1
+            );
+
+            const cropBottom = Math.min(
+                height,
+                maxY + extraPadding + 1
+            );
+
+            const cropWidth = cropRight - cropX;
+            const cropHeight = cropBottom - cropY;
+
+            const croppedCanvas = document.createElement('canvas');
+
+            croppedCanvas.width = cropWidth;
+            croppedCanvas.height = cropHeight;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+
+            croppedCtx.drawImage(
+                sourceCanvas,
+                cropX,
+                cropY,
+                cropWidth,
+                cropHeight,
+                0,
+                0,
+                cropWidth,
+                cropHeight
+            );
+
+            return croppedCanvas.toDataURL('image/png');
+        }
+
+        // ======================================================
+        // DISPLAY SAVED PATIENT SIGNATURE
+        // ======================================================
+        function setPatientSignatureSaved(data) {
+
+            patientSignatureExists = Boolean(data);
+            patientSignatureSavedUrl = data?.signature || null;
+            patientSignatureSavedName = data?.nama_pihak || '';
+
+            if (patientSignatureName) {
+                patientSignatureName.value =
+                    patientSignatureSavedName;
+            }
+
+            if (patientSignatureExists && patientSignatureSavedUrl) {
+
+                patientSignatureImage.src =
+                    patientSignatureSavedUrl;
+
+                patientSignatureSavedNameElement.textContent =
+                    patientSignatureSavedName || '-';
+
+                patientSignatureSavedAt.textContent =
+                    data.updated_at
+                        ? `Diperbarui: ${data.updated_at}`
+                        : '';
+
+                patientSignatureSaved.classList.remove('d-none');
+
+                patientSignatureEditor.classList.add('d-none');
+
+                patientSignatureUpdateAction.classList.toggle(
+                    'd-none',
+                    isFinal
+                );
+
+            } else {
+
+                patientSignatureSaved.classList.add('d-none');
+
+                patientSignatureEditor.classList.remove('d-none');
+
+                patientSignatureUpdateAction.classList.add('d-none');
+            }
+
+            updatePatientSignatureStatus();
+        }
+
+        function updatePatientSignatureStatus() {
+
+            if (!patientSignatureStatus) {
+                return;
+            }
+
+            if (isFinal) {
+
+                patientSignatureStatus.className =
+                    'resume-ranap-patient-signature-status alert alert-success';
+
+                patientSignatureStatus.innerHTML = `
+                    <i class="ph-duotone ph-lock-key me-1"></i>
+                    Resume Medis telah difinalisasi. Tanda tangan terkunci.
+                `;
+
+                patientSignatureStatus.classList.remove('d-none');
+
+                patientSignatureEditor.classList.add('d-none');
+                patientSignatureUpdateAction.classList.add('d-none');
+
+                return;
+            }
+
+            if (patientSignatureExists) {
+
+                patientSignatureStatus.className =
+                    'resume-ranap-patient-signature-status alert alert-success';
+
+                patientSignatureStatus.innerHTML = `
+                    <i class="ph-duotone ph-check-circle me-1"></i>
+                    Tanda tangan pasien/keluarga telah tersimpan.
+                `;
+
+            } else {
+
+                patientSignatureStatus.className =
+                    'resume-ranap-patient-signature-status alert alert-warning';
+
+                patientSignatureStatus.innerHTML = `
+                    <i class="ph-duotone ph-info me-1"></i>
+                    Tanda tangan pasien/keluarga belum tersedia.
+                `;
+            }
+
+            patientSignatureStatus.classList.remove('d-none');
+        }
+
+        // ======================================================
+        // LOAD SAVED PATIENT SIGNATURE
+        // ======================================================
+        async function loadPatientSignature() {
+
+            try {
+
+                const response = await $.ajax({
+                    url: patientSignatureUrl,
+                    type: 'GET',
+                    dataType: 'json'
+                });
+
+                if (response.success && response.exists) {
+
+                    setPatientSignatureSaved(
+                        response.data
+                    );
+
+                } else {
+
+                    setPatientSignatureSaved(null);
+                }
+
+            } catch (xhr) {
+
+                console.error(
+                    '[Resume Ranap Patient Signature] Gagal memuat TTE:',
+                    xhr.responseText || xhr
+                );
+
+                notify(
+                    'error',
+                    'Gagal Memuat TTE Pasien',
+                    xhr.responseJSON?.message ||
+                        'Tanda tangan pasien/keluarga tidak dapat dimuat.'
+                );
+            }
+        }
+
+        // ======================================================
+        // SAVE / UPDATE PATIENT SIGNATURE
+        // ======================================================
+        async function savePatientSignature() {
+            const namaPihakTTE = ($('#resume_ranap_nama_pihak').val() || '').trim();
+
+            // =========================================
+            // VALIDASI NAMA PASIEN / KELUARG
+            // =========================================
+            if (!namaPihakTTE) {
+                notify(
+                    'error',
+                    'Validasi TTE',
+                    'Nama Pasien atau Keluarga wajib diisi sebelum menyimpan TTE.'
+                );
+
+                // $('#patient_signature_name').focus();
+                return;
+            }
+
+            // =========================================
+            // VALIDASI TTE
+            // =========================================
+            if (!patientSignatureHasInk) {
+                notify(
+                    'error',
+                    'Validasi TTE',
+                    'Tanda tangan wajib dibuat terlebih dahulu.'
+                );
+                return;
+            }
+
+            // =========================================
+            // VALIDASI STATUS FINALISASI
+            // =========================================
+            if (isFinal) {
+                notify(
+                    'warning',
+                    'Resume Medis',
+                    'Resume medis sudah difinalisasi. Batalkan finalisasi terlebih dahulu.'
+                );
+                return;
+            }
+
+            if (patientSignatureSaving || isSaving || isLoading) {
+                return;
+            }
+
+            if (isFinal) {
+
+                notify(
+                    'warning',
+                    'Resume sudah final',
+                    'Batalkan finalisasi terlebih dahulu untuk memperbarui tanda tangan.'
+                );
+
+                return;
+            }
+
+            if (patientSignatureSaving || isSaving || isLoading) {
+                return;
+            }
+
+            const namaPihak = (
+                patientSignatureName?.value || ''
+            ).trim();
+
+            if (!namaPihak) {
+
+                notify(
+                    'warning',
+                    'Nama belum diisi',
+                    'Silakan isi nama pasien atau keluarga yang menandatangani.'
+                );
+
+                patientSignatureName?.focus();
+
+                return;
+            }
+
+            if (!patientSignatureHasInk) {
+
+                notify(
+                    'warning',
+                    'Tanda tangan kosong',
+                    'Silakan bubuhkan tanda tangan terlebih dahulu.'
+                );
+
+                return;
+            }
+
+            const signature = cropPatientSignatureCanvas(
+                patientSignatureCanvas
+            );
+
+            if (!signature) {
+
+                notify(
+                    'warning',
+                    'Tanda tangan tidak ditemukan',
+                    'Silakan ulangi tanda tangan pada area yang tersedia.'
+                );
+
+                return;
+            }
+
+            patientSignatureSaving = true;
+
+            btnSavePatientSignature.disabled = true;
+            btnClearPatientSignature.disabled = true;
+
+            btnSavePatientSignature.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                Menyimpan TTE...
+            `;
+
+            try {
+
+                const response = await $.ajax({
+                    url: patientSignatureUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        nama_pihak: namaPihak,
+                        signature: signature
+                    }
+                });
+
+                clearPatientSignatureCanvas();
+
+                await loadPatientSignature();
+
+                notify(
+                    'success',
+                    'TTE Berhasil Disimpan',
+                    response.message ||
+                        'Tanda tangan pasien/keluarga berhasil disimpan.'
+                );
+
+            } catch (xhr) {
+
+                let message =
+                    'Tanda tangan pasien/keluarga gagal disimpan.';
+
+                if (xhr.responseJSON?.errors) {
+
+                    message = Object
+                        .values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+
+                } else if (xhr.responseJSON?.message) {
+
+                    message = xhr.responseJSON.message;
+                }
+
+                notify(
+                    'error',
+                    'Gagal Menyimpan TTE',
+                    message
+                );
+
+                console.error(
+                    '[Resume Ranap Patient Signature] Error:',
+                    xhr.responseText || xhr
+                );
+
+            } finally {
+
+                patientSignatureSaving = false;
+
+                btnSavePatientSignature.disabled = isFinal;
+                btnClearPatientSignature.disabled = isFinal;
+
+                btnSavePatientSignature.innerHTML = `
+                    <i class="ph-duotone ph-floppy-disk me-1"></i>
+                    <span>
+                        ${patientSignatureExists
+                            ? 'Simpan Perubahan TTE'
+                            : 'Simpan Tanda Tangan'}
+                    </span>
+                `;
+
+                updatePatientSignatureStatus();
+            }
+        }
+
+        // ======================================================
+        // EDIT / UPDATE SIGNATURE
+        // ======================================================
+        function editPatientSignature() {
+
+            if (isFinal) {
+                return;
+            }
+
+            patientSignatureSaved.classList.add('d-none');
+            patientSignatureUpdateAction.classList.add('d-none');
+
+            patientSignatureEditor.classList.remove('d-none');
+
+            requestAnimationFrame(() => {
+
+                resizePatientSignatureCanvas();
+
+                clearPatientSignatureCanvas();
+
+            });
+
+            btnSavePatientSignature.innerHTML = `
+                <i class="ph-duotone ph-floppy-disk me-1"></i>
+                <span>Simpan Perubahan TTE</span>
+            `;
+        }
+
+        // ======================================================
+        // PATIENT SIGNATURE EVENTS
+        // ======================================================
+        btnClearPatientSignature?.addEventListener(
+            'click',
+            function () {
+
+                if (isFinal || patientSignatureSaving) {
+                    return;
+                }
+
+                clearPatientSignatureCanvas();
+            }
+        );
+
+        btnSavePatientSignature?.addEventListener(
+            'click',
+            savePatientSignature
+        );
+
+        btnUpdatePatientSignature?.addEventListener(
+            'click',
+            editPatientSignature
+        );
 
         // ======================================================
         // STATE
@@ -788,7 +1740,6 @@
         // ======================================================
         // UPDATE FORM STATUS
         // ======================================================
-
         function updateFormStatus() {
 
             $fieldset.prop(
@@ -838,6 +1789,32 @@
             $btnFinal.prop('disabled', busy);
             $btnBatalFinal.prop('disabled', busy);
             $btnPrint.prop('disabled', busy);
+
+            // ======================================================
+            // PATIENT SIGNATURE STATUS
+            // ======================================================
+
+            if (btnSavePatientSignature) {
+                btnSavePatientSignature.disabled =
+                    isFinal || patientSignatureSaving;
+            }
+
+            if (btnClearPatientSignature) {
+                btnClearPatientSignature.disabled =
+                    isFinal || patientSignatureSaving;
+            }
+
+            if (btnUpdatePatientSignature) {
+                btnUpdatePatientSignature.disabled =
+                    isFinal || patientSignatureSaving;
+            }
+
+            if (patientSignatureName) {
+                patientSignatureName.disabled =
+                    isFinal || patientSignatureSaving;
+            }
+
+            updatePatientSignatureStatus();
         }
 
         // ======================================================
@@ -1308,8 +2285,8 @@
         // ======================================================
         // LOAD AWAL
         // ======================================================
-
         getData();
+        loadPatientSignature();
     }
 
     // ==========================================================

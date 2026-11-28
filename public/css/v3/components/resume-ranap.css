@@ -788,3 +788,240 @@
     }
 
 }
+
+/* =========================================================
+   RESUME RANAP - PATIENT / FAMILY SIGNATURE
+========================================================= */
+
+.resume-ranap-patient-signature-card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bs-body-bg);
+}
+
+.resume-ranap-patient-signature-card .card-header {
+    background: var(--bs-tertiary-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    padding: 14px 16px;
+}
+
+.resume-ranap-patient-signature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+    font-size: 22px;
+}
+
+.resume-ranap-patient-signature-card .card-body {
+    padding: 18px;
+}
+
+/* =========================================================
+   SAVED SIGNATURE
+========================================================= */
+
+.resume-ranap-patient-signature-saved {
+    margin-bottom: 16px;
+    padding: 14px;
+    border: 1px solid var(--bs-success-border-subtle);
+    border-radius: 12px;
+    background: var(--bs-success-bg-subtle);
+}
+
+.resume-ranap-patient-signature-saved-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.resume-ranap-patient-signature-image-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    padding: 16px;
+    border: 1px dashed var(--bs-border-color);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.resume-ranap-patient-signature-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    object-position: center;
+}
+
+.resume-ranap-patient-signature-signer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 12px;
+    font-size: 0.85rem;
+}
+
+.resume-ranap-patient-signature-signer strong {
+    color: var(--bs-body-color);
+}
+
+/* =========================================================
+   SIGNATURE EDITOR
+========================================================= */
+
+.resume-ranap-patient-signature-editor {
+    margin-top: 14px;
+}
+
+.resume-ranap-patient-signature-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+/* Canvas area */
+
+.resume-ranap-patient-signature-pad-wrap {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    overflow: hidden;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+/*
+ * Canvas tetap horizontal untuk kenyamanan menandatangani.
+ * Gambar yang dikirim akan auto-crop di JS.
+ */
+
+.resume-ranap-patient-signature-canvas {
+    display: block;
+    width: 100%;
+    height: 190px;
+    touch-action: none;
+    cursor: crosshair;
+    background: transparent;
+}
+
+.resume-ranap-patient-signature-hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #9ca3af;
+    font-size: 0.7rem;
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+.resume-ranap-patient-signature-canvas:active
+~ .resume-ranap-patient-signature-hint {
+    opacity: 0.2;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.resume-ranap-patient-signature-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.resume-ranap-patient-signature-actions .btn,
+.resume-ranap-patient-signature-update-action .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 9px;
+}
+
+.resume-ranap-patient-signature-update-action {
+    margin-top: 12px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.resume-ranap-patient-signature-status {
+    font-size: 0.8rem;
+    border-radius: 10px;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"]
+.resume-ranap-patient-signature-card {
+    background: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"]
+.resume-ranap-patient-signature-card .card-header {
+    background: var(--bs-tertiary-bg);
+}
+
+[data-bs-theme="dark"]
+.resume-ranap-patient-signature-image-wrap {
+    background: #ffffff;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .resume-ranap-patient-signature-card .card-body {
+        padding: 14px;
+    }
+
+    .resume-ranap-patient-signature-pad-wrap {
+        height: 170px;
+    }
+
+    .resume-ranap-patient-signature-canvas {
+        height: 170px;
+    }
+
+    .resume-ranap-patient-signature-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .resume-ranap-patient-signature-actions .btn {
+        width: 100%;
+    }
+
+    .resume-ranap-patient-signature-image {
+        max-height: 150px;
+    }
+}

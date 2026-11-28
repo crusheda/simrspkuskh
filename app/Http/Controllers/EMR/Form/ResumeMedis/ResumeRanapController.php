@@ -63,6 +63,278 @@ class ResumeRanapController extends Controller
         'edukasi',
     ];
 
+    /**
+     * ==========================================================
+     * GET TANDA TANGAN PASIEN / KELUARGA
+     * ==========================================================
+     *
+     * GET:
+     * /api/v2/emr/resume/ranap/{kunjungan}/ttd-pasien
+     */
+    public function getTandaTanganPasien($kunjungan)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sesi pengguna tidak ditemukan. Silakan login kembali.',
+            ], 401);
+        }
+
+        try {
+            $signature = DB::table('simrspku_klaim.tanda_tangan')
+                ->where('kunjungan', $kunjungan)
+                ->whereNull('deleted_at')
+                ->orderByDesc('id')
+                ->first();
+
+            if (!$signature) {
+                return response()->json([
+                    'success' => true,
+                    'exists' => false,
+                    'data' => null,
+                ]);
+            }
+
+            $disk = Storage::disk('public');
+
+            $signatureUrl = $disk->exists($signature->signature_path)
+                ? $disk->url($signature->signature_path)
+                : null;
+
+            return response()->json([
+                'success' => true,
+                'exists' => true,
+                'data' => [
+                    'id' => $signature->id,
+                    'kunjungan' => $signature->kunjungan,
+                    'nama_pihak' => $signature->nama_pihak ?? '',
+                    'signature_path' => $signature->signature_path,
+                    'signature' => $signatureUrl,
+                    'created_at' => $signature->created_at,
+                    'updated_at' => $signature->updated_at,
+                ],
+            ]);
+
+        } catch (Throwable $e) {
+
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil tanda tangan pasien.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+    /**
+     * ==========================================================
+     * SIMPAN / UPDATE TANDA TANGAN PASIEN / KELUARGA
+     * ==========================================================
+     *
+     * POST:
+     * /api/v2/emr/resume/ranap/{kunjungan}/ttd-pasien
+     */
+    public function simpanTandaTanganPasien(Request $request, $kunjungan)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sesi pengguna tidak ditemukan. Silakan login kembali.',
+            ], 401);
+        }
+
+        $validated = $request->validate([
+            'nama_pihak' => 'required|string|max:255',
+            'signature' => 'required|string',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. CEK RESUME DAN STATUS FINAL
+        |--------------------------------------------------------------------------
+        */
+
+        $resume = DB::table(self::TABLE)
+            ->where('kunjungan', $kunjungan)
+            ->where('status', 1)
+            ->orderByDesc('id')
+            ->first();
+
+        // if (!$resume) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Data Resume Medis Rawat Inap belum tersedia.',
+        //     ], 404);
+        // }
+
+        if ((int) $resume->final === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resume Medis sudah difinalisasi. Batalkan finalisasi terlebih dahulu untuk memperbarui TTE.',
+            ], 423);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. VALIDASI BASE64 PNG
+        |--------------------------------------------------------------------------
+        */
+
+        $signatureData = $validated['signature'];
+
+        if (!preg_match(
+            '/^data:image\/png;base64,(.+)$/',
+            $signatureData,
+            $matches
+        )) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Format tanda tangan tidak valid.',
+            ], 422);
+        }
+
+        $binary = base64_decode($matches[1], true);
+
+        if ($binary === false || strlen($binary) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data gambar tanda tangan tidak dapat dibaca.',
+            ], 422);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. VALIDASI GAMBAR
+        |--------------------------------------------------------------------------
+        */
+
+        $imageInfo = @getimagesizefromstring($binary);
+
+        if (
+            !$imageInfo ||
+            $imageInfo[2] !== IMAGETYPE_PNG
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File tanda tangan harus berupa gambar PNG.',
+            ], 422);
+        }
+
+        // Batas ukuran gambar 2 MB
+        if (strlen($binary) > 2 * 1024 * 1024) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ukuran gambar tanda tangan terlalu besar.',
+            ], 422);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. GENERATE FILE
+        |--------------------------------------------------------------------------
+        */
+
+        $disk = Storage::disk('public');
+
+        $timestamp = time();
+        $userId = Auth::id();
+
+        $filename = "ttd_{$userId}_{$timestamp}.png";
+        $path = "signatures/pasien/{$filename}";
+
+        while ($disk->exists($path)) {
+            $timestamp++;
+            $filename = "ttd_{$userId}_{$timestamp}.png";
+            $path = "signatures/pasien/{$filename}";
+        }
+
+        $saved = $disk->put($path, $binary);
+
+        if (!$saved) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File tanda tangan gagal disimpan.',
+            ], 500);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 5. DATABASE TRANSACTION
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            DB::transaction(function () use (
+                $kunjungan,
+                $path,
+                $validated,
+                $timestamp,
+                $userId
+            ) {
+
+                $now = now();
+
+                /*
+                * Soft delete TTE aktif sebelumnya.
+                * Histori lama tetap dipertahankan.
+                */
+                DB::table('simrspku_klaim.tanda_tangan')
+                    ->where('kunjungan', $kunjungan)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'deleted_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+
+                /*
+                * Insert TTE terbaru.
+                */
+                DB::table('simrspku_klaim.tanda_tangan')
+                    ->insert([
+                        'kunjungan' => $kunjungan,
+                        'signature_path' => $path,
+                        'nama_pihak' => trim($validated['nama_pihak']),
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'deleted_at' => null,
+                        'user' => $userId,
+                    ]);
+            });
+
+        } catch (Throwable $e) {
+
+            // Database gagal, hapus file yang baru dibuat.
+            $disk->delete($path);
+
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan tanda tangan pasien.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 6. RESPONSE
+        |--------------------------------------------------------------------------
+        */
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tanda tangan pasien/keluarga berhasil disimpan.',
+            'data' => [
+                'kunjungan' => $kunjungan,
+                'nama_pihak' => trim($validated['nama_pihak']),
+                'signature' => $disk->url($path),
+                'signature_path' => $path,
+                'signature_tanggal' => now()->format('d-m-Y H:i'),
+                'signature_user' => $userId,
+            ],
+        ]);
+    }
 
     /**
      * ==========================================================
@@ -1972,6 +2244,22 @@ class ResumeRanapController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | AMBIL TANDA TANGAN PASIEN / KELUARGA
+            |--------------------------------------------------------------------------
+            */
+
+            $ttdPasien = DB::table('simrspku_klaim.tanda_tangan')
+                ->where('kunjungan', $kunjungan)
+                ->whereNull('deleted_at')
+                ->orderByDesc('id')
+                ->first();
+
+            $ttdPasienPath = $ttdPasien->signature_path ?? null;
+
+            $namaPihak = $ttdPasien->nama_pihak ?? '';
+
+            /*
+            |--------------------------------------------------------------------------
             | 4. MAPPING KONDISI KELUAR
             |--------------------------------------------------------------------------
             */
@@ -2000,7 +2288,7 @@ class ResumeRanapController extends Controller
             $layananLanjutan = [
                 1 => 'Poliklinik RS',
                 2 => 'RS Lain',
-                3 => 'Puskesmas',
+                3 => 'Faskes Pertama',
                 4 => 'Dokter Luar',
                 5 => 'Komunitas',
             ];
@@ -2290,6 +2578,7 @@ class ResumeRanapController extends Controller
                 ),
 
                 'NAMALENGKAP' => $kunjunganUtama->NAMALENGKAP ?? '',
+                'NAMA_PIHAK' => $namaPihak,
 
                 'JENISKELAMIN' => (
                     $kunjunganUtama->JENIS_KELAMIN
@@ -2398,8 +2687,12 @@ class ResumeRanapController extends Controller
                     ? $record->ku_suhu . ' °C'
                     : '',
 
-                // 'LAYANAN_LANJUTAN' => $layananLanjutan[$record->layanan_lanjutan] ?? '',
-                'LAYANAN_LANJUTAN' => $record->layanan_lanjutan ? '☑' : '☐',
+                // 'LAYANAN_LANJUTAN' => $record->layanan_lanjutan ? '☑' : '☐',
+                'LL_1' => $record->layanan_lanjutan == 1 ? '☑' : '☐',
+                'LL_2' => $record->layanan_lanjutan == 2 ? '☑' : '☐',
+                'LL_3' => $record->layanan_lanjutan == 3 ? '☑' : '☐',
+                'LL_4' => $record->layanan_lanjutan == 4 ? '☑' : '☐',
+                'LL_5' => $record->layanan_lanjutan == 5 ? '☑' : '☐',
                 'EDUKASI' => $record->edukasi ?? '',
 
                 // OBAT PULANG
@@ -2568,6 +2861,37 @@ class ResumeRanapController extends Controller
             } else {
                 // Jika TTD belum tersedia, placeholder dikosongkan.
                 $templateProcessor->setValue('TTD_DPJP', '');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 14. MASUKKAN GAMBAR TANDA TANGAN PASIEN / KELUARGA
+            |--------------------------------------------------------------------------
+            */
+            if (
+                $ttdPasienPath &&
+                Storage::disk('public')->exists($ttdPasienPath)
+            ) {
+
+                $imagePath = Storage::disk('public')->path(
+                    $ttdPasienPath
+                );
+
+                self::setImgWord(
+                    $templateProcessor,
+                    'TTD_PASIEN',
+                    $imagePath,
+                    130
+                );
+
+            } else {
+
+                // Jika TTE pasien belum tersedia,
+                // placeholder gambar dikosongkan.
+                $templateProcessor->setValue(
+                    'TTD_PASIEN',
+                    ''
+                );
             }
 
             /*
